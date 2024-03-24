@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { DataTablePagination } from './pagination'
+import { getRecords } from '@/lib/api'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -70,6 +71,13 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  React.useEffect(() => {
+    const getUsers = async () => {
+      const users = await getRecords('users')
+      console.log('users:', users)
+    }
+    getUsers()
+  }, [])
   return (
     <div>
       {/* Filters */}
