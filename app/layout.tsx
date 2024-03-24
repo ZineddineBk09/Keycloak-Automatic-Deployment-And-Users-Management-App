@@ -5,6 +5,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeSwitch } from '@/components/theme-switch'
 import SessionWrapper from '@/components/login/session-wrapper'
+import CheckAuthGuard from '@/components/login/auth-guard'
 
 export const metadata: Metadata = {
   title: 'Keycloak User Management',
@@ -21,17 +22,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <SessionWrapper>
-      <html lang='en'>
-        <body
-          className={cn(
-            'text-gray-900',
-            'bg-white',
-            'dark:bg-gray-900',
-            'dark:text-gray-100',
-            fontSans
-          )}
-        >
+    <html lang='en'>
+      <body
+        className={cn(
+          'text-gray-900',
+          'bg-white',
+          'dark:bg-gray-900',
+          'dark:text-gray-100',
+          fontSans
+        )}
+      >
+        <CheckAuthGuard>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'
@@ -41,8 +42,8 @@ export default function RootLayout({
             <ThemeSwitch />
             {children}
           </ThemeProvider>
-        </body>
-      </html>
-    </SessionWrapper>
+        </CheckAuthGuard>
+      </body>
+    </html>
   )
 }
