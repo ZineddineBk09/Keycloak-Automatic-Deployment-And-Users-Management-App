@@ -1,7 +1,5 @@
 // signin keycloak
 export const signIn = async (credentials: any, options?: any) => {
-  console.log('signing in with credentials', credentials)
-
   // check if credentials contains clientId, and clientSecret
   if (!credentials.clientId || !credentials.clientSecret) {
     throw new Error('Client ID and Client Secret are required')
@@ -22,17 +20,14 @@ export const signIn = async (credentials: any, options?: any) => {
     )
 
     const data = await response.json()
-    console.log('DATA:', data)
     return data
   } catch (error) {
-    console.log('Error signing in', error)
     throw error
   }
 }
 
 // signout keycloak
 export const signOut = async (accessToken: string) => {
-  console.log('signing out')
   try {
     const response = await fetch(
       process.env.NEXT_PUBLIC_CLIENT_LOGOUT_URL || '',
@@ -48,7 +43,6 @@ export const signOut = async (accessToken: string) => {
     const data = await response.json()
     return data
   } catch (error) {
-    console.log('Error signing out', error)
     throw error
   }
 }
