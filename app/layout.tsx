@@ -5,7 +5,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeSwitch } from '@/components/theme-switch'
 import SessionWrapper from '@/components/login/session-wrapper'
-import CheckAuthGuard from '@/components/login/auth-guard'
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: 'Keycloak User Management',
@@ -32,7 +32,7 @@ export default function RootLayout({
           fontSans
         )}
       >
-        <CheckAuthGuard>
+        <SessionWrapper>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'
@@ -41,8 +41,9 @@ export default function RootLayout({
           >
             <ThemeSwitch />
             {children}
+            <Toaster />
           </ThemeProvider>
-        </CheckAuthGuard>
+        </SessionWrapper>
       </body>
     </html>
   )
