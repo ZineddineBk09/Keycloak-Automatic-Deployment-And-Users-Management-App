@@ -1,10 +1,17 @@
-import { ClientForm } from '@/components/login/client-form'
+'use client'
+import CsvReader from '@/components/csv/csv-reader'
+import AuthProvider from '@/context/auth-context'
+import { UsersContextProvider } from '@/context/csv'
 
-export default async function LoginPage() {
+export default function MainPage() {
   return (
-    <div className='container mx-auto py-10'>
-      <h1 className='text-3xl font-bold mb-10'>Client Login</h1>
-      <ClientForm />
-    </div>
+    <AuthProvider>
+      <UsersContextProvider>
+        <div className='container mx-auto py-10'>
+          <h1 className='text-3xl font-bold mb-10'>Upload CSV File</h1>
+          <CsvReader />
+        </div>
+      </UsersContextProvider>
+    </AuthProvider>
   )
 }
