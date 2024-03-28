@@ -8,6 +8,7 @@ export const AuthContext = createContext<any>(null)
 export const useAuth: {
   (): {
     session: ClientSession
+    loading: boolean
     setSession: React.Dispatch<React.SetStateAction<ClientSession>>
     refreshToken: () => Promise<void>
   }
@@ -16,6 +17,7 @@ export const useAuth: {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<ClientSession>({} as any)
   const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const refreshToken = async () => {
     // check if cookie exists
@@ -26,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } as ClientSession)
     } else {
       // get token from keycloak
+      setLoading(true)
       const clientSession: ClientSession = await getAccessToken()
       setSession(clientSession)
       // save session to cookie
@@ -33,14 +36,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         path: '/',
         maxAge: clientSession.expires_in,
       })
+      setLoading(false)
     }
   }
   useEffect(() => {
     refreshToken()
+
+    const refreshInterval = setInterval(() => {
+      refreshToken()
+    }, 1000 * 60) // 1 minute
+
+    return () => clearInterval(refreshInterval)
   }, [])
 
   return (
-    <AuthContext.Provider value={{ session, setSession, refreshToken }}>
+    <AuthContext.Provider
+      value={{ session, loading, setSession, refreshToken }}
+    >
       {children}
     </AuthContext.Provider>
   )

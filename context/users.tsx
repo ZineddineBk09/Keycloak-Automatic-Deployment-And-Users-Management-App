@@ -21,21 +21,24 @@ export const UsersContextProvider = ({
   children: React.ReactNode
 }) => {
   const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[])
-  const [loading, setLoading] = useState<boolean>(false)
-  const { session } = useAuth()
+  const { session, loading } = useAuth()
 
   const fetchUsers = async () => {
-    setLoading(true)
     // call the create user API
     try {
-      if (!session?.access_token) throw new Error('No access token')
-      const response = await getUsers(session?.access_token)
+      if (!session?.access_token && !loading)
+        throw new Error(
+          'Please check if the Keycloak server is running. and try again.'
+        )
+      if (loading) {
+        toast.error('Loading...')
+        return
+      }
+      const response = await getUsers(session?.access_token || '')
       setUsers(response)
     } catch (error: any) {
       console.error('Error fetching users:', error)
       throw error
-    } finally {
-      setLoading(false)
     }
   }
 
