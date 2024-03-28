@@ -25,7 +25,27 @@ This is a simple project to manage users in a Keycloak server. It uses the Keycl
 
 ## Getting Started
 
-First, run the development server:
+First, run the keycloak server in a docker container in development mode:
+
+```bash
+docker run --name mykeycloak -p 8080:8080 \
+                                        -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin \
+                                        quay.io/keycloak/keycloak:latest \
+                                        start-dev
+```
+
+then, create a client in the keycloak server with the following settings:
+
+- Client ID: `rest-api-client`
+- Enable: `Client authentication`, and select the `Service accounts roles` options 
+- In Web Origins, add `http://localhost:3000`
+
+After that, go to the client credentials tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
+
+```bash
+
+
+Second, run the development server:
 
 ```bash
 npm run dev
