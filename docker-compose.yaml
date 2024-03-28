@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile # Assuming you have a multi-stage Dockerfile
+    volumes:
+      - ./package-lock.json:/app/package-lock.json:ro # Ensure dependency consistency
+      - .:/app:ro # Read-only access to codebase (modify if needed)
+    command: npm run start
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    ports:
+      - '8080:8080'
