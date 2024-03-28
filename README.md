@@ -32,6 +32,8 @@ docker run --name mykeycloak -p 8080:8080 \
                                         start-dev
 ```
 
+amd open [http://localhost:8080](http://localhost:8080) with your browser to see the keycloak server.
+
 then, create a client in the keycloak server with the following settings:
 
 - Client ID: `rest-api-client`
@@ -63,6 +65,12 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Usage
+
+1. Go to the `/` page
+2. Use the MOCK_DATA.csv file in the root of the project to create multiple users
+3. Upload users to keycloak, and you should be redirected to the dashboard page to see all the keycloak users
 
 ## Keycloak REST API Documentation
 
