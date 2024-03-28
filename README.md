@@ -10,7 +10,7 @@ This is a simple project to manage users in a Keycloak server. It uses the Keycl
 - Keycloak Admin REST API
 - Axios
 - TypeScript
-  
+
 ## Features
 
 - List users
@@ -21,11 +21,9 @@ This is a simple project to manage users in a Keycloak server. It uses the Keycl
 
 ## Screenshots
 
-
-
 ## Getting Started
 
-First, run the keycloak server in a docker container in development mode:
+**First**, run the keycloak server in a docker container in development mode:
 
 ```bash
 docker run --name mykeycloak -p 8080:8080 \
@@ -37,15 +35,22 @@ docker run --name mykeycloak -p 8080:8080 \
 then, create a client in the keycloak server with the following settings:
 
 - Client ID: `rest-api-client`
-- Enable: `Client authentication`, and select the `Service accounts roles` options 
+- Enable: `Client authentication`, and select the `Service accounts roles` options
 - In Web Origins, add `http://localhost:3000`
 
-After that, go to the client credentials tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
+After that, go to the client `Credentials` tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
 
 ```bash
+NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=YOUR_SECRET
+```
 
+Then go to `Service accounts roles` tab, and add the following roles:
 
-Second, run the development server:
+- view-users
+- manage-users
+- query-users
+
+**Second**, run the development server:
 
 ```bash
 npm run dev
