@@ -38,7 +38,6 @@ export function ClientForm() {
       clientId: values.clientId,
       clientSecret: values.clientSecret,
     }).then((res: { ok: boolean; status: number } | any) => {
-      console.log('res:', res)
       if (res.ok && res.status == 200) {
         router.push('/dashboard')
       }
