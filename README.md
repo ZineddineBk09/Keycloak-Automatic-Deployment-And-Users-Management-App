@@ -32,7 +32,7 @@ docker run --name mykeycloak -p 8080:8080 \
                                         start-dev
 ```
 
-amd open [http://localhost:8080](http://localhost:8080) with your browser to see the keycloak server.
+and open [http://localhost:8080](http://localhost:8080) with your browser to see the keycloak server.
 
 then, create a client in the keycloak server with the following settings:
 
