@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeSwitch } from '@/components/theme-switch'
 import SessionWrapper from '@/components/login/session-wrapper'
 import { Toaster } from 'sonner'
+import Navigation from '@/components/navigation'
 
 export const metadata: Metadata = {
   title: 'Keycloak User Management',
@@ -40,8 +41,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <ThemeSwitch />
+            <Navigation />
             {children}
-            <Toaster />
+            <Toaster visibleToasts={10} />
           </ThemeProvider>
         </SessionWrapper>
       </body>
