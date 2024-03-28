@@ -5,20 +5,17 @@ export const getAccessToken = async () => {
   try {
     const url = `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/protocol/openid-connect/token`
 
-    const response = await fetch(
-      'http://localhost:8080/realms/master/protocol/openid-connect/token',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          grant_type: 'client_credentials',
-          client_id: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || '',
-          client_secret: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || '',
-        }),
-      }
-    )
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || '',
+        client_secret: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || '',
+      }),
+    })
     const data = await response.json()
     return data
   } catch (error) {

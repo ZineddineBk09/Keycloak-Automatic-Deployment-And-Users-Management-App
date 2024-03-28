@@ -1,8 +1,8 @@
 'use client'
-import { columns } from '@/components/dashboard/columns'
-import { DataTable } from '@/components/dashboard/data-table'
-import AuthProvider from '@/context/auth-context'
-import { UsersContextProvider, useUsersContext } from '@/context/users'
+import { columns } from '../../components/dashboard/columns'
+import { DataTable } from '../../components/dashboard/data-table'
+import AuthProvider from '../../context/auth-context'
+import { UsersContextProvider } from '../../context/users'
 
 export default function MainPage() {
   

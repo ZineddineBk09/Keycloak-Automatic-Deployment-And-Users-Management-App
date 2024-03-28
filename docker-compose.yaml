@@ -13,10 +13,10 @@ services:
     environment:
       NODE_ENV: production
 
-  keycloak:
-    image: jboss/keycloak
-    environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-    ports:
-      - '8080:8080'
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:latest
+  #   environment:
+  #     KEYCLOAK_USER: admin
+  #     KEYCLOAK_PASSWORD: admin
+  #   ports:
+  #     - '8080:8080'

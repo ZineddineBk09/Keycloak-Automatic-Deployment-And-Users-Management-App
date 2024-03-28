@@ -22,23 +22,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '../ui/table'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '../ui/dropdown-menu'
 import { DataTablePagination } from './pagination'
-import { useUsersContext } from '@/context/users'
+import { useUsersContext } from '../../context/users'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
-import { KeycloakUser } from '@/interfaces'
-import { deleteUser, updateUser } from '@/lib/api'
-import { useAuth } from '@/context/auth-context'
+import { KeycloakUser } from '../../interfaces'
+import { deleteUser, updateUser } from '../../lib/api'
+import { useAuth } from '../../context/auth-context'
 import { toast } from 'sonner'
 
 interface DataTableProps<TData, TValue> {

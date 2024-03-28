@@ -1,5 +1,5 @@
-import { ClientSession } from '@/interfaces'
-import { getAccessToken } from '@/lib/api'
+import { ClientSession } from '../interfaces'
+import { getAccessToken } from '../lib/api'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 

@@ -3,8 +3,8 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontal } from 'lucide-react'
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
+import { Checkbox } from '../ui/checkbox'
+import { Button } from '../ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { KeycloakUser } from '@/interfaces'
+} from '../ui/dropdown-menu'
+import { KeycloakUser } from '../../interfaces'
 import {
   Dialog,
   DialogContent,
@@ -23,9 +23,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '../ui/dialog'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,12 +36,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from '../ui/alert-dialog'
 import { useState } from 'react'
-import { updateUser } from '@/lib/api'
-import { useAuth } from '@/context/auth-context'
+import { updateUser } from '../../lib/api'
+import { useAuth } from '../../context/auth-context'
 import { toast } from 'sonner'
-import { useUsersContext } from '@/context/users'
+import { useUsersContext } from '../../context/users'
 
 /**example keycloak user
  * access:{manageGroupMembership: true, view: true, mapRoles: true, impersonate: false, manage: true}

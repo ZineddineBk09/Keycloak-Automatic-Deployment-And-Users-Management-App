@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@/interfaces'
+import { User } from '../interfaces'
 import { useAuth } from './auth-context'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'

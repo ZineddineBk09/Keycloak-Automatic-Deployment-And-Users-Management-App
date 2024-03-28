@@ -3,8 +3,8 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontal } from 'lucide-react'
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
+import { Checkbox } from '../ui/checkbox'
+import { Button } from '../ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { User } from '@/interfaces'
+} from '../ui/dropdown-menu'
+import { User } from '../../interfaces'
 
 export const columns: ColumnDef<User>[] = [
   {

@@ -1,9 +1,8 @@
 import { createContext, use, useContext, useEffect, useState } from 'react'
-import { KeycloakUser } from '@/interfaces'
+import { KeycloakUser } from '../interfaces'
 import { useAuth } from './auth-context'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
-import { getUsers } from '@/lib/api'
+import { getUsers } from '../lib/api'
 
 export const UsersContext = createContext({})
 

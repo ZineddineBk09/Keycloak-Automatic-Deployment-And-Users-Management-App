@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { Noto_Sans as FontSans } from 'next/font/google'
-import { cn } from '@/lib/utils'
+import { cn } from '../lib/utils'
 import './globals.css'
-import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeSwitch } from '@/components/theme-switch'
-import SessionWrapper from '@/components/login/session-wrapper'
+import { ThemeProvider } from '../components/theme-provider'
+import { ThemeSwitch } from '../components/theme-switch'
+import SessionWrapper from '../components/login/session-wrapper'
 import { Toaster } from 'sonner'
-import Navigation from '@/components/navigation'
+import Navigation from '../components/navigation'
 
 export const metadata: Metadata = {
   title: 'Keycloak User Management',
