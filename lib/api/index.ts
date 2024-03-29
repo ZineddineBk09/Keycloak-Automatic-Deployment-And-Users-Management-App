@@ -5,7 +5,7 @@ export const getAccessToken = async () => {
   try {
     const url =
       'http://localhost:8080/realms/master/protocol/openid-connect/token'
-    console.log('login URL:', url)
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
