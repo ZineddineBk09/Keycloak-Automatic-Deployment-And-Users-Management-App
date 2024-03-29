@@ -72,6 +72,24 @@ pnpm dev
 bun dev
 ```
 
+**Finally**, after running the development server, don't forget to commit the keycloak server container:
+
+```bash
+docker commit <container_id> keycloak-dev
+```
+
+then, when you are done, you can stop the keycloak server container:
+
+```bash
+docker stop <container_id>
+```
+
+and next time you can run the keycloak server with the following command:
+
+```bash
+docker run -p 8080:8080 keycloak-dev
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Usage
