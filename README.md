@@ -21,6 +21,14 @@ This is a simple project to manage users in a Keycloak server. It uses the Keycl
 
 ## Screenshots
 
+### Dashboard
+
+![Dashboard](./public/screenshots/keycloak-users.png)
+
+### CSV Upload
+
+![CSV Upload](./public/screenshots/csv-upload.png)
+
 ## Getting Started
 
 **First**, run the keycloak server in a docker container in development mode:
