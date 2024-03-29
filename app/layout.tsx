@@ -4,7 +4,6 @@ import { cn } from '../lib/utils'
 import './globals.css'
 import { ThemeProvider } from '../components/theme-provider'
 import { ThemeSwitch } from '../components/theme-switch'
-import SessionWrapper from '../components/login/session-wrapper'
 import { Toaster } from 'sonner'
 import Navigation from '../components/navigation'
 
@@ -33,19 +32,17 @@ export default function RootLayout({
           fontSans
         )}
       >
-        <SessionWrapper>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ThemeSwitch />
-            <Navigation />
-            {children}
-            <Toaster visibleToasts={10} />
-          </ThemeProvider>
-        </SessionWrapper>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ThemeSwitch />
+          <Navigation />
+          {children}
+          <Toaster visibleToasts={10} />
+        </ThemeProvider>
       </body>
     </html>
   )
