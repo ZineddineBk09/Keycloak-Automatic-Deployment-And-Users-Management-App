@@ -46,7 +46,7 @@ then, create a client in the keycloak server with the following settings:
 
 - Client ID: `rest-api-client`
 - Enable: `Client authentication`, and select the `Service accounts roles` options
-- In Web Origins, add `http://localhost:3000`
+- In Web Origins, add `http://localhost:3000` and `http://localhost:3000/*` to the list of allowed origins
 
 After that, go to the client `Credentials` tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
 
