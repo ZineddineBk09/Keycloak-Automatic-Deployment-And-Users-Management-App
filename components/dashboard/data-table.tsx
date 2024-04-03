@@ -32,9 +32,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { DataTablePagination } from './pagination'
+import { DataTablePagination } from '../ui/pagination'
 import { useUsersContext } from '../../context/users'
-import { ReloadIcon } from '@radix-ui/react-icons'
+import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
 import { KeycloakUser } from '../../interfaces'
 import { deleteUser, updateUser } from '../../lib/api'
@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { users, fetchUsers } = useUsersContext()
+  const { users, fetchUsers, deleteUsers } = useUsersContext()
   const { session } = useAuth()
   const [data, setData] = React.useState<TData[]>([] as TData[])
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -84,7 +84,6 @@ export function DataTable<TData, TValue>({
           })
           .catch((error) => {
             toast.error('Error deleting user')
-            console.error(error)
           })
       },
 
@@ -96,15 +95,40 @@ export function DataTable<TData, TValue>({
           })
           .catch((error) => {
             toast.error('Error updating user')
-            console.error(error)
           })
       },
     },
   })
+  const [isDeleteDisabled, setIsDeleteDisabled] = React.useState<boolean>(true)
+
+  const handleDeleteUsers = async () => {
+    const rowsIndices = Object.keys(rowSelection)
+    const usersIds: string[] = rowsIndices.map(
+      (idx: string) => (data[Number(idx)] as any).id as string
+    )
+    deleteUsers(usersIds)
+      .then(() => {
+        toast.success('Users deleted successfully')
+        setRowSelection({})
+      })
+      .catch((error) => {
+        toast.error('Error deleting users')
+      })
+  }
 
   React.useEffect(() => {
     setData(users as TData[])
   }, [users])
+
+  // check if there is any rows selected to enable the delete button
+
+  React.useEffect(() => {
+    if (Object.keys(rowSelection).length) {
+      setIsDeleteDisabled(false)
+    } else {
+      setIsDeleteDisabled(true)
+    }
+  }, [rowSelection])
 
   return (
     <div>
@@ -119,6 +143,15 @@ export function DataTable<TData, TValue>({
           className='max-w-sm'
         />
         <div className='flex items-center gap-x-4 ml-auto'>
+          {!isDeleteDisabled && (
+            <Button variant='outline' onClick={handleDeleteUsers}>
+              Delete ({Object.keys(rowSelection).length})
+              <TrashIcon
+                className='h-6 w-6 text-red-500 ml-2'
+                aria-hidden='true'
+              />
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>
@@ -155,7 +188,6 @@ export function DataTable<TData, TValue>({
                 })
                 .catch((error) => {
                   toast.error('Error fetching users')
-                  console.error(error)
                 })
             }}
             className='h-8 w-8 p-0'

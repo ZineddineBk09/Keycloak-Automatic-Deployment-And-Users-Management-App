@@ -2,7 +2,7 @@ import { createContext, use, useContext, useEffect, useState } from 'react'
 import { KeycloakUser } from '../interfaces'
 import { useAuth } from './auth-context'
 import { toast } from 'sonner'
-import { getUsers } from '../lib/api'
+import { getUsers, deleteUser } from '../lib/api'
 
 export const UsersContext = createContext({})
 
@@ -11,6 +11,7 @@ export const useUsersContext: {
     users: KeycloakUser[]
     setUsers: React.Dispatch<React.SetStateAction<KeycloakUser[]>>
     fetchUsers: () => Promise<void>
+    deleteUsers: (ids: string[]) => Promise<void>
   }
 } = () => useContext(UsersContext as React.Context<any>)
 
@@ -41,6 +42,26 @@ export const UsersContextProvider = ({
     }
   }
 
+  const deleteUsers = async (ids: string[]) => {
+    try {
+      if (!session?.access_token && !loading)
+        throw new Error(
+          'Please check if the Keycloak server is running. and try again.'
+        )
+      if (loading) {
+        toast.error('Loading...')
+        return
+      }
+      await Promise.all(
+        ids.map((id) => deleteUser(id, session?.access_token || ''))
+      )
+      await fetchUsers()
+    } catch (error: any) {
+      console.error('Error deleting users:', error)
+      throw error
+    }
+  }
+
   useEffect(() => {
     fetchUsers()
       .then(() => {
@@ -57,6 +78,7 @@ export const UsersContextProvider = ({
         users,
         setUsers,
         fetchUsers,
+        deleteUsers,
       }}
     >
       {children}

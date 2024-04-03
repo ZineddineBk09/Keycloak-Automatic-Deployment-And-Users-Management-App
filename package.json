@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
+    "jwt-decode": "^4.0.0",
     "keycloak-react-web": "^0.1.19",
     "lucide-react": "^0.362.0",
     "next": "14.1.4",
@@ -43,6 +44,7 @@
     "react-jwt": "^1.2.1",
     "react-papaparse": "^4.4.0",
     "recharts": "^2.12.3",
+    "sharp": "^0.33.3",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",

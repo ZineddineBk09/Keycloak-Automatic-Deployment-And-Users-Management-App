@@ -1,9 +1,12 @@
+import { toast } from 'sonner'
+import { User } from '../../interfaces'
 import axios from '../axios'
 
 export const getAccessToken = async () => {
   // get client access token from keycloak server
   try {
-    const url = `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/protocol/openid-connect/token`
+    const url =
+      'http://localhost:8080/realms/master/protocol/openid-connect/token'
 
     const response = await fetch(url, {
       method: 'POST',
@@ -22,6 +25,27 @@ export const getAccessToken = async () => {
     throw error
   }
 }
+// export const getAccessToken = async () => {
+//   try {
+//     const url = `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/protocol/openid-connect/token`
+//     console.log('login URL:', url)
+//     const formData = new URLSearchParams({
+//       grant_type: 'client_credentials',
+//       client_id: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || '',
+//       client_secret: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || '',
+//     })
+
+//     const response = await axios.post(url, formData, {
+//       headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//       },
+//     })
+
+//     return response.data
+//   } catch (error) {
+//     throw error
+//   }
+// }
 
 export const getUsers = async (accessToken: string) => {
   // get users from keycloak server
@@ -38,12 +62,21 @@ export const getUsers = async (accessToken: string) => {
   }
 }
 
-export const createUser = async (user: any, endpoint: string) => {
+export const createUser = async (user: User, accessToken: string) => {
   try {
-    const response = await axios.post(endpoint + '/', user)
+    const response = await axios.post('/admin/realms/master/users', user, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
     const data = await response.data
+
+    if (response.status === 201) {
+      toast.success(`User ${user.username} created`)
+    }
     return data
   } catch (error: any) {
+    toast.error(`Failed to create user ${user.username}`)
     throw error
   }
 }

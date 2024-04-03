@@ -21,6 +21,14 @@ This is a simple project to manage users in a Keycloak server. It uses the Keycl
 
 ## Screenshots
 
+### Dashboard
+
+![Dashboard](./public/screenshots/keycloak-users.png)
+
+### CSV Upload
+
+![CSV Upload](./public/screenshots/csv-upload.png)
+
 ## Getting Started
 
 **First**, run the keycloak server in a docker container in development mode:
@@ -38,7 +46,7 @@ then, create a client in the keycloak server with the following settings:
 
 - Client ID: `rest-api-client`
 - Enable: `Client authentication`, and select the `Service accounts roles` options
-- In Web Origins, add `http://localhost:3000`
+- In Web Origins, add `http://localhost:3000` and `http://localhost:3000/*` to the list of allowed origins
 
 After that, go to the client `Credentials` tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
 
@@ -62,6 +70,24 @@ yarn dev
 pnpm dev
 # or
 bun dev
+```
+
+**Finally**, after running the development server, don't forget to commit the keycloak server container:
+
+```bash
+docker commit <container_id> keycloak-dev
+```
+
+then, when you are done, you can stop the keycloak server container:
+
+```bash
+docker stop <container_id>
+```
+
+and next time you can run the keycloak server with the following command:
+
+```bash
+docker run -p 8080:8080 keycloak-dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

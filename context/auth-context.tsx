@@ -44,10 +44,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const refreshInterval = setInterval(() => {
       refreshToken()
-    }, 1000 * 60) // 1 minute
+    }, 1000 * 60 * 5) // 5 minutes
 
     return () => clearInterval(refreshInterval)
-  }, [])
+  }, [cookies.kc_session])
 
   return (
     <AuthContext.Provider
