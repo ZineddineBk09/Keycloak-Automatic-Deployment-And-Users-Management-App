@@ -32,10 +32,10 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { DataTablePagination } from './pagination'
 import { UploadIcon } from '@radix-ui/react-icons'
 import { useUsersContext } from '../../context/csv'
 import { User } from '../../interfaces'
+import { DataTablePagination } from '../ui/pagination'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
