@@ -1,3 +1,5 @@
+import { toast } from 'sonner'
+import { User } from '../../interfaces'
 import axios from '../axios'
 
 export const getAccessToken = async () => {
@@ -60,12 +62,21 @@ export const getUsers = async (accessToken: string) => {
   }
 }
 
-export const createUser = async (user: any, endpoint: string) => {
+export const createUser = async (user: User, accessToken: string) => {
   try {
-    const response = await axios.post(endpoint + '/', user)
+    const response = await axios.post('/admin/realms/master/users', user, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
     const data = await response.data
+
+    if (response.status === 201) {
+      toast.success(`User ${user.username} created`)
+    }
     return data
   } catch (error: any) {
+    toast.error(`Failed to create user ${user.username}`)
     throw error
   }
 }
