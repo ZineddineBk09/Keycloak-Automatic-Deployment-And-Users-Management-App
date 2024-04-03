@@ -3,6 +3,7 @@ import { User } from '../interfaces'
 import { useAuth } from './auth-context'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { createUser } from '../lib/api'
 
 export const UsersContext = createContext({})
 
@@ -24,41 +25,41 @@ export const UsersContextProvider = ({
   const { session } = useAuth()
   const router = useRouter()
 
-  const createUser = async (user: User) => {
-    // call the create user API
-    try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_KEYCLOAK_USERS_URL || '',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify(user),
-        }
-      )
-      if (!response.ok) {
-        toast.error(`Failed to create user ${user.username}`)
-        throw new Error('Failed to create user')
-      }
+  // const createUser = async (user: User) => {
+  //   // call the create user API
+  //   try {
+  //     const response = await fetch(
+  //       process.env.NEXT_PUBLIC_KEYCLOAK_USERS_URL || '',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${session.access_token}`,
+  //         },
+  //         body: JSON.stringify(user),
+  //       }
+  //     )
+  //     if (!response.ok) {
+  //       toast.error(`Failed to create user ${user.username}`)
+  //       throw new Error('Failed to create user')
+  //     }
 
-      toast.success(`User ${user.username} created`)
-      return {
-        status: response.status,
-        message: 'User created',
-      }
-    } catch (error: any) {
-      console.error('Error creating user:', error)
-      throw error
-    }
-  }
+  //     toast.success(`User ${user.username} created`)
+  //     return {
+  //       status: response.status,
+  //       message: 'User created',
+  //     }
+  //   } catch (error: any) {
+  //     console.error('Error creating user:', error)
+  //     throw error
+  //   }
+  // }
 
   const uploadToKeycloak = async () => {
     try {
       const createdUsers = await Promise.all(
         users.map(async (user) => {
-          return await createUser(user)
+          return await createUser(user, session.access_token)
         })
       )
       setUsers([])
