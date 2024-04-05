@@ -29,6 +29,7 @@ export default function RootLayout({
           'bg-white',
           'dark:bg-gray-900',
           'dark:text-gray-100',
+          'overflow-x-hidden',
           fontSans
         )}
       >
