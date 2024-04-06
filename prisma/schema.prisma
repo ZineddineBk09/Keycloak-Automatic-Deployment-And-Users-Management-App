@@ -15,6 +15,9 @@ model Client {
   clientId     String   @unique
   clientSecret String   @unique
   realmId      String   @default("master")
+  authProtocol String   @default("openid-connect")
+  adminUser    String   @default("admin")
+  serverUrl    String   @default("https://keycloak.example.com:8080")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
