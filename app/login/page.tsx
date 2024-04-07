@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClientForm } from '../../components/client/register-form'
+import { ClientLoginForm } from '../../components/client/login-form'
 
 const page = () => {
   return (
@@ -7,7 +7,7 @@ const page = () => {
       <h1 className='text-3xl font-bold mb-10'>
         Config
       </h1>
-      <ClientForm />
+      <ClientLoginForm />
     </div>
   )
 }
