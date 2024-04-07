@@ -1,0 +1,23 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id           String   @id @default(cuid())
+  clientId     String   @unique
+  clientSecret String   @unique
+  realmId      String   @default("master")
+  authProtocol String   @default("openid-connect")
+  adminUser    String   @default("admin")
+  serverUrl    String   @default("https://keycloak.example.com:8080")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
