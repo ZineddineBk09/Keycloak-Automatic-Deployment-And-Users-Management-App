@@ -1,22 +1,41 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '../../../db'
-import bcrypt from 'bcrypt'
 
-export async function POST(request: NextRequest) {
-  const req = await request.json()
+// get request handler to retreive client info: /client/:clientId
+export async function GET(request: NextRequest) {
+  const clientId: string = request.nextUrl.searchParams.get(
+    'clientId'
+  ) as string
 
-  const { clientId, clientSecret, realmId } = req
-  try {
-    const client = await prisma.client.create({
-      data: {
-        clientId,
-        clientSecret: await bcrypt.hash(clientSecret, 10),
-        realmId,
+  // get client info from the database
+  let client = await prisma.client.findUnique({
+    where: {
+      clientId,
+    },
+  })
+
+  // if the client does not exist
+  if (!client) {
+    console.log('client does not exist')
+    return NextResponse.json(
+      {
+        status: 404,
+        data: {
+          message: 'client does not exist',
+        },
       },
-    })
-
-    return NextResponse.json(client)
-  } catch (e) {
-    return NextResponse.error()
+      { status: 404 }
+    )
   }
+
+  return NextResponse.json(
+    {
+      status: 200,
+      data: {
+        message: 'client found',
+        client,
+      },
+    },
+    { status: 200 }
+  )
 }
