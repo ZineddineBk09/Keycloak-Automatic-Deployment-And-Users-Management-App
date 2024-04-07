@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '../../../../db'
 import bcrypt from 'bcrypt'
-// create a validator for the request body with zod
 import { z } from 'zod'
 
 // define the schema for the request body
@@ -14,19 +13,25 @@ const schema = z.object({
   serverUrl: z.string().min(1),
 })
 
-// handle the logic for the POST request where the client send hist clientId/clientSecret to get an access token form the keycloak server
-// http://localhost:8080/realms/master/protocol/openid-connect/token
-
 export async function POST(request: NextRequest) {
   const req = await request.json()
+  console.log(req)
 
   // check if the request body is valid
   const result = schema.safeParse(req)
 
-  // if the request body is not valid
-  if (!result.success) {
+  // if the request body is not valid, contains more than 6 keys or the schema validation fails
+  if (Object.keys(req).length !== 6 || !result.success) {
     console.log('invalid request body')
-    return NextResponse.error()
+    return NextResponse.json(
+      {
+        status: 400,
+        data: {
+          message: 'invalid request body',
+        },
+      },
+      { status: 400 }
+    )
   }
 
   const { clientId, clientSecret, realmId } = req
@@ -38,43 +43,90 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  // if the client does not exist
-  if (!client) {
-    console.log('client does not exist')
-    try {
-      client = await prisma.client.create({
+  // if the client exist
+  if (client) {
+    console.log('client exist')
+    return NextResponse.json(
+      {
+        status: 409,
         data: {
-          clientId,
-          clientSecret: await bcrypt.hash(clientSecret, 10),
-          realmId,
+          message: 'client exist',
         },
-      })
-    } catch (err) {
-      console.log('error creating client', err)
-      return NextResponse.error()
-    }
+      },
+      { status: 409 }
+    )
+  }
+
+  try {
+    client = await prisma.client.create({
+      data: {
+        clientId,
+        clientSecret: await bcrypt.hash(clientSecret, 10),
+        realmId,
+      },
+    })
+  } catch (err) {
+    console.log('error creating client', err)
+    return NextResponse.json(
+      {
+        status: 500,
+        data: {
+          message: 'error creating client',
+        },
+      },
+      { status: 500 }
+    )
   }
 
   // if the client exist and the clientSecret is correct
   if (client && (await bcrypt.compare(clientSecret, client.clientSecret))) {
     // request an access token from the keycloak server
-    const response = await fetch(process.env.KEYCLOAK_AUTH_URL || '', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'client_credentials',
-      }),
-    })
+    try {
+      const response = await fetch(process.env.KEYCLOAK_AUTH_URL || '', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: 'client_credentials',
+        }),
+      })
 
-    // return the response from the keycloak server
-    return NextResponse.json(await response.json())
+      // return the response from the keycloak server
+      return NextResponse.json(
+        {
+          status: response.status,
+          data: await response.json(),
+        },
+        {
+          status: response.status,
+        }
+      )
+    } catch (err) {
+      console.log('error fetching keycloak', err)
+      return NextResponse.json(
+        {
+          status: 500,
+          data: {
+            message: 'error fetching keycloak',
+          },
+        },
+        { status: 500 }
+      )
+    }
   } else {
     // return an error
     console.log('clientSecret is incorrect')
-    return NextResponse.error()
+    return NextResponse.json(
+      {
+        status: 401,
+        data: {
+          message: 'client secret is incorrect',
+        },
+      },
+      { status: 401 }
+    )
   }
 }
