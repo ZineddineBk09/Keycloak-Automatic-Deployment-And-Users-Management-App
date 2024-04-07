@@ -39,3 +39,8 @@ export interface ClientSession {
   not_before_policy: number
   scope: string
 }
+
+export interface Response {
+  status: number
+  data: any
+}
