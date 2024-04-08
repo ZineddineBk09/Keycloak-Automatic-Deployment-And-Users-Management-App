@@ -1,8 +1,8 @@
-import { createContext, use, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { KeycloakUser } from '../interfaces'
-import { useAuth } from './auth-context'
 import { toast } from 'sonner'
 import { getUsers, deleteUser } from '../lib/api'
+import { useCookies } from 'react-cookie'
 
 export const UsersContext = createContext({})
 
@@ -21,20 +21,18 @@ export const UsersContextProvider = ({
   children: React.ReactNode
 }) => {
   const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[])
-  const { session, loading } = useAuth()
+  const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
 
   const fetchUsers = async () => {
     // call the create user API
     try {
-      if (!session?.access_token && !loading)
+      if (!cookies.kc_session) {
         throw new Error(
           'Please check if the Keycloak server is running. and try again.'
         )
-      if (loading) {
-        toast.error('Loading...')
-        return
       }
-      const response = await getUsers(session?.access_token || '')
+
+      const response = await getUsers()
       setUsers(response)
     } catch (error: any) {
       console.error('Error fetching users:', error)
@@ -44,17 +42,12 @@ export const UsersContextProvider = ({
 
   const deleteUsers = async (ids: string[]) => {
     try {
-      if (!session?.access_token && !loading)
+      if (!cookies.kc_session)
         throw new Error(
           'Please check if the Keycloak server is running. and try again.'
         )
-      if (loading) {
-        toast.error('Loading...')
-        return
-      }
-      await Promise.all(
-        ids.map((id) => deleteUser(id, session?.access_token || ''))
-      )
+
+      await Promise.all(ids.map((id) => deleteUser(id)))
       await fetchUsers()
     } catch (error: any) {
       console.error('Error deleting users:', error)
@@ -70,7 +63,7 @@ export const UsersContextProvider = ({
       .catch((error) => {
         toast.error(error.message)
       })
-  }, [session])
+  }, [cookies.kc_session])
 
   return (
     <UsersContext.Provider
