@@ -15,7 +15,6 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   const req = await request.json()
-  console.log(req)
 
   // check if the request body is valid
   const result = schema.safeParse(req)
@@ -118,7 +117,7 @@ export async function POST(request: NextRequest) {
     }
   } else {
     // return an error
-    console.log('clientSecret is incorrect')
+    console.log('client secret is incorrect')
     return NextResponse.json(
       {
         status: 401,
