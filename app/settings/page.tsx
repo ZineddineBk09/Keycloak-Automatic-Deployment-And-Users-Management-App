@@ -1,7 +1,8 @@
+'use client'
 import React from 'react'
 import { ClientSettingsForm } from '../../components/client/settings-form'
 
-const page = () => {
+export default function SettingsPage() {
   return (
     <div className='container mx-auto py-10'>
       <h1 className='text-3xl font-bold mb-2'>Settings</h1>
@@ -13,5 +14,3 @@ const page = () => {
     </div>
   )
 }
-
-export default page
