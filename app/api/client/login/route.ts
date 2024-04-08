@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     )
   } else {
     // return an error
-    console.log('clientSecret is incorrect')
+    console.log('client secret is incorrect')
     return NextResponse.json(
       {
         status: 401,
