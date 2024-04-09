@@ -45,9 +45,7 @@ export async function PATCH(request: NextRequest) {
   const clientId: string = request.nextUrl.searchParams.get(
     'clientId'
   ) as string
-  console.log('clientId', clientId)
   const body = await request.json()
-  console.log('body', body)
 
   const allowedFields = [
     'clientId',
