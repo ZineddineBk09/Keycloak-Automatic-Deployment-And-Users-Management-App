@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { ClientSettingsForm } from '../../components/client/settings-form'
+import { ClientSettingsForm } from '../../components/forms/settings-form'
 
 export default function SettingsPage() {
   return (
