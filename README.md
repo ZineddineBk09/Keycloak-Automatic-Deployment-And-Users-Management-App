@@ -70,10 +70,12 @@ then, create a client in the keycloak server with the following settings:
 - Enable: `Client authentication`, and select the `Service accounts roles` options
 - In Web Origins, add `http://localhost:3000` and `http://localhost:3000/*` to the list of allowed origins
 
-After that, go to the client `Credentials` tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
+After that, go to the `.env.local` file in the root of the project and change the following:
 
 ```bash
-NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=YOUR_SECRET
+NEXT_PUBLIC_BASE_URL=http://localhost:8080
+NODE_ENV=development
+
 ```
 
 Then go to `Service accounts roles` tab, and add the following roles:
