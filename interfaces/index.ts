@@ -31,6 +31,41 @@ export interface KeycloakUser {
   }
 }
 
+export interface KeycloakClient {
+  id: string
+  clientId: string
+  name: string
+  rootUrl: string
+  baseUrl: string
+  surrogateAuthRequired: boolean
+  enabled: boolean
+  alwaysDisplayInConsole: boolean
+  clientAuthenticatorType: string
+  redirectUris: string[]
+  webOrigins: string[]
+  notBefore: number
+  bearerOnly: boolean
+  consentRequired: boolean
+  standardFlowEnabled: boolean
+  implicitFlowEnabled: boolean
+  directAccessGrantsEnabled: boolean
+  serviceAccountsEnabled: boolean
+  publicClient: boolean
+  frontchannelLogout: boolean
+  protocol: string
+  attributes: { [key: string]: string }
+  authenticationFlowBindingOverrides: { [key: string]: string }
+  fullScopeAllowed: boolean
+  nodeReRegistrationTimeout: number
+  defaultClientScopes: string[]
+  optionalClientScopes: string[]
+  access: {
+    view: boolean
+    configure: boolean
+    manage: boolean
+  }
+}
+
 export interface ClientSession {
   access_token: string
   expires_in: number
@@ -43,4 +78,37 @@ export interface ClientSession {
 export interface Response {
   status: number
   data: any
+}
+
+export interface Client {
+  id: string
+  clientId: string
+  clientSecret: string
+  realmId: string
+  authProtocol: string
+  adminUser: string
+  serverUrl: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DecodedJWT {
+  exp: number
+  iat: number
+  jti: string
+  iss: string
+  aud: string[]
+  sub: string
+  typ: string
+  azp: string
+  acr: string
+  'allowed-origins': string[]
+  realm_access: { roles: string[] }
+  resource_access: { [key: string]: { roles: string[] } }
+  scope: string
+  clientHost: string
+  email_verified: boolean
+  preferred_username: string
+  clientAddress: string
+  client_id: string
 }
