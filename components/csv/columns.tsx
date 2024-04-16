@@ -90,10 +90,6 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
-  },
-  {
     id: 'actions',
     cell: ({ row, table }) => {
       const user = row.original
