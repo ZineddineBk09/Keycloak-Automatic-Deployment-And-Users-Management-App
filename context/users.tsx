@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { KeycloakUser } from '../interfaces'
+import { DecodedJWT, KeycloakUser } from '../interfaces'
 import { toast } from 'sonner'
-import { getUsers, deleteUser } from '../lib/api'
+import { getRecords, deleteRecord } from '../lib/api'
 import { useCookies } from 'react-cookie'
+import { jwtDecode } from 'jwt-decode'
 
 export const UsersContext = createContext({})
 
@@ -32,7 +33,7 @@ export const UsersContextProvider = ({
         )
       }
 
-      const response = await getUsers()
+      const response = await getRecords('users')
       setUsers(response)
     } catch (error: any) {
       console.error('Error fetching users:', error)
@@ -47,7 +48,7 @@ export const UsersContextProvider = ({
           'Please check if the Keycloak server is running. and try again.'
         )
 
-      await Promise.all(ids.map((id) => deleteUser(id)))
+      await Promise.all(ids.map((id) => deleteRecord('users', id)))
       await fetchUsers()
     } catch (error: any) {
       console.error('Error deleting users:', error)
@@ -61,6 +62,7 @@ export const UsersContextProvider = ({
         toast.success('Users fetched')
       })
       .catch((error) => {
+        console.log('Error fetching users:', error)
         toast.error(error.message)
       })
   }, [cookies.kc_session])
