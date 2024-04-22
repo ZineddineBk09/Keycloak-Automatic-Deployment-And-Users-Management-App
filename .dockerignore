@@ -7,5 +7,4 @@ Dockerfile*
 .env.example
 README.md
 .next
-.git
 .vercel
