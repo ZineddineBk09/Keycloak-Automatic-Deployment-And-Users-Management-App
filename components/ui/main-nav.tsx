@@ -4,6 +4,7 @@ import { cn } from '../../lib/utils'
 import { ThemeSwitch } from '../theme-switch'
 import { useCookies } from 'react-cookie'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 interface NavLink {
   href: string
@@ -22,6 +23,11 @@ export function MainNav({
     {
       href: '/users',
       label: 'Users',
+      condition: cookies.kc_session,
+    },
+    {
+      href: '/clients',
+      label: 'Clients',
       condition: cookies.kc_session,
     },
     {
@@ -72,6 +78,29 @@ export function MainNav({
           }
         })}
       </nav>
+
+      <div className='absolute right-4'>
+        {cookies.kc_session ? <SignOut /> : null}
+      </div>
     </div>
+  )
+}
+
+const SignOut = () => {
+  const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
+  const router = useRouter()
+
+  const signOut = () => {
+    removeCookie('kc_session')
+    router.push('/login')
+  }
+
+  return (
+    <button
+      onClick={signOut}
+      className='text-sm font-medium text-muted-foreground transition-colors hover:text-primary px-3 py-2 rounded mr-16'
+    >
+      Sign Out
+    </button>
   )
 }
