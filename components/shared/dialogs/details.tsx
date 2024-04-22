@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '../../ui/button'
-import { KeycloakUser } from '../../../interfaces'
+import { KeycloakClient, KeycloakUser } from '../../../interfaces'
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,8 @@ import {
 } from '../../ui/dialog'
 import JSONPretty from 'react-json-pretty'
 
-function DetailsDialog({ user }: { user: KeycloakUser }) {
+function DetailsDialog({ data }: { data: KeycloakUser | KeycloakClient }) {
+  
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -24,13 +25,13 @@ function DetailsDialog({ user }: { user: KeycloakUser }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>User details</DialogTitle>
+          <DialogTitle>Details</DialogTitle>
           <DialogDescription>
-            View user details here. Click close when you&apos;re done.
+            View details here. Click close when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <div>
-          <JSONPretty data={user} />
+        <div className='overflow-y-auto max-h-[600px]'>
+          <JSONPretty data={data} />
         </div>
         <DialogFooter>
           <DialogClose>

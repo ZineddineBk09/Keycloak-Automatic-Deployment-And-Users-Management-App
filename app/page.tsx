@@ -1,6 +1,5 @@
 'use client'
 import CsvReader from '../components/csv/csv-reader'
-import AuthProvider from '../context/auth-context'
 import { UsersContextProvider } from '../context/csv'
 
 export default function MainPage() {

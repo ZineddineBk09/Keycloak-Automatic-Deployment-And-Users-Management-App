@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '../../ui/button'
-import { KeycloakUser } from '../../../interfaces'
+import { KeycloakClient, KeycloakUser } from '../../../interfaces'
 import {
   Dialog,
   DialogContent,
@@ -15,30 +15,24 @@ import {
 import { Input } from '../../ui/input'
 import { Label } from '../../ui/label'
 import { useState } from 'react'
-import { updateUser } from '../../../lib/api'
-import { useAuth } from '../../../context/auth-context'
+import { updateRecord } from '../../../lib/api'
 import { toast } from 'sonner'
 import { useUsersContext } from '../../../context/users'
 
-function EditDialog({ user }: { user: KeycloakUser }) {
-  const { session } = useAuth()
+function EditDialog({ client }: { client: KeycloakClient }) {
   const { fetchUsers } = useUsersContext()
-
   const [fields, setFields] = useState({
-    username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
+    name: client.name,
   })
 
   const handleUpdate = async () => {
-    await updateUser(fields, user.id, session.access_token || '')
+    await updateRecord('clients', fields, client.id)
       .then(() => {
         toast.success('User updated successfully')
         fetchUsers()
       })
       .catch((error) => {
-        toast.error('Error updating user')
+        toast.error('Error updating client')
         console.error(error)
       })
   }
@@ -54,7 +48,7 @@ function EditDialog({ user }: { user: KeycloakUser }) {
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
-            Make changes to user here. Click save when you&apos;re done.
+            Make changes to client here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className='grid gap-4 py-4'>

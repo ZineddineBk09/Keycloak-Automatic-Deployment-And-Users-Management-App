@@ -6,6 +6,8 @@ import { ThemeProvider } from '../components/theme-provider'
 import { ThemeSwitch } from '../components/theme-switch'
 import { Toaster } from 'sonner'
 import Navigation from '../components/navigation'
+import CheckAuthGuard from '../components/guards/auth-guard'
+import { MainNav } from '../components/ui/main-nav'
 
 export const metadata: Metadata = {
   title: 'Keycloak User Management',
@@ -39,10 +41,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeSwitch />
-          <Navigation />
-          {children}
-          <Toaster visibleToasts={10} />
+          <CheckAuthGuard>
+            <MainNav />
+            {children}
+            <Toaster visibleToasts={10} richColors closeButton />
+          </CheckAuthGuard>
         </ThemeProvider>
       </body>
     </html>

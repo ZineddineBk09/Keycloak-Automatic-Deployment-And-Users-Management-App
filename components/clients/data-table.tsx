@@ -33,12 +33,11 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { DataTablePagination } from '../ui/pagination'
-import { useUsersContext } from '../../context/users'
+import { useClientsContext } from '../../context/clients'
 import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
-import { KeycloakUser } from '../../interfaces'
-import { deleteUser, updateUser } from '../../lib/api'
-import { useAuth } from '../../context/auth-context'
+import { KeycloakClient } from '../../interfaces'
+import { deleteRecord, updateRecord } from '../../lib/api'
 import { toast } from 'sonner'
 
 interface DataTableProps<TData, TValue> {
@@ -48,8 +47,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { users, fetchUsers, deleteUsers } = useUsersContext()
-  const { session } = useAuth()
+  const { clients, fetchClients, deleteClients } = useClientsContext()
   const [data, setData] = React.useState<TData[]>([] as TData[])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -76,25 +74,25 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
     meta: {
-      deleteRow: async (row: KeycloakUser) => {
-        await deleteUser(row.id, session.access_token)
+      deleteRow: async (row: KeycloakClient) => {
+        await deleteRecord('clients', row.id)
           .then(() => {
-            toast.success('User deleted successfully')
-            fetchUsers()
+            toast.success('Client deleted successfully')
+            fetchClients()
           })
           .catch((error) => {
-            toast.error('Error deleting user')
+            toast.error('Error deleting client')
           })
       },
 
-      updateRow: async (row: KeycloakUser) => {
-        await updateUser(row, row.id, session.access_token)
+      updateRow: async (row: KeycloakClient) => {
+        await updateRecord('clients', row, row.id)
           .then(() => {
-            toast.success('User updated successfully')
-            fetchUsers()
+            toast.success('Client updated successfully')
+            fetchClients()
           })
           .catch((error) => {
-            toast.error('Error updating user')
+            toast.error('Error updating client')
           })
       },
     },
@@ -103,22 +101,23 @@ export function DataTable<TData, TValue>({
 
   const handleDeleteUsers = async () => {
     const rowsIndices = Object.keys(rowSelection)
-    const usersIds: string[] = rowsIndices.map(
+    const clientsIds: string[] = rowsIndices.map(
       (idx: string) => (data[Number(idx)] as any).id as string
     )
-    deleteUsers(usersIds)
+    deleteClients(clientsIds)
       .then(() => {
-        toast.success('Users deleted successfully')
+        const msg: string = clientsIds.length > 1 ? 'Users' : 'User'
+        toast.success(msg + ' deleted successfully')
         setRowSelection({})
       })
       .catch((error) => {
-        toast.error('Error deleting users')
+        toast.error('Error deleting clients')
       })
   }
 
   React.useEffect(() => {
-    setData(users as TData[])
-  }, [users])
+    setData(clients as TData[])
+  }, [clients])
 
   // check if there is any rows selected to enable the delete button
 
@@ -135,10 +134,10 @@ export function DataTable<TData, TValue>({
       {/* Filters */}
       <div className='flex items-center py-4'>
         <Input
-          placeholder='Filter emails...'
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          placeholder='Filter client id...'
+          value={(table.getColumn('clientId')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
+            table.getColumn('clientId')?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />
@@ -181,13 +180,13 @@ export function DataTable<TData, TValue>({
           <Button
             variant='outline'
             onClick={async () => {
-              await fetchUsers()
+              await fetchClients()
                 .then(() => {
                   toast.success('Users fetched successfully')
-                  fetchUsers()
+                  fetchClients()
                 })
                 .catch((error) => {
-                  toast.error('Error fetching users')
+                  toast.error('Error fetching clients')
                 })
             }}
             className='h-8 w-8 p-0'

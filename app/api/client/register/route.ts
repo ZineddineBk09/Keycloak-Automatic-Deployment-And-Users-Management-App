@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '../../../../db'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
+import { getClientDomainRealmAndProtocol } from '../../../../lib/api'
 
 // define the schema for the request body
 const schema = z.object({
@@ -15,7 +16,6 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   const req = await request.json()
-  console.log(req)
 
   // check if the request body is valid
   const result = schema.safeParse(req)
@@ -82,17 +82,22 @@ export async function POST(request: NextRequest) {
   if (client && (await bcrypt.compare(clientSecret, client.clientSecret))) {
     // request an access token from the keycloak server
     try {
-      const response = await fetch(process.env.KEYCLOAK_AUTH_URL || '', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: clientId,
-          client_secret: clientSecret,
-          grant_type: 'client_credentials',
-        }),
-      })
+          const { domain, realm, protocol } =
+            await getClientDomainRealmAndProtocol()
+          const url: string = `${domain}/realms/${realm}/protocol/${protocol}/token`
+
+          // request an access token from the keycloak server
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              client_id: clientId,
+              client_secret: clientSecret,
+              grant_type: 'client_credentials',
+            }),
+          })
 
       // return the response from the keycloak server
       return NextResponse.json(
@@ -105,12 +110,12 @@ export async function POST(request: NextRequest) {
         }
       )
     } catch (err) {
-      console.log('error fetching keycloak', err)
+      console.log('error registering client', err)
       return NextResponse.json(
         {
           status: 500,
           data: {
-            message: 'error fetching keycloak',
+            message: 'error registering client',
           },
         },
         { status: 500 }
@@ -118,7 +123,7 @@ export async function POST(request: NextRequest) {
     }
   } else {
     // return an error
-    console.log('clientSecret is incorrect')
+    console.log('client secret is incorrect')
     return NextResponse.json(
       {
         status: 401,

@@ -1,6 +1,6 @@
 'use client'
 
-import { KeycloakUser } from '../../../interfaces'
+import { KeycloakClient, KeycloakUser } from '../../../interfaces'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,11 +14,11 @@ import {
 } from '../../ui/alert-dialog'
 
 function DeleteDialog({
-  user,
-  deleteUserRow,
+  data,
+  deleteRow,
 }: {
-  user: KeycloakUser
-  deleteUserRow: (user: KeycloakUser) => void
+  data: any
+  deleteRow: (data: any) => void
 }) {
   return (
     <AlertDialog>
@@ -31,14 +31,15 @@ function DeleteDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the user.
+            This action cannot be undone. This will permanently delete the
+            record.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              deleteUserRow(user)
+              deleteRow(data)
             }}
           >
             Continue

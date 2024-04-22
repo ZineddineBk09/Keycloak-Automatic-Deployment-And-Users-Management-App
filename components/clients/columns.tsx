@@ -13,12 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { KeycloakUser } from '../../interfaces'
-import DeleteDialog from './dialogs/delete'
-import DetailsDialog from './dialogs/details'
+import { KeycloakClient, KeycloakUser } from '../../interfaces'
+import DeleteDialog from '../shared/dialogs/delete'
+import DetailsDialog from '../shared/dialogs/details'
 import EditDialog from './dialogs/edit'
-
-
 
 export const columns: ColumnDef<KeycloakUser>[] = [
   {
@@ -44,43 +42,12 @@ export const columns: ColumnDef<KeycloakUser>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'createdTimestamp',
-    header: 'Created',
-    cell: ({ row }) => {
-      const createdTimestamp: number = row.getValue('createdTimestamp')
-      const day = new Date(createdTimestamp).toLocaleDateString()
-      const time = new Date(createdTimestamp).toLocaleTimeString()
-      return day + ' ' + time
-    },
+    accessorKey: 'clientId',
+    header: 'Client ID',
   },
   {
-    accessorKey: 'username',
-    header: 'Username',
-  },
-  {
-    accessorKey: 'firstName',
-    header: 'First Name',
-  },
-  {
-    accessorKey: 'lastName',
-    header: 'Last Name',
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-  },
-  {
-    accessorKey: 'emailVerified',
-    header: 'Email Verified',
-    cell: ({ row }) => {
-      const emailVerified = row.getValue('emailVerified')
-
-      return emailVerified ? (
-        <CheckCircledIcon className='h-6 w-6 text-green-500' />
-      ) : (
-        <CrossCircledIcon className='h-6 w-6 text-red-500' />
-      )
-    },
+    accessorKey: 'name',
+    header: 'Name',
   },
   {
     accessorKey: 'enabled',
@@ -96,12 +63,12 @@ export const columns: ColumnDef<KeycloakUser>[] = [
     },
   },
   {
-    accessorKey: 'totp',
-    header: 'TOTP',
+    accessorKey: 'bearerOnly',
+    header: 'Bearer Only',
     cell: ({ row }) => {
-      const enabled = row.getValue('totp')
+      const bearerOnly = row.getValue('bearerOnly')
 
-      return enabled ? (
+      return bearerOnly ? (
         <CheckCircledIcon className='h-6 w-6 text-green-500' />
       ) : (
         <CrossCircledIcon className='h-6 w-6 text-red-500' />
@@ -109,9 +76,39 @@ export const columns: ColumnDef<KeycloakUser>[] = [
     },
   },
   {
+    accessorKey: 'serviceAccountsEnabled',
+    header: 'Service Accounts',
+    cell: ({ row }) => {
+      const serviceAccountsEnabled = row.getValue('serviceAccountsEnabled')
+
+      return serviceAccountsEnabled ? (
+        <CheckCircledIcon className='h-6 w-6 text-green-500' />
+      ) : (
+        <CrossCircledIcon className='h-6 w-6 text-red-500' />
+      )
+    },
+  },
+  {
+    accessorKey: 'publicClient',
+    header: 'Public Client',
+    cell: ({ row }) => {
+      const publicClient = row.getValue('publicClient')
+
+      return publicClient ? (
+        <CheckCircledIcon className='h-6 w-6 text-green-500' />
+      ) : (
+        <CrossCircledIcon className='h-6 w-6 text-red-500' />
+      )
+    },
+  },
+  {
+    accessorKey: 'protocol',
+    header: 'Protocol',
+  },
+  {
     id: 'actions',
     cell: ({ row, table }) => {
-      const user = row.original
+      const client = row.original
       const { deleteRow, updateRow } = table.options.meta as any
 
       return (
@@ -125,33 +122,29 @@ export const columns: ColumnDef<KeycloakUser>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
+              onClick={() => navigator.clipboard.writeText(client.id)}
             >
               Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild={true}>
-              <DetailsDialog user={user} />
+              <DetailsDialog data={client} />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild={true}>
               <DeleteDialog
-                user={user}
-                deleteUserRow={(user: KeycloakUser) => {
-                  deleteRow(user)
+                data={client}
+                deleteRow={(client: KeycloakClient) => {
+                  deleteRow(client)
                 }}
               />
             </DropdownMenuItem>
-            <DropdownMenuItem asChild={true}>
-              <EditDialog user={user} />
-            </DropdownMenuItem>
+            {/* <DropdownMenuItem asChild={true}>
+              <EditDialog client={client} />
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       )
     },
   },
 ]
-
-
-
-

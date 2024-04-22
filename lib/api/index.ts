@@ -3,41 +3,11 @@ import { User } from '../../interfaces'
 import axios from '../axios'
 import { jwtDecode } from 'jwt-decode'
 
-export const getAccessToken = async () => {
-  // get client access token from keycloak server
-  try {
-    const url =
-      'http://localhost:8080/realms/master/protocol/openid-connect/token'
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || '',
-        client_secret: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || '',
-      }),
-    })
-    const data = await response.json()
-    return data
-  } catch (error) {
-    throw error
-  }
-}
-
-export const getUsers = async () => {
+export const getRecords = async (endpoint: string) => {
   const kcSession = getKcSession()
   const { realm, admin } = await getClientRealmAndAdmin()
 
-  if (!kcSession) {
-    throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
-    )
-  }
-
-  if (!realm || !admin) {
+  if (!kcSession || !realm || !admin) {
     throw new Error(
       'Please check if the Keycloak server is running. and try again.'
     )
@@ -45,7 +15,7 @@ export const getUsers = async () => {
 
   // get users from keycloak server
   try {
-    const response = await axios.get(`/${admin}/realms/${realm}/users`, {
+    const response = await axios.get(`/${admin}/realms/${realm}/${endpoint}`, {
       headers: {
         Authorization: `Bearer ${kcSession}`,
       },
@@ -61,13 +31,7 @@ export const createUser = async (user: User) => {
   const kcSession = getKcSession()
   const { realm, admin } = await getClientRealmAndAdmin()
 
-  if (!kcSession) {
-    throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
-    )
-  }
-
-  if (!realm || !admin) {
+  if (!kcSession || !realm || !admin) {
     throw new Error(
       'Please check if the Keycloak server is running. and try again.'
     )
@@ -91,17 +55,11 @@ export const createUser = async (user: User) => {
   }
 }
 
-export const deleteUser = async (userId: string) => {
+export const deleteRecord = async (endpoint: string, id: string) => {
   const kcSession = getKcSession()
   const { realm, admin } = await getClientRealmAndAdmin()
 
-  if (!kcSession) {
-    throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
-    )
-  }
-
-  if (!realm || !admin) {
+  if (!kcSession || !realm || !admin) {
     throw new Error(
       'Please check if the Keycloak server is running. and try again.'
     )
@@ -109,7 +67,7 @@ export const deleteUser = async (userId: string) => {
 
   try {
     const response = await axios.delete(
-      `/${admin}/realms/${realm}/users/${userId}`,
+      `/${admin}/realms/${realm}/${endpoint}/${id}`,
       {
         headers: {
           Authorization: `Bearer ${kcSession}`,
@@ -123,17 +81,15 @@ export const deleteUser = async (userId: string) => {
   }
 }
 
-export const updateUser = async (user: any, userId: string) => {
+export const updateRecord = async (
+  endpoint: string,
+  user: any,
+  userId: string
+) => {
   const kcSession = getKcSession()
   const { realm, admin } = await getClientRealmAndAdmin()
 
-  if (!kcSession) {
-    throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
-    )
-  }
-
-  if (!realm || !admin) {
+  if (!kcSession || !realm || !admin) {
     throw new Error(
       'Please check if the Keycloak server is running. and try again.'
     )
@@ -141,7 +97,7 @@ export const updateUser = async (user: any, userId: string) => {
 
   try {
     const response = await axios.put(
-      `/admin/realms/master/users/${userId}`,
+      `/${admin}/realms/${realm}/${endpoint}/${userId}`,
       user,
       {
         headers: {
@@ -186,7 +142,25 @@ const getClientRealmAndAdmin = async () => {
   }
 }
 
-export const getKcSession = () => {
+export const getClientDomainRealmAndProtocol = async () => {
+  const kcSession = getKcSession()
+  const decoded = jwtDecode(kcSession) as any
+
+  // send a request to get the client and return it's serverUrl, /api/client?clientId=${clientId}
+  try {
+    const response = await getClient(decoded.client_id)
+    const { data } = response
+    return {
+      domain: data?.client?.serverUrl,
+      realm: data?.client?.realmId,
+      protocol: data?.client?.authProtocol,
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
+const getKcSession = () => {
   const cookies = document.cookie
   return cookies
     .split(';')

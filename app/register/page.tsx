@@ -1,15 +1,12 @@
+'use client'
 import React from 'react'
-import { ClientRegisterForm } from '../../components/client/register-form'
+import { ClientRegisterForm } from '../../components/forms/register-form'
 
-const page = () => {
+export default function RegisterPage() {
   return (
     <div className='container mx-auto py-10'>
-      <h1 className='text-3xl font-bold mb-10'>
-        Config
-      </h1>
+      <h1 className='text-3xl font-bold mb-10'>Register your client</h1>
       <ClientRegisterForm />
     </div>
   )
 }
-
-export default page

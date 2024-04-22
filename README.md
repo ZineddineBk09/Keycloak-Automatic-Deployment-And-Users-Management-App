@@ -18,16 +18,38 @@ This is a simple project to manage users in a Keycloak server. It uses the Keycl
 - Create multiple users from a csv file
 - Update user
 - Delete user
+- List clients
+- Delete client
 
 ## Screenshots
 
-### Dashboard
+### Client Login
 
-![Dashboard](./public/screenshots/keycloak-users.png)
+![Client Login](./public/screenshots/client-login-page.png)
 
-### CSV Upload
+### Client Registration
 
-![CSV Upload](./public/screenshots/csv-upload.png)
+![Client Registration](./public/screenshots/client-register-page.png)
+
+### Users
+
+![Users](./public/screenshots/users-page.png)
+
+### Clients
+
+![Clients](./public/screenshots/clients-page.png)
+
+### Upload Users (CSV)
+
+![Upload Users](./public/screenshots/upload-csv-page.png)
+
+### Settings
+
+![Settings](./public/screenshots/settings-page.png)
+
+### Dark Mode
+
+![Dark Mode](./public/screenshots/dark-theme.png)
 
 ## Getting Started
 
@@ -48,10 +70,12 @@ then, create a client in the keycloak server with the following settings:
 - Enable: `Client authentication`, and select the `Service accounts roles` options
 - In Web Origins, add `http://localhost:3000` and `http://localhost:3000/*` to the list of allowed origins
 
-After that, go to the client `Credentials` tab, copy the secret key, and paste it in the `.env.local` file in the root of the project:
+After that, go to the `.env.local` file in the root of the project and change the following:
 
 ```bash
-NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=YOUR_SECRET
+NEXT_PUBLIC_BASE_URL=http://localhost:8080
+NODE_ENV=development
+
 ```
 
 Then go to `Service accounts roles` tab, and add the following roles:
@@ -59,6 +83,9 @@ Then go to `Service accounts roles` tab, and add the following roles:
 - view-users
 - manage-users
 - query-users
+- query-clients
+- manage-clients
+- view-clients
 
 **Second**, run the development server:
 
@@ -94,9 +121,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Usage
 
-1. Go to the `/` page
-2. Use the MOCK_DATA.csv file in the root of the project to create multiple users
-3. Upload users to keycloak, and you should be redirected to the dashboard page to see all the keycloak users
+1. Go to the `/register` page
+2. Register a new keycloak client with the following settings:
+   - Client ID: `rest-api-client`
+   - Client Secret: `YOUR_SECRET`
+   - Realm: `master` (default)
+   - Authentication Protocol: `openid-connect` (default)
+   - Keycloak Admin Username: `admin`
+   - Keycloak Server URL: `http://localhost:8080`
+3. Go to the `/` page and use the MOCK_DATA.csv file to upload users to the keycloak server
+4. Go to the `/users` page to see the list of users
+5. Go to the `/clients` page to see the list of clients
+6. Go to the `/settings` page to change the settings entered in the registration page
 
 ## Keycloak REST API Documentation
 
