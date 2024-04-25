@@ -52,6 +52,18 @@ export function MainNav({
     },
   ]
 
+  const hideNav = () => {
+    const hideNavPages = ['/', '/deploy']
+    if (hideNavPages.includes(path)) {
+      return true
+    }
+    return false
+  }
+
+  if (hideNav()) {
+    return null
+  }
+
   return (
     <div className='flex h-16 items-center px-4 border-b relative lg:px-16'>
       <ThemeSwitch />

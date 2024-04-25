@@ -15,8 +15,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const Navigation = () => {
-  // check url: /dashboard or /
-  // if /dashboard, set the Dashboard link to active
+  // check url: /users or /
+  // if /users, set the Dashboard link to active
   // if /, set the Home link to active
   const path = usePathname()
 
@@ -26,7 +26,7 @@ const Navigation = () => {
         <NavigationMenuList>
           <NavigationMenuItem>
             <Link
-              href={path === '/dashboard' ? '/' : '/dashboard'}
+              href={path === '/users' ? '/' : '/users'}
               legacyBehavior
               passHref
             >
@@ -34,7 +34,7 @@ const Navigation = () => {
                 className={navigationMenuTriggerStyle()}
                 active={false}
               >
-                {path === '/dashboard' ? 'Home' : 'Dashboard'}
+                {path === '/users' ? 'Upload' : 'Users'}
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>

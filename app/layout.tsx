@@ -3,9 +3,7 @@ import { Noto_Sans as FontSans } from 'next/font/google'
 import { cn } from '../lib/utils'
 import './globals.css'
 import { ThemeProvider } from '../components/theme-provider'
-import { ThemeSwitch } from '../components/theme-switch'
 import { Toaster } from 'sonner'
-import Navigation from '../components/navigation'
 import CheckAuthGuard from '../components/guards/auth-guard'
 import { MainNav } from '../components/ui/main-nav'
 
@@ -23,6 +21,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
     <html lang='en'>
       <body
