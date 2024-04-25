@@ -16,7 +16,7 @@ export function ThemeSwitch() {
   const { setTheme } = useTheme()
 
   return (
-    <div className='absolute right-6 top-6'>
+    <div className='absolute right-6 z-10'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='outline' size='icon'>

@@ -5,7 +5,7 @@ import React from 'react'
 import { useCookies } from 'react-cookie'
 
 const CheckAuthGuard = ({ children }: { children: React.ReactNode }): any => {
-  const protectedRoutes = ['', 'users', 'clients', 'settings']
+  const protectedRoutes = ['upload', 'users', 'clients', 'settings']
   const router = useRouter()
   const path = usePathname().replace('/', '')
   const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
