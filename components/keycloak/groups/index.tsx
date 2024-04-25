@@ -1,9 +1,9 @@
 import React from 'react'
 import { DataTable } from '../../ui/data-table'
 import { columns } from './columns'
-import { Group } from '@/interfaces'
+import { Group } from '../../../interfaces/keycloak'
 import { TableIcon } from '@radix-ui/react-icons'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 
 const Groups = () => {
   return (
