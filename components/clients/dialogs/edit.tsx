@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '../../ui/button'
-import { KeycloakClient, KeycloakUser } from '../../../interfaces'
+import { KeycloakClient } from '../../../interfaces'
 import {
   Dialog,
   DialogContent,

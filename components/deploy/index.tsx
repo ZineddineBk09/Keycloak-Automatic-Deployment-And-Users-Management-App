@@ -14,9 +14,12 @@ import {
 } from '../ui/card'
 import { DownloadIcon } from '@radix-ui/react-icons'
 import { useKeycloakConfigurationContext } from '../../context/keycloak-config'
+import { useState } from 'react'
+import { Button } from '../ui/button'
 
 export default function ConfigPage() {
   const { config } = useKeycloakConfigurationContext()
+  const [showConfig, setShowConfig] = useState<boolean>(false)
 
   return (
     <div className='container mx-auto py-10 overflow-x-hidden'>
@@ -66,7 +69,14 @@ export default function ConfigPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <JSONPretty data={config} />
+            <Button
+              onClick={() => setShowConfig(!showConfig)}
+              variant='outline'
+              className='mb-5'
+            >
+              {showConfig ? 'Hide Configuration' : 'Show Configuration'}
+            </Button>
+            {showConfig && <JSONPretty data={config} />}
           </CardContent>
           <CardFooter>
             <p>

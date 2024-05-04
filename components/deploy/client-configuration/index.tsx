@@ -2,23 +2,20 @@ import React from 'react'
 import { DataTable } from '../../ui/data-table'
 import { columns } from './columns'
 import { Client } from '../../../interfaces/keycloak'
-import { PlusIcon } from '@radix-ui/react-icons'
-import { Button } from '../../ui/button'
+import AddClient from './add-client'
+import { useKeycloakConfigurationContext } from '../../../context/keycloak-config'
 
 const ClientConfiguration = () => {
+  const { config } = useKeycloakConfigurationContext()
   return (
     <div className='container '>
       <DataTable
         columns={columns}
-        data={[] as Client[]}
+        data={config.clients as Client[]}
         Action={() => (
-          <Button variant='outline' type='button'>
-            Add Client
-            <PlusIcon
-              className='h-5 w-5 text-gray-500 ml-2'
-              aria-hidden='true'
-            />
-          </Button>
+          <>
+            <AddClient />
+          </>
         )}
       />
     </div>
