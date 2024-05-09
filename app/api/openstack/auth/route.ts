@@ -1,10 +1,34 @@
 import { NextResponse, NextRequest } from 'next/server'
 import axios from '../../../../lib/axios/openstack'
 import endpoints from '../../../../utils/endpoints'
+import { prisma } from '../../../../db'
 
 // since we're using a multi-step form, we need to save the user's information from each step and the each step informations in db
+/**
+ * 
+ * @param request model OpenstackKeycloak {
+  id           String   @id @default(cuid())
+  username     String
+  userId       String
+  tenantId     String //! tenant name same as Project ID 
+  project      String
+  domain       String   @default("Default") //! domain name, NOT domain id
+  baseUrl      String
+  flavor       String   @default("m1.small")
+  keypair      String   @default("keycloak")
+  network      String   @default("private")
+  keycloakPort Int      @default(8080)
+  realmName    String   @default("master")
+  adminUser    String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  // CONSTRAINTS
+  @@unique([username, userId, tenantId, project, domain])
+}
 
+ * @returns 
+ */
 export async function POST(request: NextRequest) {
   // get users from keycloak server
   try {
@@ -15,7 +39,7 @@ export async function POST(request: NextRequest) {
       'project',
       'password',
       'domain',
-      'identityEndpoint',
+      'baseUrl',
     ]
 
     // check if the request body contains the required fields
@@ -32,11 +56,12 @@ export async function POST(request: NextRequest) {
     }
 
     // get the identity endpoint from the request body
-    const identityEndpoint = body.identityEndpoint.replace(/\/$/, '').trim()
+    const baseUrl: string = body.baseUrl.replace(/\/$/, '').trim()
+    const identityEndpoint: string = baseUrl + ':5000/' + endpoints.authEndpoint
 
     // send a post request to the identity endpoint
-    const response = await axios
-      .post(`${identityEndpoint + '/' + endpoints.authEndpoint}`, {
+    const response: any = await axios
+      .post(identityEndpoint, {
         auth: {
           identity: {
             methods: ['password'],
@@ -60,9 +85,55 @@ export async function POST(request: NextRequest) {
           },
         },
       })
-      .then((res) => {
+      .then(async (res) => {
         const headers = res.headers
-        // concatenate the response headers to the response data
+        // create new OpenstackKeycloak object
+        try {
+          // check if user already exist
+          const user = await prisma.openstackKeycloak.findUnique({
+            where: {
+              userId: res.data.token.user.id,
+            },
+          })
+          if (user) {
+            // update the user's project and domain
+            console.log('Update existing openstack keycloak config!')
+            await prisma.openstackKeycloak.update({
+              where: {
+                userId: res.data.token.user.id,
+              },
+              data: {
+                project: body.project,
+                domain: body.domain,
+                baseUrl: body.baseUrl,
+                tenantId: res.data.token.project.id,
+              },
+            })
+          } else {
+            console.log('Create new openstack keycloak config!')
+            const config = await prisma.openstackKeycloak.create({
+              data: {
+                username: body.username,
+                userId: res.data.token.user.id,
+                project: body.project,
+                domain: body.domain,
+                baseUrl: body.baseUrl,
+                tenantId: res.data.token.project.id,
+              },
+            })
+          }
+        } catch (error) {
+          console.log('error creating openstackKeycloak object')
+          return NextResponse.json(
+            {
+              status: 500,
+              data: {
+                message: 'error creating openstackKeycloak object',
+              },
+            },
+            { status: 500 }
+          )
+        }
         return {
           data: res.data,
           headers: {
@@ -78,7 +149,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         status: 200,
-        data: response?.data,
+        data: response?.data || {},
       },
       { status: 200, headers: response?.headers }
     )
