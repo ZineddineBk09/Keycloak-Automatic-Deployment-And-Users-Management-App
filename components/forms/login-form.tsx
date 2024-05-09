@@ -16,20 +16,13 @@ import {
 import { Input } from '../ui/input'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { type } from 'os'
 import { useCookies } from 'react-cookie'
-import { ClientSession } from '../../interfaces'
+import { ClientSession, FieldType } from '../../interfaces'
 
 const formSchema = z.object({
   clientId: z.string().min(1),
   clientSecret: z.string().min(1),
 })
-
-interface FieldType {
-  id: string
-  name: string
-  placeholder: string
-}
 
 export function ClientLoginForm() {
   const router = useRouter()
