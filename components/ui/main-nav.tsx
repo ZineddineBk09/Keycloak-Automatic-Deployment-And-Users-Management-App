@@ -5,6 +5,7 @@ import { ThemeSwitch } from '../theme-switch'
 import { useCookies } from 'react-cookie'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/navigation'
+import { publicRoutes } from '../../routes'
 
 interface NavLink {
   href: string
@@ -53,8 +54,7 @@ export function MainNav({
   ]
 
   const hideNav = () => {
-    const hideNavPages = ['/', '/deploy']
-    if (hideNavPages.includes(path)) {
+    if (publicRoutes.includes(path)) {
       return true
     }
     return false
