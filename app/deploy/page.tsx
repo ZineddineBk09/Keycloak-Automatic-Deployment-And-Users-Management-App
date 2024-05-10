@@ -1,12 +1,11 @@
 'use client'
 
-import { KeycloakConfigurationContextProvider } from '../../context/keycloak-config'
-import ConfigPage from '../../components/deploy'
+import StepperScrollTracking from '../../components/shared/stepper/stepper-scroll-tracking'
 
-export default function KeycloakDeployPage() {
+export default function DeploySettupPage() {
   return (
-    <KeycloakConfigurationContextProvider>
-      <ConfigPage />
-    </KeycloakConfigurationContextProvider>
+    <div className='container mx-auto py-10 overflow-x-hidden'>
+      <StepperScrollTracking />
+    </div>
   )
 }
