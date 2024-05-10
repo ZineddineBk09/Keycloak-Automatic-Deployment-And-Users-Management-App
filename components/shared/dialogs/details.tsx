@@ -15,7 +15,6 @@ import {
 import JSONPretty from 'react-json-pretty'
 
 function DetailsDialog({ data }: { data: KeycloakUser | KeycloakClient }) {
-  
   return (
     <Dialog>
       <DialogTrigger asChild>

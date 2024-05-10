@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { KeycloakUser } from '../interfaces'
 import { toast } from 'sonner'
-import { getRecords, deleteRecord } from '../lib/api'
+import { getRecords, deleteRecord } from '../lib/api/keycloak'
 import { useCookies } from 'react-cookie'
 
 export const ClientsContext = createContext({})

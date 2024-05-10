@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '../../ui/button'
-import { KeycloakClient, KeycloakUser } from '../../../interfaces'
+import { KeycloakClient } from '../../../interfaces'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
 import { Input } from '../../ui/input'
 import { Label } from '../../ui/label'
 import { useState } from 'react'
-import { updateRecord } from '../../../lib/api'
+import { updateRecord } from '../../../lib/api/keycloak'
 import { toast } from 'sonner'
 import { useUsersContext } from '../../../context/users'
 

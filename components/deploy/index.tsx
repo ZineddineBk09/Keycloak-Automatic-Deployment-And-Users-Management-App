@@ -1,8 +1,7 @@
 'use client'
 
-import ClientConfiguration from '../../components/keycloak/client-configuration'
-import RealmSettings from '../../components/keycloak/realm-settings'
-import TokenLifespans from '../../components/keycloak/token-lifespans'
+import ClientConfiguration from './client-configuration'
+import RealmSettings from './realm-settings'
 import JSONPretty from 'react-json-pretty'
 import {
   Card,
@@ -11,12 +10,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '../../components/ui/card'
+} from '../ui/card'
 import { DownloadIcon } from '@radix-ui/react-icons'
 import { useKeycloakConfigurationContext } from '../../context/keycloak-config'
+import { useState } from 'react'
+import { Button } from '../ui/button'
 
 export default function ConfigPage() {
   const { config } = useKeycloakConfigurationContext()
+  const [showConfig, setShowConfig] = useState<boolean>(false)
 
   return (
     <div className='container mx-auto py-10 overflow-x-hidden'>
@@ -29,11 +31,6 @@ export default function ConfigPage() {
           <h2 className='text-2xl font-bold mb-5'>Realm Settings</h2>
           <RealmSettings />
         </div>
-
-        {/* <div className='col-span-2'>
-          <h2 className='text-2xl font-bold mb-5'>Token Lifespans</h2>
-          <TokenLifespans />
-        </div> */}
 
         <div className='col-span-3'>
           <h2 className='text-2xl font-bold mb-5'>Client Configuration</h2>
@@ -66,7 +63,14 @@ export default function ConfigPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <JSONPretty data={config} />
+            <Button
+              onClick={() => setShowConfig(!showConfig)}
+              variant='outline'
+              className='mb-5'
+            >
+              {showConfig ? 'Hide Configuration' : 'Show Configuration'}
+            </Button>
+            {showConfig && <JSONPretty data={config} />}
           </CardContent>
           <CardFooter>
             <p>

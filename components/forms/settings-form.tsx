@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useCookies } from 'react-cookie'
 import { ClientSession, DecodedJWT } from '../../interfaces'
-import { getClient } from '../../lib/api'
+import { getClient } from '../../lib/api/keycloak'
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 

@@ -20,7 +20,9 @@ FROM node:18-alpine
 WORKDIR /my-app
 COPY --from=builder /my-app/package*.json ./
 COPY --from=builder /my-app/next.config.mjs ./
-# COPY --from=builder /my-app/public ./public
+COPY --from=builder /my-app/public ./public
+RUN rm -rf ./public/example-keycloak-config.json
+RUN rm -rf ./public/mini-example.json
 COPY --from=builder /my-app/.next/standalone ./
 COPY --from=builder /my-app/.next/static ./server
 

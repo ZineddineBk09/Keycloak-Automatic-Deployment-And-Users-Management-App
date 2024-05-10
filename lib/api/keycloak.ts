@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
 import { User } from '../../interfaces'
-import axios from '../axios'
+import axios from '../axios/keycloak'
 import { jwtDecode } from 'jwt-decode'
 
 export const getRecords = async (endpoint: string) => {
