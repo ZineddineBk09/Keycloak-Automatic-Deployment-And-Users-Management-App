@@ -112,3 +112,10 @@ export interface DecodedJWT {
   clientAddress: string
   client_id: string
 }
+
+export interface FieldType {
+  id: string
+  name: string
+  placeholder: string
+  type?: string
+}
