@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '../../../../db'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
-import { getClientDomainRealmAndProtocol } from '../../../../lib/api'
+import { getClientDomainRealmAndProtocol } from '../../../../lib/api/keycloak'
 
 // define the schema for the request body
 const schema = z.object({

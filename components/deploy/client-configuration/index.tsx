@@ -7,6 +7,7 @@ import { useKeycloakConfigurationContext } from '../../../context/keycloak-confi
 
 const ClientConfiguration = () => {
   const { config } = useKeycloakConfigurationContext()
+  
   return (
     <div className='container '>
       <DataTable

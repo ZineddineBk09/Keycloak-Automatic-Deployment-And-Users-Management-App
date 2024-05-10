@@ -16,7 +16,6 @@ import {
 import { KeycloakClient, KeycloakUser } from '../../interfaces'
 import DeleteDialog from '../shared/dialogs/delete'
 import DetailsDialog from '../shared/dialogs/details'
-import EditDialog from './dialogs/edit'
 
 export const columns: ColumnDef<KeycloakUser>[] = [
   {

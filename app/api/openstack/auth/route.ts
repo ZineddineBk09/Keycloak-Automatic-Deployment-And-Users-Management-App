@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     // get the identity endpoint from the request body
     const baseUrl: string = body.baseUrl.replace(/\/$/, '').trim()
-    const identityEndpoint: string = baseUrl + ':5000/' + endpoints.authEndpoint
+    const identityEndpoint: string = baseUrl + endpoints.authEndpoint
 
     // send a post request to the identity endpoint
     const response: any = await axios

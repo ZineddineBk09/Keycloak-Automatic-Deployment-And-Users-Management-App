@@ -15,7 +15,7 @@ import {
 import { Input } from '../../ui/input'
 import { Label } from '../../ui/label'
 import { useState } from 'react'
-import { updateRecord } from '../../../lib/api'
+import { updateRecord } from '../../../lib/api/keycloak'
 import { toast } from 'sonner'
 import { useUsersContext } from '../../../context/users'
 

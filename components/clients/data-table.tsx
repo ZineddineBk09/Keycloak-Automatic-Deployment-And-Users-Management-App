@@ -37,7 +37,7 @@ import { useClientsContext } from '../../context/clients'
 import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
 import { KeycloakClient } from '../../interfaces'
-import { deleteRecord, updateRecord } from '../../lib/api'
+import { deleteRecord, updateRecord } from '../../lib/api/keycloak'
 import { toast } from 'sonner'
 
 interface DataTableProps<TData, TValue> {
