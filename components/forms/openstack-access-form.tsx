@@ -48,6 +48,7 @@ const OpenstackAccessForm = () => {
   const [cookies, setCookie, removeCookie] = useCookies([
     'openstack_auth_token',
     'openstack_user_id',
+    'current_step',
   ])
 
   const formFields: FieldType[] = [
@@ -84,46 +85,56 @@ const OpenstackAccessForm = () => {
   ]
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // use axios instead of fetch to access the reponse headers and get X-Subject-Token
-    const response = await axios.post('/api/openstack/auth', {
-      username: values.username,
-      password: values.password,
-      project: values.project,
-      domain: values.domain,
-      baseUrl: values.baseUrl,
-    })
+    try {
+      // use axios instead of fetch to access the reponse headers and get X-Subject-Token
+      const response = await axios.post('/api/openstack/auth', {
+        username: values.username,
+        password: values.password,
+        project: values.project,
+        domain: values.domain,
+        baseUrl: values.baseUrl,
+      })
 
-    if (response.status === 200) {
-      if (!response.headers['x-subject-token']) {
-        console.log('No token found')
-        return
+      if (response.status === 200) {
+        if (!response.headers['x-subject-token']) {
+          console.log('No token found')
+          return
+        }
+
+        // save cookies
+        setCookie('openstack_auth_token', response.headers['x-subject-token'], {
+          path: '/',
+          maxAge: 3600, // 1 hour
+        })
+        setCookie('openstack_user_id', response?.data?.data?.token?.user?.id, {
+          path: '/',
+          maxAge: 3600, // 1 hour
+        })
+        setCookie('current_step', 1, {
+          path: '/',
+          maxAge: 3600, // 1 hour
+        })
+
+        toast.success('Openstack API Access granted successfully')
+
+        // move to the next step
+        nextStep()
+      } else {
+        toast.error('Invalid credentials')
       }
-
-      // save cookies
-      setCookie('openstack_auth_token', response.headers['x-subject-token'], {
-        path: '/',
-        maxAge: 3600, // 1 hour
-      })
-      setCookie('openstack_user_id', response?.data?.data?.token?.user?.id, {
-        path: '/',
-        maxAge: 3600, // 1 hour
-      })
-
-      toast.success('Openstack API Access granted successfully')
-
-      // move to the next step
-      nextStep()
-    } else {
-      toast.error('Invalid credentials')
+    } catch (error) {
+      console.log(error)
+      toast.error('An error occured!')
     }
   }
 
   // check if the user is authenticated and skip the step
   if (
     cookies.openstack_auth_token &&
-    cookies.openstack_auth_token !== 'undefined'
+    cookies.openstack_auth_token !== 'undefined' &&
+    cookies.current_step
   ) {
-    setStep(1)
+    setStep(cookies.current_step)
   }
 
   return (
