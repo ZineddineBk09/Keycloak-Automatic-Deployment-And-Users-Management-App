@@ -2,7 +2,6 @@
 
 import ClientConfiguration from './client-configuration'
 import RealmSettings from './realm-settings'
-import TokenLifespans from './token-lifespans'
 import JSONPretty from 'react-json-pretty'
 import {
   Card,
@@ -32,11 +31,6 @@ export default function ConfigPage() {
           <h2 className='text-2xl font-bold mb-5'>Realm Settings</h2>
           <RealmSettings />
         </div>
-
-        {/* <div className='col-span-2'>
-          <h2 className='text-2xl font-bold mb-5'>Token Lifespans</h2>
-          <TokenLifespans />
-        </div> */}
 
         <div className='col-span-3'>
           <h2 className='text-2xl font-bold mb-5'>Client Configuration</h2>
