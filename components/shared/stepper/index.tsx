@@ -7,6 +7,7 @@ import type { StepItem, StepProps, StepperProps } from './types'
 import { useMediaQuery } from './use-media-query'
 import { useStepper } from './use-stepper'
 import { cn } from '../../../lib/utils'
+import { Flavor, Keypair, Network } from '../../../interfaces/openstack'
 
 const VARIABLE_SIZES = {
   sm: '36px',
@@ -85,6 +86,9 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(function Stepper(
         steps,
         scrollTracking,
         styles,
+        flavors: [] as Flavor[],
+        keyPairs: [] as Keypair[],
+        networks: [] as Network[],
       }}
     >
       <div

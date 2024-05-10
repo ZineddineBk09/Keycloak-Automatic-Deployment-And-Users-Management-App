@@ -37,7 +37,7 @@ import { useUsersContext } from '../../context/users'
 import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
 import { KeycloakUser } from '../../interfaces'
-import { deleteRecord, updateRecord } from '../../lib/api'
+import { deleteRecord, updateRecord } from '../../lib/api/keycloak'
 import { toast } from 'sonner'
 import { useCookies } from 'react-cookie'
 

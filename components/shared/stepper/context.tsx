@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { StepperProps } from './types'
 import { Flavor, Keypair, Network } from '../../../interfaces/openstack'
-import { getFlavors, getOpenstackAuthToken } from '../../../lib/api/openstack'
+import { getOpenstackAuthToken } from '../../../lib/api/openstack'
 import { useCookies } from 'react-cookie'
 
 interface StepperContextValue extends StepperProps {

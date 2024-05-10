@@ -1,9 +1,8 @@
-import { Button } from "../../ui/button"
-import { useStepper } from "./use-stepper"
+import { Button } from '../../ui/button'
+import { useStepper } from './use-stepper'
 
 const StepButtons = () => {
-  const { nextStep, prevStep, isLastStep, isOptionalStep, isDisabledStep } =
-    useStepper()
+  const { prevStep, isLastStep, isOptionalStep, isDisabledStep } = useStepper()
   return (
     <div className='w-full flex gap-2 mb-4'>
       <Button
@@ -11,6 +10,7 @@ const StepButtons = () => {
         onClick={prevStep}
         size='sm'
         variant='secondary'
+        type='button'
       >
         Prev
       </Button>

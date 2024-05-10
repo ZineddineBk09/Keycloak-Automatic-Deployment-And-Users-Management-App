@@ -3,8 +3,37 @@ import { Button } from '../../../components/ui/button'
 import OpenstackAccessForm from '../../forms/openstack-access-form'
 import ConfigureServerInstanceForm from '../../forms/config-server-form'
 import ConfigureKeycloakForm from '../../forms/config-keycloak-form'
-import DeployKeycloakForm from '../../forms/deploy-keycloak-form'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useCookies } from 'react-cookie'
+import {
+  Flavor,
+  Keypair,
+  Network,
+  OpenstackConfig,
+} from '../../../interfaces/openstack'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from '../../ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select'
+import { Input } from '../../ui/input'
+import { Label } from '../../ui/label'
+import { toast } from 'sonner'
+import { Pencil2Icon } from '@radix-ui/react-icons'
 
 const steps = [
   {
@@ -18,10 +47,6 @@ const steps = [
   {
     label: 'Configure Keycloak',
     children: <ConfigureKeycloakForm />,
-  },
-  {
-    label: 'Deploy Keycloak',
-    children: <DeployKeycloakForm />,
   },
 ] satisfies StepItem[]
 
@@ -51,6 +76,58 @@ export default function StepperScrollTracking() {
 
 const FinalStep = () => {
   const { hasCompletedAllSteps, resetSteps } = useStepper()
+  const [data, setData] = useState<OpenstackConfig>({} as OpenstackConfig)
+  const [cookies] = useCookies([
+    'openstack_user_id',
+    'current_step',
+    'openstack_auth_token',
+  ])
+
+  // fetch data from /api/openstack endpoint
+  useEffect(() => {
+    const getData = async () => {
+      await fetch('/api/openstack', {
+        headers: {
+          userId: cookies.openstack_user_id as string,
+        },
+      })
+        .then(async (res) => await res.json())
+        .then(({ data }) => setData(data))
+        .catch((error) => {
+          console.error(error)
+          toast.error('An error occurred!')
+        })
+    }
+    if (cookies.current_step && cookies.current_step == 3) {
+      getData()
+    }
+  }, [cookies.current_step])
+
+  const handleDeploy = async () => {
+    // send a POST request to /api/openstack/stack
+    await fetch('/api/openstack/stack', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        userId: cookies.openstack_user_id as string,
+        xAuthToken: cookies.openstack_auth_token as string,
+      },
+      body: JSON.stringify(data),
+    })
+      .then(async (res) => {
+        console.log('Response:', res)
+        if (res.status === 200) {
+          toast.success('Deployment successful!')
+          // resetSteps()
+        } else {
+          toast.error('An error occurred!')
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        toast.error('An error occurred!')
+      })
+  }
 
   if (!hasCompletedAllSteps) {
     return null
@@ -58,14 +135,283 @@ const FinalStep = () => {
 
   return (
     <>
-      <div className='h-40 flex items-center justify-center border bg-secondary text-primary rounded-md'>
-        <h1 className='text-xl'>Woohoo! All steps completed! 🎉</h1>
+      <div className='h-fit flex flex-col items-center justify-center border bg-secondary text-primary rounded-md p-4'>
+        <div className='w-full flex justify-between mb-4'>
+          <h2 className='flex items-center text-2xl font-bold mb-1'>
+            Review Configuration
+          </h2>
+          <EditDialog data={data} setData={setData} />
+        </div>
+
+        {/* Openstack Access Config */}
+        <div className='w-full flex flex-col gap-2 my-2'>
+          <h3 className='text-lg font-bold'>Openstack Access Config</h3>
+          <div className='w-full flex justify-between'>
+            <span>Username </span>
+            <span className='text-gray-500'>{data.username}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Project </span>
+            <span className='text-gray-500'>{data.project}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Domain </span>
+            <span className='text-gray-500'>{data.domain}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Base URL </span>
+            <span className='text-gray-500'>{data.baseUrl}</span>
+          </div>
+        </div>
+
+        {/* Server Instance Config */}
+        <div className='w-full flex flex-col gap-2 my-2'>
+          <h3 className='text-lg font-bold'>Server Instance Config</h3>
+          <div className='w-full flex justify-between'>
+            <span>Flavor </span>
+            <span className='text-gray-500'>{data.flavor}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Keypair </span>
+            <span className='text-gray-500'>{data.keypair}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Network </span>
+            <span className='text-gray-500'>{data.network}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Keycloak Port </span>
+            <span className='text-gray-500'>{data.keycloakPort}</span>
+          </div>
+        </div>
+
+        {/* Keycloak Config */}
+        <div className='w-full flex flex-col gap-2 my-2'>
+          <h3 className='text-lg font-bold'>Keycloak Config</h3>
+          <div className='w-full flex justify-between'>
+            <span>Realm Name </span>
+            <span className='text-gray-500'>{data.realmName}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Admin Username </span>
+            <span className='text-gray-500'>{data.adminUsername}</span>
+          </div>
+          <div className='w-full flex justify-between'>
+            <span>Admin Password </span>
+            <span className='text-gray-500'>{data.adminPassword}</span>
+          </div>
+        </div>
       </div>
       <div className='w-full flex justify-end gap-2'>
-        <Button size='sm' onClick={resetSteps}>
-          Reset
+        <Button size='sm' onClick={handleDeploy}>
+          Deploy
         </Button>
       </div>
     </>
+  )
+}
+
+function EditDialog({
+  data,
+  setData,
+}: {
+  data: OpenstackConfig
+  setData: React.Dispatch<React.SetStateAction<OpenstackConfig>>
+}) {
+  const { flavors, keyPairs, networks } = useStepper()
+  const [cookies] = useCookies(['openstack_user_id'])
+  const [fields, setFields] = useState({
+    flavor: data.flavor,
+    keypair: data.keypair,
+    network: data.network,
+    keycloakPort: data.keycloakPort,
+    realmName: data.realmName,
+    adminUsername: data.adminUsername,
+    adminPassword: data.adminPassword,
+  })
+
+  // send a PUT request to update the configuration /api/openstack
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch('/api/openstack', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          userId: cookies.openstack_user_id as string,
+        },
+        body: JSON.stringify(fields),
+      })
+      const data = await response.json()
+      if (response.status === 200) {
+        toast.success('Configuration Updated Successfully!')
+        console.log(data)
+        setData(data.data)
+        // nextStep()
+      } else {
+        toast.error('Error Updating Configuration!')
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error('An error occured!')
+    }
+  }
+
+  const renderFlavor = (flavor: Flavor) => {
+    const vcpus = flavor.vcpus
+    const ram = flavor.ram > 1024 ? flavor.ram / 1024 + 'GB' : flavor.ram + 'MB'
+    const disk = flavor.disk
+
+    return (
+      <SelectItem key={flavor.id} value={flavor.name}>
+        {flavor.name}
+        <span className='text-xs ml-2'>{`${vcpus}vCPU ${ram} ${disk}GB`}</span>
+      </SelectItem>
+    )
+  }
+
+  useEffect(() => {
+    setFields({
+      flavor: data.flavor,
+      keypair: data.keypair,
+      network: data.network,
+      keycloakPort: data.keycloakPort,
+      realmName: data.realmName,
+      adminUsername: data.adminUsername,
+      adminPassword: data.adminPassword,
+    })
+  }, [data])
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className='flex items-center gap-x-3 bg-gray-100 border border-gray-300 px-3 py-1 rounded-md shadow hover:cursor-pointer'>
+          <span>Edit</span> <Pencil2Icon />
+        </div>
+      </DialogTrigger>
+      <DialogContent className='sm:max-w-[550px]'>
+        <DialogHeader>
+          <DialogTitle>Edit Configuration</DialogTitle>
+          <DialogDescription>
+            Make changes here. Click save when you&apos;re done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className='w-full grid gap-4 py-4'>
+          {[
+            { name: 'flavor', type: 'select' },
+            { name: 'keypair', type: 'select' },
+            { name: 'network', type: 'select' },
+            { name: 'keycloakPort', type: 'input' },
+            { name: 'realmName', type: 'input' },
+            { name: 'adminUsername', type: 'input' },
+            { name: 'adminPassword', type: 'input' },
+          ].map(({ name, type }) => {
+            return (
+              <div
+                className='w-full grid grid-cols-4 items-center gap-4'
+                key={name}
+              >
+                <Label htmlFor={name} className='text-right capitalize'>
+                  {name.replace(/([A-Z])/g, ' $1')}
+                </Label>
+                {type === 'input' ? (
+                  <Input
+                    id={name}
+                    // @ts-ignore
+                    defaultValue={fields[name]}
+                    onChange={(event) => {
+                      setFields((prev: any) => ({
+                        ...prev,
+                        [name]: event.target.value,
+                      }))
+                    }}
+                    className='col-span-3'
+                  />
+                ) : (
+                  <Select
+                    defaultValue={
+                      // @ts-ignore
+                      fields[name]
+                    }
+                    value={
+                      // @ts-ignore
+                      fields[name]
+                    }
+                    onValueChange={
+                      // @ts-ignore
+                      (value) =>
+                        setFields((prev) => ({ ...prev, [name]: value }))
+                    }
+                  >
+                    <SelectTrigger className='col-span-3'>
+                      <SelectValue placeholder={'Select a ' + name} />
+                    </SelectTrigger>
+                    <SelectContent className='col-span-3'>
+                      <SelectGroup>
+                        {name == 'flavor' && flavors.length > 0 && (
+                          <>
+                            <SelectLabel>{name} vCPU RAM Disk</SelectLabel>
+                            {flavors?.map((flavor: Flavor) =>
+                              renderFlavor(flavor)
+                            )}
+                          </>
+                        )}
+
+                        {name == 'keypair' && keyPairs.length > 0 && (
+                          <>
+                            <SelectLabel>{name}</SelectLabel>
+                            {keyPairs.map((keypair: Keypair) => (
+                              <SelectItem
+                                key={keypair.keypair.name}
+                                value={keypair.keypair.name}
+                              >
+                                {keypair.keypair.name}
+                              </SelectItem>
+                            ))}
+                          </>
+                        )}
+
+                        {name == 'network' && networks.length > 0 && (
+                          <>
+                            <SelectLabel>{name}</SelectLabel>
+                            {networks.map((network: Network) => (
+                              <SelectItem key={network.id} value={network.id}>
+                                {network.label}
+                              </SelectItem>
+                            ))}
+                          </>
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        <DialogFooter className=''>
+          <DialogClose>
+            <Button variant='outline'>Close</Button>
+          </DialogClose>
+          <Button
+            type='submit'
+            onClick={handleUpdate}
+            // disable if no changes
+            disabled={
+              JSON.stringify({
+                flavor: data.flavor,
+                keypair: data.keypair,
+                network: data.network,
+                keycloakPort: data.keycloakPort,
+                realmName: data.realmName,
+                adminUsername: data.adminUsername,
+                adminPassword: data.adminPassword,
+              }) === JSON.stringify(fields)
+            }
+          >
+            Save changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
