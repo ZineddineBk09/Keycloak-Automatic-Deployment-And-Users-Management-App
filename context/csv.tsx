@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { User } from '../interfaces'
 import { useRouter } from 'next/navigation'
-import { createUser } from '../lib/api'
+import { createUser } from '../lib/api/keycloak'
 
 export const UsersContext = createContext({})
 

@@ -1,9 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { DecodedJWT, KeycloakUser } from '../interfaces'
+import {KeycloakUser } from '../interfaces'
 import { toast } from 'sonner'
-import { getRecords, deleteRecord } from '../lib/api'
+import { getRecords, deleteRecord } from '../lib/api/keycloak'
 import { useCookies } from 'react-cookie'
-import { jwtDecode } from 'jwt-decode'
 
 export const UsersContext = createContext({})
 
