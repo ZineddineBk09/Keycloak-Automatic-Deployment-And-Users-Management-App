@@ -67,61 +67,81 @@
       > The script is as follows:
 
       ```bash
-       #!/bin/bash
-       /bin/su
-       for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
-       # Add Docker's official GPG key:
-       sudo apt-get update
-       sudo apt-get install ca-certificates curl
-       sudo install -m 0755 -d /etc/apt/keyrings
-       sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-       sudo chmod a+r /etc/apt/keyrings/docker.asc
+        #!/bin/bash
+        ## Add Docker's official GPG key:
+        sudo apt-get update && sudo apt-get upgrade -y
+        sudo apt-get install ca-certificates curl
+        sudo install -m 0755 -d /etc/apt/keyrings
+        sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+        sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-       # Add the repository to Apt sources:
-       echo \
-         "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-         sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-       sudo apt-get update
-       sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        ## Add the repository to Apt sources:
+        echo \
+          "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install fish net-tools docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+        ## Create docker compose file for keycloak deployment
+        echo "version: '3'
+        services:
+          keycloak:
+            image: quay.io/keycloak/keycloak:latest
+            container_name: keycloak
+            ports:
+              - '8080:8080'
+            environment:
+              - KEYCLOAK_ADMIN=admin
+              - KEYCLOAK_ADMIN_PASSWORD=admin
+            command: start-dev" > /etc/os-release
+        sudo docker compose -f /etc/os-release up -d
       ```
 
       The response will contain the VM ID.
 
-   3. Start the VM
-      Send a POST request to the Openstack Compute API to start the VM.
+2. Create a Heat stack that handles deploying using the heat api with the following body:
 
-      - Endpoint: `https://dash.cloud.cerist.dz:8774/v2.1/servers/SERVER_ID/action`
-      - Headers:
-        - `X-Auth-Token`: The auth token from the first step
-        - `Content-Type`: `application/json`
-      - Body:
-
-      ```json
-      {
-        "os-start": null
+```json
+{
+  "files": {
+    "deploy": "#!/bin/bash \n## Add Docker's official GPG key: \nsudo apt-get update && sudo apt-get upgrade -y \nsudo apt-get install ca-certificates curl \nsudo install -m 0755 -d /etc/apt/keyrings \nsudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc \nsudo chmod a+r /etc/apt/keyrings/docker.asc \n## Add the repository to Apt sources: \necho \"deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \nsudo apt-get update \nsudo apt-get install fish net-tools docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y \n## Create docker compose file for keycloak deployment \necho \"version: '3' \nservices: \n  keycloak: \n    image: quay.io/keycloak/keycloak:latest \n    container_name: keycloak \n    ports: \n      - '8080:8080' \n    environment: \n      - KEYCLOAK_ADMIN=admin \n      - KEYCLOAK_ADMIN_PASSWORD=admin \n    command: start-dev\" > /etc/os-release \nsudo docker compose -f /etc/os-release up -d",
+  },
+  "disable_rollback": true,
+  "parameters": {
+    "flavor": "m1.small"
+  },
+  "stack_name": "Keycloak-Auto-Deploy-Stack",
+  "template": {
+    "heat_template_version": "2013-05-23",
+    "description": "Simple template to test heat commands",
+    "parameters": {
+      "flavor": {
+        "default": "m1.small",
+        "type": "string"
+      },
+      "image": {
+        "default": "925cf5db-152f-40c4-9e1a-f94847c845b3", // Ubuntu-Jammy-22.04
+        "type": "string"
       }
-      ```
-   
-   4. Run keycloak docker container inside the VM remotely
-      Send a POST request to the Openstack Compute API to run a docker container inside the VM.
-
-      - Endpoint: `https://dash.cloud.cerist.dz:8774/v2.1/servers/SERVER_ID/action`
-      - Headers:
-        - `X-Auth-Token`: The auth token from the first step
-        - `Content-Type`: `application/json`
-      - Body:
-
-      ```json
-      {
-        "run_docker": {
-          "image": "quay.io/keycloak/keycloak:latest",
-          "command": "docker run -d -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin quay.io/keycloak/keycloak:latest",
-          "name": "keycloak"
+    },
+    "resources": {
+      "keycloak": {
+        "type": "OS::Nova::Server",
+        "properties": {
+          "key_name": "Test",
+          "flavor": {
+            "get_param": "flavor"
+          },
+          "image": "925cf5db-152f-40c4-9e1a-f94847c845b3",
+          "user_data": {
+            "get_file": "deploy"
+          }
         }
       }
-      ```
+    }
+  },
+  "timeout_mins": 1
+}
+```
 
-      The response will contain the container ID.
-    
-2.
+5.

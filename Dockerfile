@@ -1,14 +1,14 @@
 # Use a lightweight image for Node.js applications
-FROM node:18-alpine as builder
+FROM node:18-alpine
 
 # Set working directory
-WORKDIR /my-app
+WORKDIR /app
 
 # Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
 # Install dependencies and clean up
-RUN npm ci
+RUN npm install --production --no-optional && npm cache clean --force 
 
 # Copy the rest of your project code
 COPY . .
@@ -16,15 +16,10 @@ COPY . .
 # Build the project
 RUN npm run build
 
-FROM node:18-alpine
-WORKDIR /my-app
-COPY --from=builder /my-app/package*.json ./
-COPY --from=builder /my-app/next.config.mjs ./
-COPY --from=builder /my-app/public ./public
-RUN rm -rf ./public/example-keycloak-config.json
-RUN rm -rf ./public/mini-example.json
-COPY --from=builder /my-app/.next/standalone ./
-COPY --from=builder /my-app/.next/static ./server
+RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
+
+# Load environment variables from .env file
+# RUN source .env
 
 
 # Expose the port
