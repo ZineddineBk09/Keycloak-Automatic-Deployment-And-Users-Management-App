@@ -1,5 +1,6 @@
 const flavorsEndpoint = 'flavors/detail'
 const flavorsEndpointWithId = (id: string) => `flavors/${id}`
+const serversEndpoint = 'servers/detail'
 const keypairsEndpoint = 'os-keypairs'
 const keypairsEndpointWithId = (id: string) => `os-keypairs/${id}`
 const networksEndpoint = 'os-networks'
@@ -12,6 +13,7 @@ const stackEndpoint = (tenantId: string) => `:8004/v1/${tenantId}/stacks`
 const endpoints = {
   flavorsEndpoint,
   flavorsEndpointWithId,
+  serversEndpoint,
   keypairsEndpoint,
   keypairsEndpointWithId,
   networksEndpoint,
