@@ -88,11 +88,11 @@ const OpenstackAccessForm = () => {
     try {
       // use axios instead of fetch to access the reponse headers and get X-Subject-Token
       const response = await axios.post('/api/openstack/auth', {
-        username: values.username,
-        password: values.password,
-        project: values.project,
-        domain: values.domain,
-        baseUrl: values.baseUrl,
+        username: values?.username,
+        password: values?.password,
+        project: values?.project,
+        domain: values?.domain,
+        baseUrl: values?.baseUrl,
       })
 
       if (response.status === 200) {
@@ -130,11 +130,11 @@ const OpenstackAccessForm = () => {
 
   // check if the user is authenticated and skip the step
   if (
-    cookies.openstack_auth_token &&
-    cookies.openstack_auth_token !== 'undefined' &&
-    cookies.current_step
+    cookies?.openstack_auth_token &&
+    cookies?.openstack_auth_token !== 'undefined' &&
+    cookies?.current_step
   ) {
-    setStep(cookies.current_step)
+    setStep(cookies?.current_step)
   }
 
   return (

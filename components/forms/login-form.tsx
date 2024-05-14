@@ -61,16 +61,16 @@ export function ClientLoginForm() {
 
     if (response.ok) {
       const { data }: { data: ClientSession } = await response.json()
-      
-      if (!data.access_token) {
+
+      if (!data?.access_token) {
         toast.error('Failed to login: access_token not found')
         return
       }
 
       // save session to cookie
-      setCookie('kc_session', data.access_token, {
+      setCookie('kc_session', data?.access_token, {
         path: '/',
-        maxAge: data.expires_in,
+        maxAge: data?.expires_in,
       })
 
       toast.success('Successfully logged in')

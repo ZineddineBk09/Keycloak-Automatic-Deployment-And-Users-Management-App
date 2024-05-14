@@ -90,12 +90,12 @@ const ConfigureServerInstanceForm = () => {
     try {
       // use axios instead of fetch to access the reponse headers and get X-Subject-Token
       const response = await axios.post('/api/openstack/config-server', {
-        flavor: values.flavor,
-        keypair: values.keypair,
-        network: values.network,
-        keycloakPort: values.port,
-        xAuthToken: cookies.openstack_auth_token || '',
-        userId: cookies.openstack_user_id || '',
+        flavor: values?.flavor,
+        keypair: values?.keypair,
+        network: values?.network,
+        keycloakPort: values?.port,
+        xAuthToken: cookies?.openstack_auth_token || '',
+        userId: cookies?.openstack_user_id || '',
       })
 
       if (response.status === 200) {
@@ -127,11 +127,11 @@ const ConfigureServerInstanceForm = () => {
   }
 
   if (
-    cookies.openstack_auth_token &&
-    cookies.openstack_auth_token !== 'undefined' &&
-    cookies.current_step
+    cookies?.openstack_auth_token &&
+    cookies?.openstack_auth_token !== 'undefined' &&
+    cookies?.current_step
   ) {
-    setStep(cookies.current_step)
+    setStep(cookies?.current_step)
   }
 
   // check if user already configured flavor, keypair, network and port before
@@ -139,21 +139,21 @@ const ConfigureServerInstanceForm = () => {
     const getData = async () => {
       await fetch('/api/openstack', {
         headers: {
-          userId: cookies.openstack_user_id as string,
+          userId: cookies?.openstack_user_id as string,
         },
       })
         .then(async (res) => await res.json())
         .then(({ data }: { data: OpenstackConfig }) => {
           if (
-            data.flavor &&
-            data.keypair &&
-            data.network &&
-            data.keycloakPort
+            data?.flavor &&
+            data?.keypair &&
+            data?.network &&
+            data?.keycloakPort
           ) {
-            form.setValue('flavor', data.flavor)
-            form.setValue('keypair', data.keypair)
-            form.setValue('network', data.network)
-            form.setValue('port', data.keycloakPort)
+            form.setValue('flavor', data?.flavor)
+            form.setValue('keypair', data?.keypair)
+            form.setValue('network', data?.network)
+            form.setValue('port', data?.keycloakPort)
           }
         })
         .catch((error) => {
@@ -161,7 +161,7 @@ const ConfigureServerInstanceForm = () => {
         })
     }
     getData()
-  }, [networks, flavors, keyPairs])
+  }, [])
 
   return (
     <div className='container mx-auto overflow-x-hidden'>

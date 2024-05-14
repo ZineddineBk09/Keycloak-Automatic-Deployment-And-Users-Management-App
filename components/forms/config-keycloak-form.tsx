@@ -66,10 +66,10 @@ const ConfigureKeycloakForm = () => {
     try {
       // use axios instead of fetch to access the reponse headers and get X-Subject-Token
       const response = await axios.post('/api/openstack/config-keycloak', {
-        realmName: values.realmName,
-        username: values.username,
-        password: values.password,
-        userId: cookies.openstack_user_id || '',
+        realmName: values?.realmName,
+        username: values?.username,
+        password: values?.password,
+        userId: cookies?.openstack_user_id || '',
       })
 
       if (response.status === 200) {
@@ -92,14 +92,14 @@ const ConfigureKeycloakForm = () => {
     const getData = async () => {
       await fetch('/api/openstack', {
         headers: {
-          userId: cookies.openstack_user_id as string,
+          userId: cookies?.openstack_user_id as string,
         },
       })
         .then(async (res) => await res.json())
         .then(({ data }: { data: OpenstackConfig }) => {
-          if (data.adminUsername && data.adminPassword && data.realmName) {
-            form.setValue('realmName', data.realmName)
-            form.setValue('username', data.adminUsername)
+          if (data?.adminUsername && data?.adminPassword && data?.realmName) {
+            form.setValue('realmName', data?.realmName)
+            form.setValue('username', data?.adminUsername)
           }
         })
         .catch((error) => {
@@ -110,11 +110,11 @@ const ConfigureKeycloakForm = () => {
   }, [])
 
   if (
-    cookies.openstack_auth_token &&
-    cookies.openstack_auth_token !== 'undefined' &&
-    cookies.current_step
+    cookies?.openstack_auth_token &&
+    cookies?.openstack_auth_token !== 'undefined' &&
+    cookies?.current_step
   ) {
-    setStep(cookies.current_step)
+    setStep(cookies?.current_step)
   }
 
   return (
