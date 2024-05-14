@@ -10,6 +10,7 @@ import {
   Keypair,
   Network,
   OpenstackConfig,
+  Server,
 } from '../../../interfaces/openstack'
 import {
   Dialog,
@@ -34,6 +35,9 @@ import { Input } from '../../ui/input'
 import { Label } from '../../ui/label'
 import { toast } from 'sonner'
 import { Pencil2Icon } from '@radix-ui/react-icons'
+import { Progress } from '../../ui/progress'
+import { getOpenstackAuthToken } from '../../../lib/api/openstack'
+import { ConfirmDialog } from '../dialogs/confirm'
 
 const steps = [
   {
@@ -77,18 +81,22 @@ export default function StepperScrollTracking() {
 const FinalStep = () => {
   const { hasCompletedAllSteps, resetSteps } = useStepper()
   const [data, setData] = useState<OpenstackConfig>({} as OpenstackConfig)
+  const [servers, setServers] = useState<Server[]>([] as Server[])
+  const [keycloakUrl, setKeycloakUrl] = useState<string>('')
   const [cookies] = useCookies([
     'openstack_user_id',
     'current_step',
     'openstack_auth_token',
   ])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [progress, setProgress] = useState<number>(0)
 
   // fetch data from /api/openstack endpoint
   useEffect(() => {
     const getData = async () => {
       await fetch('/api/openstack', {
         headers: {
-          userId: cookies.openstack_user_id as string,
+          userId: cookies?.openstack_user_id as string,
         },
       })
         .then(async (res) => await res.json())
@@ -98,26 +106,88 @@ const FinalStep = () => {
           toast.error('An error occurred!')
         })
     }
-    if (cookies.current_step && cookies.current_step == 3) {
+    if (cookies?.current_step == 3) {
       getData()
     }
-  }, [cookies.current_step])
+  }, [cookies?.current_step])
+
+  const fetchData = async () => {
+    const xAuthToken = getOpenstackAuthToken()
+    if (!xAuthToken || xAuthToken === 'undefined') {
+      // setStep(0)
+      return
+    }
+    const response = await fetch(`/api/openstack/servers`, {
+      headers: {
+        'X-Auth-Token': xAuthToken,
+      },
+    })
+    const body = await response.json()
+    console.log('servers', data)
+    setServers(body?.data as Server[])
+
+    /**interface Server {
+  id: string
+  name: string
+  status: string
+  addresses: {
+    [key: string]: {
+      version: number
+      addr: string
+    }[]
+  }
+}
+ */
+    // find server with name "keycloak-server" and set the ip address
+    const keycloakServer: Server = body?.data.find((server: Server) =>
+      server.name.includes('keycloak-server')
+    )
+    // take address from the first network interface
+    // convert addresses object into an array of objects
+    // get the first address object
+    // get the address value
+    const addresses = Object.values(keycloakServer?.addresses)[0]
+    const ipAddr = addresses[0]?.addr
+    setKeycloakUrl(`http://${ipAddr}:${data?.keycloakPort}`)
+    toast.success('Deployment Completed Successfully!')
+    // clearInterval(interval)
+  }
+
+  const loadAndServeKeycloakLink = () => {
+    let interval: any
+
+    console.log('setting interval')
+    interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev < 100) {
+          return prev + 1
+        } else {
+          // server keycloak instance url
+          //https://dash.cloud.cerist.dz:8774/v2.1/servers/detail
+          fetchData()
+          return 100
+        }
+      })
+    }, 3000)
+  }
 
   const handleDeploy = async () => {
     // send a POST request to /api/openstack/stack
+    setLoading(true)
     await fetch('/api/openstack/stack', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        userId: cookies.openstack_user_id as string,
-        xAuthToken: cookies.openstack_auth_token as string,
+        userId: cookies?.openstack_user_id as string,
+        xAuthToken: cookies?.openstack_auth_token as string,
       },
       body: JSON.stringify(data),
     })
       .then(async (res) => {
         console.log('Response:', res)
         if (res.status === 200) {
-          toast.success('Deployment successful!')
+          toast.success('Deployment Started Successfully!')
+          loadAndServeKeycloakLink()
           // resetSteps()
         } else {
           toast.error('An error occurred!')
@@ -148,19 +218,19 @@ const FinalStep = () => {
           <h3 className='text-lg font-bold'>Openstack Access Config</h3>
           <div className='w-full flex justify-between'>
             <span>Username </span>
-            <span className='text-gray-500'>{data.username}</span>
+            <span className='text-gray-500'>{data?.username}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Project </span>
-            <span className='text-gray-500'>{data.project}</span>
+            <span className='text-gray-500'>{data?.project}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Domain </span>
-            <span className='text-gray-500'>{data.domain}</span>
+            <span className='text-gray-500'>{data?.domain}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Base URL </span>
-            <span className='text-gray-500'>{data.baseUrl}</span>
+            <span className='text-gray-500'>{data?.baseUrl}</span>
           </div>
         </div>
 
@@ -169,19 +239,19 @@ const FinalStep = () => {
           <h3 className='text-lg font-bold'>Server Instance Config</h3>
           <div className='w-full flex justify-between'>
             <span>Flavor </span>
-            <span className='text-gray-500'>{data.flavor}</span>
+            <span className='text-gray-500'>{data?.flavor}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Keypair </span>
-            <span className='text-gray-500'>{data.keypair}</span>
+            <span className='text-gray-500'>{data?.keypair}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Network </span>
-            <span className='text-gray-500'>{data.network}</span>
+            <span className='text-gray-500'>{data?.network}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Keycloak Port </span>
-            <span className='text-gray-500'>{data.keycloakPort}</span>
+            <span className='text-gray-500'>{data?.keycloakPort}</span>
           </div>
         </div>
 
@@ -190,23 +260,62 @@ const FinalStep = () => {
           <h3 className='text-lg font-bold'>Keycloak Config</h3>
           <div className='w-full flex justify-between'>
             <span>Realm Name </span>
-            <span className='text-gray-500'>{data.realmName}</span>
+            <span className='text-gray-500'>{data?.realmName}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Admin Username </span>
-            <span className='text-gray-500'>{data.adminUsername}</span>
+            <span className='text-gray-500'>{data?.adminUsername}</span>
           </div>
           <div className='w-full flex justify-between'>
             <span>Admin Password </span>
-            <span className='text-gray-500'>{data.adminPassword}</span>
+            <span className='text-gray-500'>{data?.adminPassword}</span>
           </div>
         </div>
       </div>
       <div className='w-full flex justify-end gap-2'>
-        <Button size='sm' onClick={handleDeploy}>
-          Deploy
-        </Button>
+        <ConfirmDialog
+          title='Deploy Configuration'
+          description='Are you sure you want to deploy this configuration?'
+          buttonText='Deploy'
+          onConfirm={handleDeploy}
+        />
       </div>
+
+      {/* loading progress */}
+      {loading && (
+        <div className='fixed inset-0 bg-black/40 flex items-center '>
+          {!!keycloakUrl ? (
+            <div className='w-1/2 mx-auto flex flex-col items-center justify-center mt-4'>
+              <h2 className='text-xl text-white font-bold mb-5 mr-1'>
+                Deployment Successful 🚀
+              </h2>
+              <div className='w-full flex items-center justify-between'>
+                <span className='text-white'>Keycloak Server URL</span>
+                <a
+                  href={keycloakUrl}
+                  target='_blank'
+                  className='text-blue-600 underline'
+                >
+                  {keycloakUrl}
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className='w-1/2 mx-auto flex flex-col items-center justify-center mt-4'>
+              <div className='flex items-center gap-x-[1px]'>
+                <h2 className='text-white mb-3 mr-1'>Deployment in progress</h2>
+                <div className='h-1 w-1 bg-white rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+                <div className='h-1 w-1 bg-white rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+                <div className='h-1 w-1 bg-white rounded-full animate-bounce'></div>
+              </div>
+              <div className='w-full flex items-center'>
+                <Progress value={progress} />
+                <span className='text-white ml-2'>{progress}%</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   )
 }
@@ -221,13 +330,13 @@ function EditDialog({
   const { flavors, keyPairs, networks } = useStepper()
   const [cookies] = useCookies(['openstack_user_id'])
   const [fields, setFields] = useState({
-    flavor: data.flavor,
-    keypair: data.keypair,
-    network: data.network,
-    keycloakPort: data.keycloakPort,
-    realmName: data.realmName,
-    adminUsername: data.adminUsername,
-    adminPassword: data.adminPassword,
+    flavor: data?.flavor,
+    keypair: data?.keypair,
+    network: data?.network,
+    keycloakPort: data?.keycloakPort,
+    realmName: data?.realmName,
+    adminUsername: data?.adminUsername,
+    adminPassword: data?.adminPassword,
   })
 
   // send a PUT request to update the configuration /api/openstack
@@ -237,7 +346,7 @@ function EditDialog({
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          userId: cookies.openstack_user_id as string,
+          userId: cookies?.openstack_user_id as string,
         },
         body: JSON.stringify(fields),
       })
@@ -245,7 +354,7 @@ function EditDialog({
       if (response.status === 200) {
         toast.success('Configuration Updated Successfully!')
         console.log(data)
-        setData(data.data)
+        setData(data?.data)
         // nextStep()
       } else {
         toast.error('Error Updating Configuration!')
@@ -271,13 +380,13 @@ function EditDialog({
 
   useEffect(() => {
     setFields({
-      flavor: data.flavor,
-      keypair: data.keypair,
-      network: data.network,
-      keycloakPort: data.keycloakPort,
-      realmName: data.realmName,
-      adminUsername: data.adminUsername,
-      adminPassword: data.adminPassword,
+      flavor: data?.flavor,
+      keypair: data?.keypair,
+      network: data?.network,
+      keycloakPort: data?.keycloakPort,
+      realmName: data?.realmName,
+      adminUsername: data?.adminUsername,
+      adminPassword: data?.adminPassword,
     })
   }, [data])
 
@@ -398,13 +507,13 @@ function EditDialog({
             // disable if no changes
             disabled={
               JSON.stringify({
-                flavor: data.flavor,
-                keypair: data.keypair,
-                network: data.network,
-                keycloakPort: data.keycloakPort,
-                realmName: data.realmName,
-                adminUsername: data.adminUsername,
-                adminPassword: data.adminPassword,
+                flavor: data?.flavor,
+                keypair: data?.keypair,
+                network: data?.network,
+                keycloakPort: data?.keycloakPort,
+                realmName: data?.realmName,
+                adminUsername: data?.adminUsername,
+                adminPassword: data?.adminPassword,
               }) === JSON.stringify(fields)
             }
           >
