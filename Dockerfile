@@ -36,6 +36,9 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/static ./.next/static
 
+# Move the copied public, and static folders to the .next/standalone folder
+RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
+
 # Expose the port
 EXPOSE 3000
 
