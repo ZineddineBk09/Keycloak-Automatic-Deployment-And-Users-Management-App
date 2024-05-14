@@ -1,5 +1,4 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { OpenstackConfig } from '../../../../interfaces/openstack'
 import { prisma } from '../../../../db'
 
 export async function POST(request: NextRequest) {
@@ -143,7 +142,7 @@ export async function POST(request: NextRequest) {
           userId: userId,
         },
         data: {
-          stackId: data.stack.id,
+          stackId: data?.stack.id,
         },
       })
     } else {

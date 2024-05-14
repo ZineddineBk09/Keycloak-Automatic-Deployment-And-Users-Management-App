@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
         userId: userId,
       },
     })
-    console.log('GET flavors', openstackConfig)
     return NextResponse.json(
       {
         status: 200,
@@ -24,7 +23,6 @@ export async function GET(request: NextRequest) {
     throw error
   }
 }
-
 
 export async function PUT(request: NextRequest) {
   // get users from keycloak server
@@ -38,13 +36,13 @@ export async function PUT(request: NextRequest) {
         userId: userId,
       },
       data: {
-        flavor: body.flavor,
-        keypair: body.keypair,
-        network: body.network,
-        keycloakPort: body.keycloakPort,
-        realmName: body.realmName,
-        adminUsername: body.adminUsername,
-        adminPassword: body.adminPassword,
+        flavor: body?.flavor,
+        keypair: body?.keypair,
+        network: body?.network,
+        keycloakPort: body?.keycloakPort,
+        realmName: body?.realmName,
+        adminUsername: body?.adminUsername,
+        adminPassword: body?.adminPassword,
       },
     })
     console.log('PUT update results', openstackConfig)

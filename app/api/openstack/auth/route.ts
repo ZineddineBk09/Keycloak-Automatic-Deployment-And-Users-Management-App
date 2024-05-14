@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     // get the identity endpoint from the request body
-    const baseUrl: string = body.baseUrl.replace(/\/$/, '').trim()
+    const baseUrl: string = body?.baseUrl.replace(/\/$/, '').trim()
     const identityEndpoint: string = baseUrl + endpoints.authEndpoint
 
     // send a post request to the identity endpoint
@@ -67,19 +67,19 @@ export async function POST(request: NextRequest) {
             methods: ['password'],
             password: {
               user: {
-                name: body.username,
+                name: body?.username,
                 domain: {
-                  name: body.domain,
+                  name: body?.domain,
                 },
-                password: body.password,
+                password: body?.password,
               },
             },
           },
           scope: {
             project: {
-              name: body.project,
+              name: body?.project,
               domain: {
-                name: body.domain,
+                name: body?.domain,
               },
             },
           },
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
           // check if user already exist
           const user = await prisma.openstackKeycloak.findUnique({
             where: {
-              userId: res.data.token.user.id,
+              userId: res?.data?.token?.user?.id,
             },
           })
           if (user) {
@@ -100,25 +100,25 @@ export async function POST(request: NextRequest) {
             console.log('Update existing openstack keycloak config!')
             await prisma.openstackKeycloak.update({
               where: {
-                userId: res.data.token.user.id,
+                userId: res.data?.token.user.id,
               },
               data: {
-                project: body.project,
-                domain: body.domain,
-                baseUrl: body.baseUrl,
-                tenantId: res.data.token.project.id,
+                project: body?.project,
+                domain: body?.domain,
+                baseUrl: body?.baseUrl,
+                tenantId: res?.data?.token?.project?.id,
               },
             })
           } else {
             console.log('Create new openstack keycloak config!')
             const config = await prisma.openstackKeycloak.create({
               data: {
-                username: body.username,
-                userId: res.data.token.user.id,
-                project: body.project,
-                domain: body.domain,
-                baseUrl: body.baseUrl,
-                tenantId: res.data.token.project.id,
+                username: body?.username,
+                userId: res?.data?.token?.user?.id,
+                project: body?.project,
+                domain: body?.domain,
+                baseUrl: body?.baseUrl,
+                tenantId: res?.data?.token?.project?.id,
               },
             })
           }
