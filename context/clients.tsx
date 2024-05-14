@@ -26,7 +26,7 @@ export const ClientsContextProvider = ({
   const fetchClients = async () => {
     // call the create user API
     try {
-      if (!cookies.kc_session) {
+      if (!cookies?.kc_session) {
         throw new Error(
           'Please check if the Keycloak server is running. and try again.'
         )
@@ -42,7 +42,7 @@ export const ClientsContextProvider = ({
 
   const deleteClients = async (ids: string[]) => {
     try {
-      if (!cookies.kc_session)
+      if (!cookies?.kc_session)
         throw new Error(
           'Please check if the Keycloak server is running. and try again.'
         )
@@ -63,7 +63,7 @@ export const ClientsContextProvider = ({
       .catch((error) => {
         toast.error(error.message)
       })
-  }, [cookies.kc_session])
+  }, [cookies?.kc_session])
 
   return (
     <ClientsContext.Provider
