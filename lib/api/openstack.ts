@@ -36,6 +36,16 @@ export const getFlavors = async (url: string, xAuthToken: string) => {
     })
 }
 
+export const getServers = async (url: string, xAuthToken: string) => {
+  return await getRecords(url, endpoints.serversEndpoint, xAuthToken)
+    ?.then((data) => {
+      return data?.servers || []
+    })
+    .catch((error) => {
+      throw error
+    })
+}
+
 export const getKeypairs = async (url: string, xAuthToken: string) => {
   return await getRecords(url, endpoints.keypairsEndpoint, xAuthToken)
     ?.then((data) => {
@@ -136,7 +146,7 @@ export const createStack = async (
 ) => {
   return await createRecord(
     url,
-    endpoints.stackEndpoint(data.tenantId),
+    endpoints.stackEndpoint(data?.tenantId),
     xAuthToken,
     data
   )
