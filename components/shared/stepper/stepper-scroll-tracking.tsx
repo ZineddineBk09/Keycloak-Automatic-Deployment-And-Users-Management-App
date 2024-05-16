@@ -68,7 +68,6 @@ export default function StepperScrollTracking() {
           return (
             <Step key={stepProps.label} {...stepProps}>
               {stepProps.children}
-              {/* <StepButtons /> */}
             </Step>
           )
         })}
@@ -79,9 +78,8 @@ export default function StepperScrollTracking() {
 }
 
 const FinalStep = () => {
-  const { hasCompletedAllSteps, resetSteps } = useStepper()
+  const { hasCompletedAllSteps } = useStepper()
   const [data, setData] = useState<OpenstackConfig>({} as OpenstackConfig)
-  const [servers, setServers] = useState<Server[]>([] as Server[])
   const [keycloakUrl, setKeycloakUrl] = useState<string>('')
   const [cookies] = useCookies([
     'openstack_user_id',
@@ -114,7 +112,6 @@ const FinalStep = () => {
   const fetchData = async () => {
     const xAuthToken = getOpenstackAuthToken()
     if (!xAuthToken || xAuthToken === 'undefined') {
-      // setStep(0)
       return
     }
     const response = await fetch(`/api/openstack/servers`, {
@@ -123,47 +120,27 @@ const FinalStep = () => {
       },
     })
     const body = await response.json()
-    console.log('servers', data)
-    setServers(body?.data as Server[])
 
-    /**interface Server {
-  id: string
-  name: string
-  status: string
-  addresses: {
-    [key: string]: {
-      version: number
-      addr: string
-    }[]
-  }
-}
- */
     // find server with name "keycloak-server" and set the ip address
     const keycloakServer: Server = body?.data.find((server: Server) =>
       server.name.includes('keycloak-server')
     )
-    // take address from the first network interface
-    // convert addresses object into an array of objects
-    // get the first address object
-    // get the address value
+
+    // convert the addresses object to an array and get the first address
     const addresses = Object.values(keycloakServer?.addresses)[0]
     const ipAddr = addresses[0]?.addr
     setKeycloakUrl(`http://${ipAddr}:${data?.keycloakPort}`)
     toast.success('Deployment Completed Successfully!')
-    // clearInterval(interval)
   }
 
   const loadAndServeKeycloakLink = () => {
     let interval: any
 
-    console.log('setting interval')
     interval = setInterval(() => {
       setProgress((prev) => {
         if (prev < 100) {
           return prev + 1
         } else {
-          // server keycloak instance url
-          //https://dash.cloud.cerist.dz:8774/v2.1/servers/detail
           fetchData()
           return 100
         }
@@ -281,7 +258,7 @@ const FinalStep = () => {
         />
       </div>
 
-      {/* loading progress */}
+      {/* loading progress & displaying deployed keycloak instance url */}
       {loading && (
         <div className='fixed inset-0 bg-black/40 flex items-center '>
           {!!keycloakUrl ? (

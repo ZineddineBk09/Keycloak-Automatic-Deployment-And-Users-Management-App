@@ -21,14 +21,14 @@ export const UsersContextProvider = ({
   children: React.ReactNode
 }) => {
   const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[])
-  const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
+  const [cookies] = useCookies(['kc_session'])
 
   const fetchUsers = async () => {
     // call the create user API
     try {
       if (!cookies?.kc_session) {
         throw new Error(
-          'Please check if the Keycloak server is running. and try again.'
+          'Please check if the Keycloak server is running. and try logging in.'
         )
       }
 

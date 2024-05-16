@@ -32,7 +32,7 @@ export function MainNav({
       condition: cookies?.kc_session,
     },
     {
-      href: '/',
+      href: '/upload',
       label: 'Upload',
       condition: cookies?.kc_session,
     },

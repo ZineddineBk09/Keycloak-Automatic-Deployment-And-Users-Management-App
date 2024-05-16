@@ -47,7 +47,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
   const [flavors, setFlavors] = React.useState<Flavor[]>([] as Flavor[])
   const [keyPairs, setKeypairs] = React.useState<Keypair[]>([] as Keypair[])
   const [networks, setNetworks] = React.useState<Network[]>([] as Network[])
-   const [cookies, setCookie, removeCookie] = useCookies([
+  const [cookies, setCookie, removeCookie] = useCookies([
     'openstack_auth_token',
     'current_step',
   ])
@@ -59,7 +59,6 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
 
   const nextStep = () => {
     setActiveStep((prev) => prev + 1)
-    // setCookie('current_step', activeStep + 1)
   }
 
   const prevStep = () => {
@@ -69,12 +68,10 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
 
   const resetSteps = () => {
     setActiveStep(value.initialStep)
-    // setCookie('current_step', value.initialStep)
   }
 
   const setStep = (step: number) => {
     setActiveStep(step)
-    // setCookie('current_step', step)
   }
 
   // fetch flavors, keypairs, and networks from /api/openstack
