@@ -141,7 +141,7 @@ export function ClientRegisterForm() {
       },
       body: JSON.stringify({
         ...values,
-        // trim serverUrl to remove trailing slash
+        // trim serverUrl to remove trailing slash if any
         serverUrl: values?.serverUrl.replace(/\/$/, ''),
       }),
     })

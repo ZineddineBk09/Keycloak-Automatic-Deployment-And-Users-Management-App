@@ -4,14 +4,6 @@ import MainCard from '../../components/shared/cards'
 import { Button } from '../../components/ui/button'
 import Link from 'next/link'
 
-// export default function KeycloakDeployPage() {
-//   return (
-//     <KeycloakConfigurationContextProvider>
-//       <ConfigPage />
-//     </KeycloakConfigurationContextProvider>
-//   )
-// }
-
 export default function DeploySettupPage() {
   // create status enum
   enum Status {

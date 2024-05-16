@@ -1,6 +1,5 @@
 'use client'
 
-import { KeycloakClient, KeycloakUser } from '../../../interfaces'
 import {
   AlertDialog,
   AlertDialogAction,
