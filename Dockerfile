@@ -1,4 +1,4 @@
-# Create a multi-stage Dockerfile for a Next.js application
+# Multi-stage Dockerfile for a Next.js application
 # Use a lightweight image for Node.js applications
 FROM node:18-alpine AS build
 
