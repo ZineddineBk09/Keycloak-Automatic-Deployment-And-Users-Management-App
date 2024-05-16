@@ -133,7 +133,7 @@ export function ClientSettingsForm() {
       body: JSON.stringify({
         ...values,
         // trim serverUrl to remove trailing slash
-        serverUrl: values.serverUrl.replace(/\/$/, ''),
+        serverUrl: values?.serverUrl.replace(/\/$/, ''),
       }),
     })
 
@@ -163,7 +163,7 @@ export function ClientSettingsForm() {
   }, [decoded])
 
   useEffect(() => {
-    const token = cookies.kc_session
+    const token = cookies?.kc_session
     if (token) {
       try {
         const decoded: DecodedJWT = jwtDecode(token)

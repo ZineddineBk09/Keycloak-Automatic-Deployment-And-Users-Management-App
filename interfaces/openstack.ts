@@ -55,3 +55,15 @@ export interface OpenstackConfig {
   userId: string
   username: string
 }
+
+export interface Server {
+  id: string
+  name: string
+  status: string
+  addresses: {
+    [key: string]: {
+      version: number
+      addr: string
+    }[]
+  }
+}

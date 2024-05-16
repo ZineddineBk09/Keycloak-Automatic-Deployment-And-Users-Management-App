@@ -11,13 +11,13 @@ const CheckAuthGuard = ({ children }: { children: React.ReactNode }): any => {
   const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
 
   useEffect(() => {
-    if (protectedRoutes.includes(path) && !cookies.kc_session) {
+    if (protectedRoutes.includes(path) && !cookies?.kc_session) {
       router.push('/login')
     }
-    if (!protectedRoutes.includes(path) && cookies.kc_session) {
+    if (!protectedRoutes.includes(path) && cookies?.kc_session) {
       router.push('/users')
     }
-  }, [path, cookies.kc_session])
+  }, [path, cookies?.kc_session])
 
   return children
 }

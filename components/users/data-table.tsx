@@ -37,7 +37,7 @@ import { useUsersContext } from '../../context/users'
 import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
 import { KeycloakUser } from '../../interfaces'
-import { deleteRecord, updateRecord } from '../../lib/api'
+import { deleteRecord, updateRecord } from '../../lib/api/keycloak'
 import { toast } from 'sonner'
 import { useCookies } from 'react-cookie'
 
@@ -57,7 +57,6 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
   const table = useReactTable({
     data,
     columns,

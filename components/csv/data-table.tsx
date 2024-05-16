@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
     },
     meta: {
       deleteRow: (row: User) => {
-        deleteUser(row.username)
+        deleteUser(row?.username)
       },
     },
   })

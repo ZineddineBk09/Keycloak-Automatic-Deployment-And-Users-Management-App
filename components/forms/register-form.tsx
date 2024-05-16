@@ -141,23 +141,23 @@ export function ClientRegisterForm() {
       },
       body: JSON.stringify({
         ...values,
-        // trim serverUrl to remove trailing slash
-        serverUrl: values.serverUrl.replace(/\/$/, ''),
+        // trim serverUrl to remove trailing slash if any
+        serverUrl: values?.serverUrl.replace(/\/$/, ''),
       }),
     })
 
     if (response.ok) {
       const { data }: { data: ClientSession } = await response.json()
 
-      if (!data.access_token) {
+      if (!data?.access_token) {
         toast.error('Failed to register: access_token not found')
         return
       }
 
       // save session to cookie
-      setCookie('kc_session', data.access_token, {
+      setCookie('kc_session', data?.access_token, {
         path: '/',
-        maxAge: data.expires_in,
+        maxAge: data?.expires_in,
       })
 
       toast.success('Successfully registered and logged')

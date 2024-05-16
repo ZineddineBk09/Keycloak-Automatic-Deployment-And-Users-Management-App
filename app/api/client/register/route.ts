@@ -2,9 +2,9 @@ import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '../../../../db'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
-import { getClientDomainRealmAndProtocol } from '../../../../lib/api/keycloak'
+import { deleteClient } from '../../../../utils/prisma'
 
-// define the schema for the request body
+// define the zod schema for the request body
 const schema = z.object({
   clientId: z.string().min(1),
   clientSecret: z.string().min(1),
@@ -16,7 +16,6 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   const req = await request.json()
-
   // check if the request body is valid
   const result = schema.safeParse(req)
 
@@ -34,7 +33,14 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { clientId, clientSecret, realmId } = req
+  const {
+    clientId,
+    clientSecret,
+    realmId,
+    authProtocol,
+    adminUser,
+    serverUrl,
+  } = req
 
   // check if the client exist in the database
   let client = await prisma.client.findUnique({
@@ -63,10 +69,14 @@ export async function POST(request: NextRequest) {
         clientId,
         clientSecret: await bcrypt.hash(clientSecret, 10),
         realmId,
+        authProtocol,
+        adminUser,
+        serverUrl,
       },
     })
   } catch (err) {
     console.log('error creating client', err)
+
     return NextResponse.json(
       {
         status: 500,
@@ -82,22 +92,23 @@ export async function POST(request: NextRequest) {
   if (client && (await bcrypt.compare(clientSecret, client.clientSecret))) {
     // request an access token from the keycloak server
     try {
-          const { domain, realm, protocol } =
-            await getClientDomainRealmAndProtocol()
-          const url: string = `${domain}/realms/${realm}/protocol/${protocol}/token`
+      const url: string = `${serverUrl}/realms/${realmId}/protocol/${authProtocol}/token`
 
-          // request an access token from the keycloak server
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-              client_id: clientId,
-              client_secret: clientSecret,
-              grant_type: 'client_credentials',
-            }),
-          })
+      // request an access token from the keycloak server
+      console.log('======================')
+      console.log(url)
+      console.log(url)
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: 'client_credentials',
+        }),
+      })
 
       // return the response from the keycloak server
       return NextResponse.json(
@@ -111,6 +122,10 @@ export async function POST(request: NextRequest) {
       )
     } catch (err) {
       console.log('error registering client', err)
+
+      // delete the client from the database
+      await deleteClient(clientId)
+
       return NextResponse.json(
         {
           status: 500,

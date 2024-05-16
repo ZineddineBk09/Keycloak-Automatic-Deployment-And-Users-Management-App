@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { FieldType } from '../../interfaces'
@@ -23,7 +23,12 @@ import {
   SelectValue,
 } from '../ui/select'
 import { useStepper } from '../shared/stepper'
-import { Flavor, Keypair, Network } from '../../interfaces/openstack'
+import {
+  Flavor,
+  Keypair,
+  Network,
+  OpenstackConfig,
+} from '../../interfaces/openstack'
 import StepButtons from '../shared/stepper/step-buttons'
 import axios from 'axios'
 import { useCookies } from 'react-cookie'
@@ -41,6 +46,7 @@ const ConfigureServerInstanceForm = () => {
   const [cookies, setCookie, removeCookie] = useCookies([
     'openstack_auth_token',
     'openstack_user_id',
+    'current_step',
   ])
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,28 +87,29 @@ const ConfigureServerInstanceForm = () => {
   ]
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // use axios instead of fetch to access the reponse headers and get X-Subject-Token
-    const response = await axios.post('/api/openstack/auth', {
-      flavor: values.flavor,
-      keypair: values.keypair,
-      network: values.network,
-      keycloakPort: values.port,
-      xAuthToken: cookies.openstack_auth_token || '',
-      userId: cookies.openstack_user_id || '',
-    })
+    try {
+      // use axios instead of fetch to access the reponse headers and get X-Subject-Token
+      const response = await axios.post('/api/openstack/config-server', {
+        flavor: values?.flavor,
+        keypair: values?.keypair,
+        network: values?.network,
+        keycloakPort: values?.port,
+        xAuthToken: cookies?.openstack_auth_token || '',
+        userId: cookies?.openstack_user_id || '',
+      })
 
-    if (response.status === 200) {
-      if (!response.headers['x-subject-token']) {
-        console.log('No token found')
-        return
+      if (response.status === 200) {
+        toast.success('Keycloak Server Instance Configured Successfully!')
+        console.log(response)
+        setCookie('current_step', 2)
+        // move to the next step
+        nextStep()
+      } else {
+        toast.error('Error Configuring Keycloak Server Instance!')
       }
-
-      toast.success('Openstack API Access granted successfully')
-
-      // move to the next step
-      nextStep()
-    } else {
-      toast.error('Invalid credentials')
+    } catch (error) {
+      console.log(error)
+      toast.error('An error occured!')
     }
   }
 
@@ -112,12 +119,49 @@ const ConfigureServerInstanceForm = () => {
     const disk = flavor.disk
 
     return (
-      <SelectItem key={flavor.id} value={flavor.id}>
+      <SelectItem key={flavor.id} value={flavor.name}>
         {flavor.name}
         <span className='text-xs ml-2'>{`${vcpus}vCPU ${ram} ${disk}GB`}</span>
       </SelectItem>
     )
   }
+
+  if (
+    cookies?.openstack_auth_token &&
+    cookies?.openstack_auth_token !== 'undefined' &&
+    cookies?.current_step
+  ) {
+    setStep(cookies?.current_step)
+  }
+
+  // check if user already configured flavor, keypair, network and port before
+  useEffect(() => {
+    const getData = async () => {
+      await fetch('/api/openstack', {
+        headers: {
+          userId: cookies?.openstack_user_id as string,
+        },
+      })
+        .then(async (res) => await res.json())
+        .then(({ data }: { data: OpenstackConfig }) => {
+          if (
+            data?.flavor &&
+            data?.keypair &&
+            data?.network &&
+            data?.keycloakPort
+          ) {
+            form.setValue('flavor', data?.flavor)
+            form.setValue('keypair', data?.keypair)
+            form.setValue('network', data?.network)
+            form.setValue('port', data?.keycloakPort)
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
+    getData()
+  }, [])
 
   return (
     <div className='container mx-auto overflow-x-hidden'>

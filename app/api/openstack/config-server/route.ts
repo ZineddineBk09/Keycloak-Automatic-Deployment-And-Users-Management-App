@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Try catch block to create a new security group with openstack api, and save the new values to the database
     try {
       // create a new security group with openstack api
-      const xAuthToken: string = body.xAuthToken
+      const xAuthToken: string = body?.xAuthToken
 
       //Try catch block to handle openstack API error
       try {
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
               security_group_id: secGroup.security_group.id,
               direction: 'ingress',
               ethertype: 'IPv4',
-              port_range_max: body.keycloakPort,
-              port_range_min: body.keycloakPort,
+              port_range_max: body?.keycloakPort,
+              port_range_min: body?.keycloakPort,
               protocol: 'tcp',
             },
           }
@@ -75,22 +75,22 @@ export async function POST(request: NextRequest) {
       } finally {
         // if the security group already exists or openstack limit reached, ignore the error and continue
         console.log('Updating openstackKeycloak object...', {
-          flavor: body.flavor,
-          keypair: body.keypair,
-          network: body.network,
-          keycloakPort: body.keycloakPort,
+          flavor: body?.flavor,
+          keypair: body?.keypair,
+          network: body?.network,
+          keycloakPort: body?.keycloakPort,
           securityGroup: 'keycloak-security-group',
-          userId: body.userId,
+          userId: body?.userId,
         })
         await prisma.openstackKeycloak.update({
           where: {
-            userId: body.userId,
+            userId: body?.userId,
           },
           data: {
-            flavor: body.flavor,
-            keypair: body.keypair,
-            network: body.network,
-            keycloakPort: body.keycloakPort,
+            flavor: body?.flavor,
+            keypair: body?.keypair,
+            network: body?.network,
+            keycloakPort: body?.keycloakPort,
             securityGroup: 'keycloak-security-group',
           },
         })

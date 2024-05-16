@@ -59,7 +59,7 @@ const CsvReader = () => {
           }
           // convert the data into an array of User objects, skipping the first row (header) and the last row (empty)
           const rows: User[] = results.data
-            .slice(1, results.data.length - 1)
+            .slice(1, results.data?.length - 1)
             .map((user: any) => {
               return {
                 username: user[0],

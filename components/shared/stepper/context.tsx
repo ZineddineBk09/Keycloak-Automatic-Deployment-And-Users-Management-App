@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { StepperProps } from './types'
-import { Flavor, Keypair, Network } from '../../../interfaces/openstack'
-import { getFlavors, getOpenstackAuthToken } from '../../../lib/api/openstack'
+import { Flavor, Keypair, Network, Server } from '../../../interfaces/openstack'
+import { getOpenstackAuthToken } from '../../../lib/api/openstack'
 import { useCookies } from 'react-cookie'
 
 interface StepperContextValue extends StepperProps {
@@ -49,6 +49,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
   const [networks, setNetworks] = React.useState<Network[]>([] as Network[])
   const [cookies, setCookie, removeCookie] = useCookies([
     'openstack_auth_token',
+    'current_step',
   ])
 
   const isError = value.state === 'error'
@@ -62,6 +63,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
 
   const prevStep = () => {
     setActiveStep((prev) => prev - 1)
+    setCookie('current_step', activeStep - 1)
   }
 
   const resetSteps = () => {
@@ -97,7 +99,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
     flavors.length == 0 && fetchData('flavors', setFlavors)
     keyPairs.length == 0 && fetchData('keypairs', setKeypairs)
     networks.length == 0 && fetchData('networks', setNetworks)
-  }, [cookies.openstack_auth_token])
+  }, [cookies?.openstack_auth_token])
 
   return (
     <StepperContext.Provider

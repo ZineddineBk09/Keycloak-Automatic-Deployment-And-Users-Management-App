@@ -5,7 +5,9 @@ import { jwtDecode } from 'jwt-decode'
 
 export const getRecords = async (endpoint: string) => {
   const kcSession = getKcSession()
-  const { realm, admin } = await getClientRealmAndAdmin()
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol()
+
+  console.log('getRecords:', kcSession, realm, admin)
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
@@ -16,6 +18,7 @@ export const getRecords = async (endpoint: string) => {
   // get users from keycloak server
   try {
     const response = await axios.get(`/${admin}/realms/${realm}/${endpoint}`, {
+      baseURL: domain,
       headers: {
         Authorization: `Bearer ${kcSession}`,
       },
@@ -29,7 +32,7 @@ export const getRecords = async (endpoint: string) => {
 
 export const createUser = async (user: User) => {
   const kcSession = getKcSession()
-  const { realm, admin } = await getClientRealmAndAdmin()
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol()
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
@@ -39,6 +42,7 @@ export const createUser = async (user: User) => {
 
   try {
     const response = await axios.post(`/${admin}/realms/${realm}/users`, user, {
+      baseURL: domain,
       headers: {
         Authorization: `Bearer ${kcSession}`,
       },
@@ -57,7 +61,7 @@ export const createUser = async (user: User) => {
 
 export const deleteRecord = async (endpoint: string, id: string) => {
   const kcSession = getKcSession()
-  const { realm, admin } = await getClientRealmAndAdmin()
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol()
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
@@ -69,6 +73,7 @@ export const deleteRecord = async (endpoint: string, id: string) => {
     const response = await axios.delete(
       `/${admin}/realms/${realm}/${endpoint}/${id}`,
       {
+        baseURL: domain,
         headers: {
           Authorization: `Bearer ${kcSession}`,
         },
@@ -87,7 +92,7 @@ export const updateRecord = async (
   userId: string
 ) => {
   const kcSession = getKcSession()
-  const { realm, admin } = await getClientRealmAndAdmin()
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol()
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
@@ -100,6 +105,7 @@ export const updateRecord = async (
       `/${admin}/realms/${realm}/${endpoint}/${userId}`,
       user,
       {
+        baseURL: domain,
         headers: {
           Authorization: `Bearer ${kcSession}`,
         },
@@ -125,24 +131,7 @@ export const getClient = async (clientId: string) => {
   return data
 }
 
-const getClientRealmAndAdmin = async () => {
-  const kcSession = getKcSession()
-  const decoded = jwtDecode(kcSession) as any
-
-  // send a request to get the client and return it's realm, /api/client?clientId=${clientId}
-  try {
-    const response = await getClient(decoded.client_id)
-    const { data } = response
-    return {
-      realm: data?.client?.realmId,
-      admin: data?.client?.adminUser,
-    }
-  } catch (error) {
-    throw error
-  }
-}
-
-export const getClientDomainRealmAndProtocol = async () => {
+export const getClientDomainRealmAdminAndProtocol = async () => {
   const kcSession = getKcSession()
   const decoded = jwtDecode(kcSession) as any
 
@@ -154,6 +143,7 @@ export const getClientDomainRealmAndProtocol = async () => {
       domain: data?.client?.serverUrl,
       realm: data?.client?.realmId,
       protocol: data?.client?.authProtocol,
+      admin: data?.client?.adminUser,
     }
   } catch (error) {
     throw error

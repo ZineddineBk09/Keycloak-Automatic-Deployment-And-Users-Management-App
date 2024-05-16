@@ -24,32 +24,32 @@ export function MainNav({
     {
       href: '/users',
       label: 'Users',
-      condition: cookies.kc_session,
+      condition: cookies?.kc_session,
     },
     {
       href: '/clients',
       label: 'Clients',
-      condition: cookies.kc_session,
+      condition: cookies?.kc_session,
     },
     {
-      href: '/',
+      href: '/upload',
       label: 'Upload',
-      condition: cookies.kc_session,
+      condition: cookies?.kc_session,
     },
     {
       href: '/register',
       label: 'Register',
-      condition: !cookies.kc_session && path !== '/register',
+      condition: !cookies?.kc_session && path !== '/register',
     },
     {
       href: '/login',
       label: 'Login',
-      condition: !cookies.kc_session && path !== '/login',
+      condition: !cookies?.kc_session && path !== '/login',
     },
     {
       href: '/settings',
       label: 'Settings',
-      condition: cookies.kc_session,
+      condition: cookies?.kc_session,
     },
   ]
 
@@ -92,7 +92,7 @@ export function MainNav({
       </nav>
 
       <div className='absolute right-4'>
-        {cookies.kc_session ? <SignOut /> : null}
+        {cookies?.kc_session ? <SignOut /> : null}
       </div>
     </div>
   )

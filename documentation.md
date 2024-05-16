@@ -115,4 +115,4 @@ npm run dev
 
     <img src="./public/screenshots/start-deployment-page.png" alt="OpenStack API Access Page" width="900">
 
-   2. coming soon...
+   2. sd

@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
     try {
       const record = await prisma.openstackKeycloak.update({
         where: {
-          userId: body.userId,
+          userId: body?.userId,
         },
         data: {
-          realmName: body.realmName,
-          adminUsername: body.username,
-          adminPassword: body.password,
+          realmName: body?.realmName,
+          adminUsername: body?.username,
+          adminPassword: body?.password,
         },
       })
 

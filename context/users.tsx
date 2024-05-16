@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import {KeycloakUser } from '../interfaces'
+import { KeycloakUser } from '../interfaces'
 import { toast } from 'sonner'
 import { getRecords, deleteRecord } from '../lib/api/keycloak'
 import { useCookies } from 'react-cookie'
@@ -21,14 +21,14 @@ export const UsersContextProvider = ({
   children: React.ReactNode
 }) => {
   const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[])
-  const [cookies, setCookie, removeCookie] = useCookies(['kc_session'])
+  const [cookies] = useCookies(['kc_session'])
 
   const fetchUsers = async () => {
     // call the create user API
     try {
-      if (!cookies.kc_session) {
+      if (!cookies?.kc_session) {
         throw new Error(
-          'Please check if the Keycloak server is running. and try again.'
+          'Please check if the Keycloak server is running. and try logging in.'
         )
       }
 
@@ -42,7 +42,7 @@ export const UsersContextProvider = ({
 
   const deleteUsers = async (ids: string[]) => {
     try {
-      if (!cookies.kc_session)
+      if (!cookies?.kc_session)
         throw new Error(
           'Please check if the Keycloak server is running. and try again.'
         )
@@ -64,7 +64,7 @@ export const UsersContextProvider = ({
         console.log('Error fetching users:', error)
         toast.error(error.message)
       })
-  }, [cookies.kc_session])
+  }, [cookies?.kc_session])
 
   return (
     <UsersContext.Provider
