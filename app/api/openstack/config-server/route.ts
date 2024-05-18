@@ -39,10 +39,16 @@ export async function POST(request: NextRequest) {
       // create a new security group with openstack api
       const xAuthToken: string = body?.xAuthToken
 
+      const openstackConfig = await prisma.openstackKeycloak.findUnique({
+        where: {
+          userId: body?.userId,
+        },
+      })
+
       //Try catch block to handle openstack API error
       try {
         const secGroup = await createSecurityGroup(
-          'https://dash.cloud.cerist.dz',
+          openstackConfig?.baseUrl ?? '',
           xAuthToken,
           {
             security_group: {
@@ -56,7 +62,7 @@ export async function POST(request: NextRequest) {
         console.log('creating new security rule...')
 
         const secGroupRule = await createSecurityGroupRule(
-          'https://dash.cloud.cerist.dz',
+          openstackConfig?.baseUrl ?? '',
           xAuthToken,
           {
             security_group_rule: {
