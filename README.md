@@ -97,7 +97,7 @@ npm run dev
 
    3. Upload the CSV file: Go to the `/upload` page and upload a CSV file containing user information.
 
-      > [!IMPORTANT]
+      > [!NOTE]
       > You can use the file `MOCK_DATA.csv` provided in the repository as an example.
 
       <img src="./public/screenshots/upload-csv-page.png" alt="Upload CSV Page" width="750">
