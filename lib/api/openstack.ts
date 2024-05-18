@@ -74,6 +74,14 @@ export const getOpenstackAuthToken = () => {
     ?.split('=')[1] as string
 }
 
+export const getOpenstackUserId = () => {
+  const cookies = document.cookie
+  return cookies
+    .split(';')
+    .find((cookie) => cookie.includes('openstack_user_id'))
+    ?.split('=')[1] as string
+}
+
 // =========================================================
 
 const createRecord = async (
