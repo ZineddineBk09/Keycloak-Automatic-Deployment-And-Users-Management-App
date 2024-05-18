@@ -36,7 +36,6 @@ import { Label } from '../../ui/label'
 import { toast } from 'sonner'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Progress } from '../../ui/progress'
-import { getOpenstackAuthToken } from '../../../lib/api/openstack'
 import { ConfirmDialog } from '../dialogs/confirm'
 
 const steps = [
@@ -110,13 +109,16 @@ const FinalStep = () => {
   }, [cookies?.current_step])
 
   const fetchData = async () => {
-    const xAuthToken = getOpenstackAuthToken()
+    const xAuthToken = cookies?.openstack_auth_token
+    const userId = cookies?.openstack_user_id
+
     if (!xAuthToken || xAuthToken === 'undefined') {
       return
     }
     const response = await fetch(`/api/openstack/servers`, {
       headers: {
         'X-Auth-Token': xAuthToken,
+        userId: userId as string,
       },
     })
     const body = await response.json()

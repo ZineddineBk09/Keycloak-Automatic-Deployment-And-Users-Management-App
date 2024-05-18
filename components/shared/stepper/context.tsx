@@ -49,6 +49,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
   const [networks, setNetworks] = React.useState<Network[]>([] as Network[])
   const [cookies, setCookie, removeCookie] = useCookies([
     'openstack_auth_token',
+    'openstack_user_id',
     'current_step',
   ])
 
@@ -86,6 +87,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
       const response = await fetch(`/api/openstack/${url}`, {
         headers: {
           'X-Auth-Token': xAuthToken,
+          userId: cookies?.openstack_user_id,
         },
       })
       const { data } = await response.json()
