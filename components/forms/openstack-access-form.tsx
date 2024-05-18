@@ -97,7 +97,7 @@ const OpenstackAccessForm = () => {
 
       if (response.status === 200) {
         if (!response.headers['x-subject-token']) {
-          console.log('No token found')
+          toast.error('Missing token in response headers')
           return
         }
 

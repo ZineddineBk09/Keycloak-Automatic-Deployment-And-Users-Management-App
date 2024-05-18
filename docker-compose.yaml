@@ -3,12 +3,13 @@ services:
   web:
     build:
       context: ./
-      dockerfile: Dockerfile 
+      dockerfile: Dockerfile
     volumes:
-      - ./package-lock.json:/app/package-lock.json:ro # Ensure dependency consistency
-      - .:/app:ro # Read-only access to codebase (modify if needed)
+      - ./package-lock.json:/app/package-lock.json:ro
+      - .:/app:ro
     command: npm run start
     ports:
       - '3000:3000'
     environment:
       NODE_ENV: production
+      DATABASE_URL: 'file:./db.sqlite'

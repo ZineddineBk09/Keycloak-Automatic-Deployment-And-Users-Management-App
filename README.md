@@ -52,30 +52,56 @@ Deploying Keycloak on OpenStack can be a complex process, involving multiple ste
 
 To get started with the Keycloak Management App, follow these steps:
 
-1. Clone the repository:
+1. ### Clone the repository:
 
 ```bash
 git clone https://github.com/ZineddineBk09/Keycloak-Users-Management-App.git
 ```
 
-2. Install the dependencies:
+2. ### Install the dependencies:
 
 ```bash
 cd Keycloak-Users-Management-App
 npm install
 ```
 
-3. Run the app:
+3. ### Run the app:
 
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:3000` to access the app.
+4. ###  Open your browser and navigate to `http://localhost:3000` to access the app.
 
-<img src="./public/screenshots/landing-page.png" alt="Keycloak Management App" width="750">
+   <img src="./public/screenshots/landing-page.png" alt="Keycloak Management App" width="750">
 
-5. Mass User Insertion:
+5. ### Seamless Keycloak Deployment on OpenStack:
+
+   1. Configure OpenStack API access: Go to the `/start-deploy` page to check for the steps needed to configure the deployment.
+
+      <img src="./public/screenshots/start-deployment-page.png" alt="Start Deployment Page" width="750">
+
+   2. Register the OpenStack API access in the app: Go to the `/deploy` page and enter the OpenStack API access information (OpenStack Username, OpenStack Password, OpenStack Project Name, OpenStack Domain, OpenStack Identity API Base URL).
+
+      <img src="./public/screenshots/openstack-api-access-page.png" alt="OpenStack API Access Page" width="750">
+
+   3. Configure the Keycloak server deployment: on the `2nd` step in the `/deploy` page enter the Keycloak server deployment information (Keycloak Server Name, Keycloak Server Flavor, Keycloak Server Network Name, Keycloak Running Port, Keycloak Server Key Pair Name).
+
+      <img src="./public/screenshots/openstack-keycloak-instance-page.png" alt="Openstack Keycloak Instance Page" width="750">
+
+   4. Configure the Keycloak deployment: on the `3rd` step in the `/deploy` page enter the Keycloak deployment information (Keycloak Realm, Keycloak Admin Username, Keycloak Admin Password).
+
+      <img src="./public/screenshots/keycloak-config-page.png" alt="Configure Deployment Page" width="750">
+
+   5. Review the deployment: Finally, review the deployment information and click on the "Deploy" button to start the deployment process.
+
+      <img src="./public/screenshots/review-config-page.png" alt="Review Deployment Page" width="750">
+
+   6. Once the deployment starts, you can monitor the progress, and once it's completed, you can view the Keycloak server URL.
+
+      <div align="center"><img src="./public/screenshots/deployment-loading-page.png" alt="Deployment Loading Page" title="Deployment Loading Page" width="450"/><img src="./public/screenshots/deployment-successful-page.png" alt="Deployment Successful Page" title="Deployment Successful Page" width="450"/></div>
+
+6. ### Mass User Insertion:
 
    1. Configure Keycloak client to allow the app to access the Keycloak Admin REST API.
 
@@ -103,39 +129,14 @@ npm run dev
 > You can use the file `MOCK_DATA.csv` provided in the repository as an example.
       
 
-   1. The users `/users`, and clients `/clients` page both contains the list of users and clients respectively.
+   4. The users `/users`, and clients `/clients` page both contains the list of users and clients respectively.
 
    <div align="center"><img src="./public/screenshots/users-page.png" alt="Users Page" title="Users Page" width="450"/><img src="./public/screenshots/clients-page.png" alt="Clients Page" title="Clients Page" width="450"/></div>
 
-   2. The `/settings` page allows you to change the settings entered in the registration page.
+   5. The `/settings` page allows you to change the settings entered in the registration page.
 
       <img src="./public/screenshots/settings-page.png" alt="Settings Page" width="750">
 
-1. Seamless Keycloak Deployment on OpenStack:
-
-   1. Configure OpenStack API access: Go to the `/start-deploy` page to check for the steps needed to configure the deployment.
-
-      <img src="./public/screenshots/start-deployment-page.png" alt="Start Deployment Page" width="750">
-
-   2. Register the OpenStack API access in the app: Go to the `/deploy` page and enter the OpenStack API access information (OpenStack Username, OpenStack Password, OpenStack Project Name, OpenStack Domain, OpenStack Identity API Base URL).
-
-      <img src="./public/screenshots/openstack-api-access-page.png" alt="OpenStack API Access Page" width="750">
-
-   3. Configure the Keycloak server deployment: on the `2nd` step in the `/deploy` page and enter the Keycloak server deployment information (Keycloak Server Name, Keycloak Server Flavor, Keycloak Server Network Name, Keycloak Running Port, Keycloak Server Key Pair Name).
-
-      <img src="./public/screenshots/openstack-keycloak-instance-page.png" alt="Openstack Keycloak Instance Page" width="750">
-
-   4. Configure the Keycloak deployment: on the `3rd` step in the `/deploy` page and enter the Keycloak deployment information (Keycloak Realm, Keycloak Admin Username, Keycloak Admin Password).
-
-      <img src="./public/screenshots/keycloak-config-page.png" alt="Configure Deployment Page" width="750">
-
-   5. Review the deployment: Finally, review the deployment information and click on the "Deploy" button to start the deployment process.
-
-      <img src="./public/screenshots/review-config-page.png" alt="Review Deployment Page" width="750">
-
-   6. Once the deployment starts, you can monitor the progress, and once it's completed, you can view the Keycloak server URL.
-
-      <div align="center"><img src="./public/screenshots/deployment-loading-page.png" alt="Deployment Loading Page" title="Deployment Loading Page" width="450"/><img src="./public/screenshots/deployment-successful-page.png" alt="Deployment Successful Page" title="Deployment Successful Page" width="450"/></div>
 
 ## Conclusion
 
@@ -143,4 +144,4 @@ The Keycloak Management App is a powerful tool for simplifying user management a
 
 ## Acknowledgements
 
-This project was developed as part of my final year project at the University of Science and Technology Houari Boumediene (USTHB). I would like to thank my supervisor, [Dr. BOUABID Mohamed Amine](https://github.com/bouabid-ma) , for his guidance and support throughout the project. and my binome @Nouri-redouane for his hard work and dedication to the project.
+This project was developed as part of my final year project at the University of Science and Technology Houari Boumediene (USTHB). I would like to thank my supervisor, [Dr. BOUABID Mohamed Amine](https://github.com/bouabid-ma) , for his guidance and support throughout the project. and my collegue @Nouri-redouane for his hard work and dedication to the project.

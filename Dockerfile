@@ -1,4 +1,3 @@
-# Multi-stage Dockerfile for a Next.js application
 # Use a lightweight image for Node.js applications
 FROM node:18-alpine AS build
 
@@ -9,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install the dependencies
-RUN npm install --network-timeout=10000000
+RUN npm install
 
 # Copy the source code
 COPY . .
@@ -27,7 +26,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only the production dependencies
-RUN npm install --only=production --network-timeout=10000000
+RUN npm install --only=production
 
 # Copy the build files from the previous stage
 COPY --from=build /app/.next ./.next
@@ -36,8 +35,13 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/static ./.next/static
 
+# Prisma
+COPY --from=build /app/prisma ./prisma
+
 # Move the copied public, and static folders to the .next/standalone folder
 RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
+
+ENV DATABASE_URL='file:./db.sqlite'
 
 # Expose the port
 EXPOSE 3000

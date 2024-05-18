@@ -42,3 +42,23 @@ model OpenstackKeycloak {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model Deployment {
+  id            String   @id @default(cuid())
+  deploymentId  String   @unique //! stack id 
+  username      String
+  userId        String   @unique
+  tenantId      String   @unique
+  project       String
+  domain        String   @default("Default") //! domain name, NOT domain id
+  baseUrl       String
+  flavor        String   @default("m1.small")
+  keypair       String   @default("keycloak")
+  network       String   @default("private")
+  keycloakPort  String   @default("8080")
+  securityGroup String   @default("default")
+  realmName     String   @default("master")
+  adminUsername String   @default("admin")
+  adminPassword String   @default("admin")
+  createdAt     DateTime @default(now())
+}
