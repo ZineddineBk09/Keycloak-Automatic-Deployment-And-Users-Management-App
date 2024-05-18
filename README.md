@@ -97,7 +97,7 @@ npm run dev
 
    3. Upload the CSV file: Go to the `/upload` page and upload a CSV file containing user information.
 
-      > [!TIP]
+      > [!IMPORTANT]
       > You can use the file `MOCK_DATA.csv` provided in the repository as an example.
 
       <img src="./public/screenshots/upload-csv-page.png" alt="Upload CSV Page" width="750">
@@ -135,3 +135,11 @@ npm run dev
    6. Once the deployment starts, you can monitor the progress, and once it's completed, you can view the Keycloak server URL.
 
       <div align="center"><img src="./public/screenshots/deployment-loading-page.png" alt="Deployment Loading Page" title="Deployment Loading Page" width="450"/><img src="./public/screenshots/deployment-successful-page.png" alt="Deployment Successful Page" title="Deployment Successful Page" width="450"/></div>
+
+## Conclusion
+
+The Keycloak Management App is a powerful tool for simplifying user management and Keycloak deployment on OpenStack. By providing a user-friendly interface and automating complex processes, the app saves time and effort for administrators. Whether you need to onboard multiple users quickly or deploy Keycloak on your OpenStack cloud environment, this app has you covered.
+
+## Acknowledgements
+
+This project was developed as part of my final year project at the University of Science and Technology Houari Boumediene (USTHB). I would like to thank my supervisor, [Dr. BOUABID Mohamed Amine](https://github.com/bouabid-ma) , for his guidance and support throughout the project. and my binome @Nouri-redouane for his hard work and dedication to the project.
