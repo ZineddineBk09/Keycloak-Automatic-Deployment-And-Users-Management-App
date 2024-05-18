@@ -150,7 +150,6 @@ const FinalStep = () => {
 
   const handleDeploy = async () => {
     // send a POST request to /api/openstack/stack
-    setLoading(true)
     await fetch('/api/openstack/stack', {
       method: 'POST',
       headers: {
@@ -162,6 +161,7 @@ const FinalStep = () => {
     })
       .then(async (res) => {
         console.log('Response:', res)
+        setLoading(true)
         if (res.status === 200) {
           toast.success('Deployment Started Successfully!')
           loadAndServeKeycloakLink()
