@@ -97,20 +97,21 @@ npm run dev
 
    3. Upload the CSV file: Go to the `/upload` page and upload a CSV file containing user information.
 
-      > [!NOTE]
-      > You can use the file `MOCK_DATA.csv` provided in the repository as an example.
 
       <img src="./public/screenshots/upload-csv-page.png" alt="Upload CSV Page" width="750">
+> [!TIP]
+> You can use the file `MOCK_DATA.csv` provided in the repository as an example.
+      
 
-   4. The users `/users`, and clients `/clients` page both contains the list of users and clients respectively.
+   1. The users `/users`, and clients `/clients` page both contains the list of users and clients respectively.
 
    <div align="center"><img src="./public/screenshots/users-page.png" alt="Users Page" title="Users Page" width="450"/><img src="./public/screenshots/clients-page.png" alt="Clients Page" title="Clients Page" width="450"/></div>
 
-   5. The `/settings` page allows you to change the settings entered in the registration page.
+   2. The `/settings` page allows you to change the settings entered in the registration page.
 
       <img src="./public/screenshots/settings-page.png" alt="Settings Page" width="750">
 
-6. Seamless Keycloak Deployment on OpenStack:
+1. Seamless Keycloak Deployment on OpenStack:
 
    1. Configure OpenStack API access: Go to the `/start-deploy` page to check for the steps needed to configure the deployment.
 
