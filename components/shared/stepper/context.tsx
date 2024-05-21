@@ -98,9 +98,16 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
         : setter(data as Network[])
     }
 
-    flavors.length == 0 && fetchData('flavors', setFlavors)
-    keyPairs.length == 0 && fetchData('keypairs', setKeypairs)
-    networks.length == 0 && fetchData('networks', setNetworks)
+    // flavors.length == 0 && fetchData('flavors', setFlavors)
+    // keyPairs.length == 0 && fetchData('keypairs', setKeypairs)
+    // networks.length == 0 && fetchData('networks', setNetworks)
+
+    // optimize the above code with Promise.all to fetch all data at once
+    Promise.allSettled([
+      fetchData('flavors', setFlavors),
+      fetchData('keypairs', setKeypairs),
+      fetchData('networks', setNetworks),
+    ])
   }, [cookies?.openstack_auth_token])
 
   return (
