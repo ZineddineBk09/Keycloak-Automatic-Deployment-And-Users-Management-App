@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
             })
           }
         } catch (error) {
-          console.log('error creating openstackKeycloak object')
+          console.log('error creating openstackKeycloak object', error)
           return NextResponse.json(
             {
               status: 500,
