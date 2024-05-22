@@ -12,4 +12,24 @@ services:
       - '3000:3000'
     environment:
       NODE_ENV: production
-      DATABASE_URL: 'file:./db.sqlite'
+      DATABASE_URL: 'postgres://cerist:cerist_2024@db:5432/PFE'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:13
+    restart: always
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: cerist
+      POSTGRES_PASSWORD: cerist_2024
+      POSTGRES_DB: PFE
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cerist -d PFE -h localhost -p 5432']
+      interval: 10s
+      timeout: 5s
+      retries: 5

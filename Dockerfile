@@ -41,7 +41,7 @@ COPY --from=build /app/prisma ./prisma
 # Move the copied public, and static folders to the .next/standalone folder
 RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
 
-ENV DATABASE_URL='file:./db.sqlite'
+ENV DATABASE_URL='postgres://cerist:cerist_2024@db:5432/PFE'
 
 # Expose the port
 EXPOSE 3000
