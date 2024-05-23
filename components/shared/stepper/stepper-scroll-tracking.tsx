@@ -112,7 +112,12 @@ const FinalStep = () => {
     const xAuthToken = cookies?.openstack_auth_token
     const userId = cookies?.openstack_user_id
 
-    if (!xAuthToken || xAuthToken === 'undefined') {
+    if (
+      !userId ||
+      !xAuthToken ||
+      xAuthToken === 'undefined' ||
+      userId === 'undefined'
+    ) {
       return
     }
     const response = await fetch(`/api/openstack/servers`, {
