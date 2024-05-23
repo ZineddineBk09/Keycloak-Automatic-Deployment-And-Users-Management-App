@@ -133,6 +133,11 @@ const FinalStep = () => {
       server.name.includes('keycloak-server')
     )
 
+    if (!keycloakServer) {
+      toast.error('Keycloak Server not found!')
+      return
+    }
+
     // convert the addresses object to an array and get the first address
     const addresses = Object.values(keycloakServer?.addresses)[0]
     const ipAddr = addresses[0]?.addr
