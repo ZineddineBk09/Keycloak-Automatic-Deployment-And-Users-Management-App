@@ -7,6 +7,17 @@ export async function GET(request: NextRequest) {
   try {
     // get userId from request headers
     const userId: string = request.headers.get('userId') as string
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          status: 400,
+          message: 'userId is required',
+        },
+        { status: 400 }
+      )
+    }
+
     const openstackConfig = await prisma.openstackKeycloak.findUnique({
       where: {
         userId: userId,
@@ -29,6 +40,17 @@ export async function PUT(request: NextRequest) {
   try {
     // get userId from request headers
     const userId: string = request.headers.get('userId') as string
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          status: 400,
+          message: 'userId is required',
+        },
+        { status: 400 }
+      )
+    }
+
     const body = await request.json()
     console.log('PUT body', body)
     const openstackConfig = await prisma.openstackKeycloak.update({
