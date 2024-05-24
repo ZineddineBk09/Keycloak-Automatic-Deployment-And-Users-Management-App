@@ -41,7 +41,7 @@ export const createUser = async (user: User) => {
   }
 
   try {
-    const response = await axios.post(`/${admin}/realms/${realm}/users`, user, {
+    const response = await axios.post(`/${admin}/realms/${realm}/users`,user , {
       baseURL: domain,
       headers: {
         Authorization: `Bearer ${kcSession}`,
