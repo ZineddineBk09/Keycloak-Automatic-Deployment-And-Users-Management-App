@@ -6,13 +6,13 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./package-lock.json:/app/package-lock.json:ro
-      - .:/app:ro
+      - .:/app
     command: npm run start
     ports:
       - '3000:3000'
     environment:
       NODE_ENV: production
-      DATABASE_URL: 'postgres://cerist:cerist_2024@db:5432/PFE'
+      DATABASE_URL: 'postgres://cerist:cerist@db:5432/PFE'
     depends_on:
       db:
         condition: service_healthy
@@ -21,10 +21,10 @@ services:
     image: postgres:13
     restart: always
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: cerist
-      POSTGRES_PASSWORD: cerist_2024
+      POSTGRES_PASSWORD: cerist
       POSTGRES_DB: PFE
     ports:
       - '5432:5432'
