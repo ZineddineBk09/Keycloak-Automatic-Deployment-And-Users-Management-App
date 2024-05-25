@@ -7,11 +7,9 @@ export const getRecords = async (endpoint: string) => {
   const kcSession = getKcSession()
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol()
 
-  console.log('getRecords:', kcSession, realm, admin)
-
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
+      'Error fetching records. Please check if the Keycloak server is running. and try again.'
     )
   }
 
@@ -36,12 +34,12 @@ export const createUser = async (user: User) => {
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
+      'Error creating user. Please check if the Keycloak server is running. and try again.'
     )
   }
 
   try {
-    const response = await axios.post(`/${admin}/realms/${realm}/users`,user , {
+    const response = await axios.post(`/${admin}/realms/${realm}/users`, user, {
       baseURL: domain,
       headers: {
         Authorization: `Bearer ${kcSession}`,
@@ -65,7 +63,7 @@ export const deleteRecord = async (endpoint: string, id: string) => {
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
+      'Error deleting record. Please check if the Keycloak server is running. and try again.'
     )
   }
 
@@ -96,7 +94,7 @@ export const updateRecord = async (
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      'Please check if the Keycloak server is running. and try again.'
+      'Error updating record. Please check if the Keycloak server is running. and try again.'
     )
   }
 
