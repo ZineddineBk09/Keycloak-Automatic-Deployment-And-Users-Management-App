@@ -63,7 +63,7 @@ export function ClientLoginForm() {
       const { data }: { data: ClientSession } = await response.json()
 
       if (!data?.access_token) {
-        toast.error('Failed to login: access_token not found')
+        toast.error('Failed to login: no token found')
         return
       }
 
@@ -77,6 +77,7 @@ export function ClientLoginForm() {
       //router.push('/users')
     } else {
       const { data } = await response.json()
+      console.log('Failed to login:', data)
       const msg =
         typeof data === 'string' ? data : data?.message || 'Unknown error'
       toast.error('Failed to login: ' + msg)
