@@ -28,7 +28,7 @@ export const UsersContextProvider = ({
     try {
       if (!cookies?.kc_session) {
         throw new Error(
-          'Please check if the Keycloak server is running. and try logging in.'
+          'You need to login to Keycloak to fetch users. Please login and try again.'
         )
       }
 
@@ -44,7 +44,7 @@ export const UsersContextProvider = ({
     try {
       if (!cookies?.kc_session)
         throw new Error(
-          'Please check if the Keycloak server is running. and try again.'
+          'You need to login to Keycloak to delete users. Please login and try again.'
         )
 
       await Promise.all(ids.map((id) => deleteRecord('users', id)))
@@ -56,6 +56,7 @@ export const UsersContextProvider = ({
   }
 
   useEffect(() => {
+    if (!cookies?.kc_session) return
     fetchUsers()
       .then(() => {
         toast.success('Users fetched')
