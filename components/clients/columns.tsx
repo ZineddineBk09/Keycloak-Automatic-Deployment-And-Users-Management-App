@@ -13,11 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { KeycloakClient, KeycloakUser } from '../../interfaces'
+import { KeycloakClient } from '../../interfaces'
 import DeleteDialog from '../shared/dialogs/delete'
 import DetailsDialog from '../shared/dialogs/details'
 
-export const columns: ColumnDef<KeycloakUser>[] = [
+export const columns: ColumnDef<KeycloakClient>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -121,7 +121,9 @@ export const columns: ColumnDef<KeycloakUser>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(client.id)}
+              onClick={() =>
+                navigator.clipboard.writeText(client?.clientId ?? client.id)
+              }
             >
               Copy ID
             </DropdownMenuItem>
