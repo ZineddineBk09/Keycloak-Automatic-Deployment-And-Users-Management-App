@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     // get username, project, password, and domain from request body
     const body = await request.json()
-    console.log('request body:', body)
     const allowedFields = ['realmName', 'username', 'password', 'userId']
 
     // check if the request body contains the required fields
@@ -47,7 +46,7 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       )
     } catch (error) {
-      console.log(error)
+      console.log('error updating openstackKeycloak object:', error)
       return NextResponse.json(
         {
           status: 500,

@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
   try {
     // get username, project, password, and domain from request body
     const body = await request.json()
-    console.log('request body:', body)
     const allowedFields = [
       'flavor',
       'keypair',

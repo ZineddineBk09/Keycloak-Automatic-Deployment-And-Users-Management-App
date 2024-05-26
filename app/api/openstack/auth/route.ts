@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
         }
       })
       .catch((error) => {
-        console.log('error')
+        console.log('error logging in user', error)
       })
 
     return NextResponse.json(
@@ -129,6 +129,6 @@ export async function POST(request: NextRequest) {
       { status: 200, headers: response?.headers }
     )
   } catch (error) {
-    console.log('error')
+    console.log('error logging in user', error)
   }
 }

@@ -52,7 +52,6 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    console.log('PUT body', body)
     const openstackConfig = await prisma.openstackKeycloak.update({
       where: {
         userId: userId,
@@ -67,7 +66,6 @@ export async function PUT(request: NextRequest) {
         adminPassword: body?.adminPassword,
       },
     })
-    console.log('PUT update results', openstackConfig)
     return NextResponse.json(
       {
         status: 200,

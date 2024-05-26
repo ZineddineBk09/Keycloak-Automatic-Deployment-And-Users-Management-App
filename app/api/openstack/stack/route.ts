@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    console.log('Request Body:', body)
 
     const allowedFields = [
       'project',
