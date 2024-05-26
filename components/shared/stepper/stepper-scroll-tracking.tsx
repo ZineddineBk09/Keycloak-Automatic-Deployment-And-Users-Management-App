@@ -172,7 +172,6 @@ const FinalStep = () => {
       body: JSON.stringify(data),
     })
       .then(async (res) => {
-        console.log('Response:', res)
         setLoading(true)
         if (res.status === 200) {
           toast.success('Deployment Started Successfully!')
@@ -342,14 +341,12 @@ function EditDialog({
       const data = await response.json()
       if (response.status === 200) {
         toast.success('Configuration Updated Successfully!')
-        console.log(data)
         setData(data?.data)
         // nextStep()
       } else {
         toast.error('Error Updating Configuration!')
       }
     } catch (error) {
-      console.log(error)
       toast.error('An error occured!')
     }
   }

@@ -77,7 +77,6 @@ export function ClientLoginForm() {
       //router.push('/users')
     } else {
       const { data } = await response.json()
-      console.log('Failed to login:', data)
       const msg =
         typeof data === 'string' ? data : data?.message || 'Unknown error'
       toast.error('Failed to login: ' + msg)

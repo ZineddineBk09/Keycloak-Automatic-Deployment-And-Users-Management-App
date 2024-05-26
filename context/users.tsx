@@ -62,7 +62,6 @@ export const UsersContextProvider = ({
         toast.success('Users fetched')
       })
       .catch((error) => {
-        console.log('Error fetching users:', error)
         toast.error(error.message)
       })
   }, [cookies?.kc_session])

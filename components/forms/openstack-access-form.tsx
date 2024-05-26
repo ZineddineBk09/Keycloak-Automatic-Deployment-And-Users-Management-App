@@ -123,7 +123,6 @@ const OpenstackAccessForm = () => {
         toast.error('Invalid credentials')
       }
     } catch (error) {
-      console.log(error)
       toast.error('An error occured!')
     }
   }

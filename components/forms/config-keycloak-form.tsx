@@ -74,7 +74,6 @@ const ConfigureKeycloakForm = () => {
 
       if (response.status === 200) {
         toast.success('Keycloak Configured Successfully!')
-        console.log(response)
         setCookie('current_step', 3)
         // move to the next step
         nextStep()
@@ -82,7 +81,6 @@ const ConfigureKeycloakForm = () => {
         toast.error('Error Configuring Keycloak!')
       }
     } catch (error) {
-      console.log(error)
       toast.error('An error occured!')
     }
   }
