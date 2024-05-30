@@ -100,7 +100,6 @@ const ConfigureServerInstanceForm = () => {
 
       if (response.status === 200) {
         toast.success('Keycloak Server Instance Configured Successfully!')
-        console.log(response)
         setCookie('current_step', 2)
         // move to the next step
         nextStep()
@@ -108,7 +107,6 @@ const ConfigureServerInstanceForm = () => {
         toast.error('Error Configuring Keycloak Server Instance!')
       }
     } catch (error) {
-      console.log(error)
       toast.error('An error occured!')
     }
   }

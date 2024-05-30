@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    console.log('Request Body:', body)
 
     const allowedFields = [
       'project',
@@ -122,7 +121,7 @@ export async function POST(request: NextRequest) {
 
     // create openstack stack
     const response = await fetch(
-      `https://dash.cloud.cerist.dz:8004/v1/${openstackConfig?.tenantId}/stacks`,
+      `${openstackConfig?.baseUrl}:8004/v1/${openstackConfig?.tenantId}/stacks`,
       {
         method: 'POST',
         headers: {

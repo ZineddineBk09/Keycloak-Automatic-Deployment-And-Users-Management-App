@@ -8,8 +8,32 @@ export async function GET(request: NextRequest) {
   try {
     // get xAuthToken from request headers
     const xAuthToken: string = request.headers.get('X-Auth-Token') as string
+    const userId: string = request.headers.get('userId') as string
+
+    if (
+      !userId ||
+      !xAuthToken ||
+      xAuthToken === 'undefined' ||
+      userId === 'undefined'
+    ) {
+      return NextResponse.json(
+        {
+          status: 400,
+          message: 'userId and xAuthToken are required',
+        },
+        { status: 400 }
+      )
+    }
+
+    // get the openstack config from db to retreive the url
+    const openstackConfig = await prisma.openstackKeycloak.findUnique({
+      where: {
+        userId: userId,
+      },
+    })
+
     const response = await getNetworks(
-      'https://dash.cloud.cerist.dz:8774/v2.1',
+      `${openstackConfig?.baseUrl}:8774/v2.1`,
       xAuthToken
     )
 

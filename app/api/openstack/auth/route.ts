@@ -3,32 +3,7 @@ import axios from '../../../../lib/axios/openstack'
 import endpoints from '../../../../utils/endpoints'
 import { prisma } from '../../../../db'
 
-// since we're using a multi-step form, we need to save the user's information from each step and the each step informations in db
-/**
- * 
- * @param request model OpenstackKeycloak {
-  id           String   @id @default(cuid())
-  username     String
-  userId       String
-  tenantId     String //! tenant name same as Project ID 
-  project      String
-  domain       String   @default("Default") //! domain name, NOT domain id
-  baseUrl      String
-  flavor       String   @default("m1.small")
-  keypair      String   @default("keycloak")
-  network      String   @default("private")
-  keycloakPort Int      @default(8080)
-  realmName    String   @default("master")
-  adminUser    String   @default("admin")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 
-  // CONSTRAINTS
-  @@unique([username, userId, tenantId, project, domain])
-}
-
- * @returns 
- */
 export async function POST(request: NextRequest) {
   // get users from keycloak server
   try {
@@ -123,7 +98,7 @@ export async function POST(request: NextRequest) {
             })
           }
         } catch (error) {
-          console.log('error creating openstackKeycloak object')
+          console.log('error creating openstackKeycloak object', error)
           return NextResponse.json(
             {
               status: 500,
@@ -143,7 +118,7 @@ export async function POST(request: NextRequest) {
         }
       })
       .catch((error) => {
-        console.log('error')
+        console.log('error logging in user', error)
       })
 
     return NextResponse.json(
@@ -154,6 +129,6 @@ export async function POST(request: NextRequest) {
       { status: 200, headers: response?.headers }
     )
   } catch (error) {
-    console.log('error')
+    console.log('error logging in user', error)
   }
 }

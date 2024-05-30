@@ -38,6 +38,10 @@ function EditDialog({ user }: { user: KeycloakUser }) {
         toast.error('Error updating user')
         console.error(error)
       })
+      .finally(() => {
+        // close the dialog
+        document.getElementById('close')?.click()
+      })
   }
 
   return (
@@ -85,7 +89,9 @@ function EditDialog({ user }: { user: KeycloakUser }) {
         </div>
         <DialogFooter className=''>
           <DialogClose>
-            <Button variant='outline'>Close</Button>
+            <Button variant='outline' id='close'>
+              Close
+            </Button>
           </DialogClose>
           <Button type='submit' onClick={handleUpdate}>
             Save changes

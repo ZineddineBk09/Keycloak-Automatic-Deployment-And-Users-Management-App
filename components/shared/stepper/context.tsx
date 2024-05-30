@@ -49,6 +49,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
   const [networks, setNetworks] = React.useState<Network[]>([] as Network[])
   const [cookies, setCookie, removeCookie] = useCookies([
     'openstack_auth_token',
+    'openstack_user_id',
     'current_step',
   ])
 
@@ -86,6 +87,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
       const response = await fetch(`/api/openstack/${url}`, {
         headers: {
           'X-Auth-Token': xAuthToken,
+          userId: cookies?.openstack_user_id,
         },
       })
       const { data } = await response.json()
@@ -96,9 +98,16 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
         : setter(data as Network[])
     }
 
-    flavors.length == 0 && fetchData('flavors', setFlavors)
-    keyPairs.length == 0 && fetchData('keypairs', setKeypairs)
-    networks.length == 0 && fetchData('networks', setNetworks)
+    // flavors.length == 0 && fetchData('flavors', setFlavors)
+    // keyPairs.length == 0 && fetchData('keypairs', setKeypairs)
+    // networks.length == 0 && fetchData('networks', setNetworks)
+
+    // optimize the above code with Promise.all to fetch all data at once
+    Promise.allSettled([
+      fetchData('flavors', setFlavors),
+      fetchData('keypairs', setKeypairs),
+      fetchData('networks', setNetworks),
+    ])
   }, [cookies?.openstack_auth_token])
 
   return (

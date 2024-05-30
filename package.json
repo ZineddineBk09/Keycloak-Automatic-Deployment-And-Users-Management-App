@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "npx prisma db push && npx prisma generate && next build",
-    "start": "node .next/standalone/server.js",
+    "build": "next build",
+    "start": "npx prisma db push && npx prisma generate && node .next/standalone/server.js",
     "lint": "next lint"
   },
   "dependencies": {

@@ -95,9 +95,6 @@ export async function POST(request: NextRequest) {
       const url: string = `${serverUrl}/realms/${realmId}/protocol/${authProtocol}/token`
 
       // request an access token from the keycloak server
-      console.log('======================')
-      console.log(url)
-      console.log(url)
       const response = await fetch(url, {
         method: 'POST',
         headers: {

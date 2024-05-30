@@ -36,7 +36,6 @@ import { Label } from '../../ui/label'
 import { toast } from 'sonner'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Progress } from '../../ui/progress'
-import { getOpenstackAuthToken } from '../../../lib/api/openstack'
 import { ConfirmDialog } from '../dialogs/confirm'
 
 const steps = [
@@ -110,13 +109,21 @@ const FinalStep = () => {
   }, [cookies?.current_step])
 
   const fetchData = async () => {
-    const xAuthToken = getOpenstackAuthToken()
-    if (!xAuthToken || xAuthToken === 'undefined') {
+    const xAuthToken = cookies?.openstack_auth_token
+    const userId = cookies?.openstack_user_id
+
+    if (
+      !userId ||
+      !xAuthToken ||
+      xAuthToken === 'undefined' ||
+      userId === 'undefined'
+    ) {
       return
     }
     const response = await fetch(`/api/openstack/servers`, {
       headers: {
         'X-Auth-Token': xAuthToken,
+        userId: userId as string,
       },
     })
     const body = await response.json()
@@ -125,6 +132,11 @@ const FinalStep = () => {
     const keycloakServer: Server = body?.data.find((server: Server) =>
       server.name.includes('keycloak-server')
     )
+
+    if (!keycloakServer) {
+      toast.error('Keycloak Server not found!')
+      return
+    }
 
     // convert the addresses object to an array and get the first address
     const addresses = Object.values(keycloakServer?.addresses)[0]
@@ -160,7 +172,6 @@ const FinalStep = () => {
       body: JSON.stringify(data),
     })
       .then(async (res) => {
-        console.log('Response:', res)
         setLoading(true)
         if (res.status === 200) {
           toast.success('Deployment Started Successfully!')
@@ -330,14 +341,12 @@ function EditDialog({
       const data = await response.json()
       if (response.status === 200) {
         toast.success('Configuration Updated Successfully!')
-        console.log(data)
         setData(data?.data)
         // nextStep()
       } else {
         toast.error('Error Updating Configuration!')
       }
     } catch (error) {
-      console.log(error)
       toast.error('An error occured!')
     }
   }
