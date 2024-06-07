@@ -511,6 +511,7 @@ function DeploySuccessCard({ url }: { url: string }) {
       <CardFooter className="flex justify-between">
         <Link
           href={url}
+          target="_blank"
           passHref
           className="text-primary hover:text-primary-dark w-full mx-auto"
         >
