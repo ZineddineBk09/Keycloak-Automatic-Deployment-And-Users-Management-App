@@ -52,26 +52,60 @@ Deploying Keycloak on OpenStack can be a complex process, involving multiple ste
 
 To get started with the Keycloak Management App, follow these steps:
 
-1. ### Clone the repository:
+### Normal Installation
+
+1. #### Clone the repository:
 
 ```bash
 git clone https://github.com/ZineddineBk09/Keycloak-Users-Management-App.git
 ```
 
-2. ### Install the dependencies:
+2. #### Install the dependencies:
 
 ```bash
 cd Keycloak-Users-Management-App
 npm install
 ```
 
-3. ### Run the app:
+3. #### Run Prisma Migrations
+
+```bash
+npx prisma migrate dev
+```
+
+4. #### Run the app:
 
 ```bash
 npm run dev
 ```
 
-4. ###  Open your browser and navigate to `http://localhost:3000` to access the app.
+### Docker Installation
+
+1. #### Clone the repository:
+
+```bash
+git clone https://github.com/ZineddineBk09/Keycloak-Users-Management-App.git
+```
+
+2. #### Run postgres db:
+
+```bash
+sudo docker run -d --name postgres-db --network pfe -e POSTGRES_USER=cerist -e POSTGRES_PASSWORD=cerist -e POSTGRES_DB=PFE -p 5432:5432 postgres:13
+```
+
+3. #### Build Docker Container
+
+```bash
+sudo docker build -t "keycloak-users-management-and-auto-deploy-app" .
+```
+
+4. #### Run the container:
+
+```bash
+sudo docker run -p 3000:3000 -d keycloak-users-management-and-auto-deploy-app
+```
+
+5. ###  Open your browser and navigate to `http://localhost:3000` to access the app.
 
    <img src="./public/screenshots/landing-page.png" alt="Keycloak Management App" width="750">
 
