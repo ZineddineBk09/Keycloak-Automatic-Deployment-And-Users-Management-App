@@ -90,6 +90,15 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    accessorKey: 'credentials',
+    header: 'Password',
+    cell: ({ row }) => {
+      const credentials: any = row.getValue('credentials')
+
+      return <div>{credentials[0].value}</div>
+    },
+  },
+  {
     id: 'actions',
     cell: ({ row, table }) => {
       const user = row.original
