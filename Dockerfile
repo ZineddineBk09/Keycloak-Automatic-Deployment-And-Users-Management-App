@@ -44,7 +44,7 @@ COPY --from=build /app/prisma ./prisma
 # Move the copied public, and static folders to the .next/standalone folder
 RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
 
-ENV DATABASE_URL='postgres://cerist:cerist@postgres-db:5432/PFE'
+ENV DATABASE_URL='postgres://xxxx:xxxx@xxxx:5432/xxxx'
 
 # Expose the port
 EXPOSE 3000
