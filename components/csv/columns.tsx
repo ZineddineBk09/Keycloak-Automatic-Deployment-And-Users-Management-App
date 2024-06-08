@@ -99,6 +99,15 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    accessorKey: 'requiredActions',
+    header: 'Required Actions',
+    cell: ({ row }) => {
+      const requiredActions: any = row.getValue('requiredActions')
+
+      return <div>{requiredActions.join(', ')}</div>
+    },
+  },
+  {
     id: 'actions',
     cell: ({ row, table }) => {
       const user = row.original
