@@ -12,7 +12,7 @@ services:
       - '3000:3000'
     environment:
       NODE_ENV: production
-      DATABASE_URL: 'postgres://cerist:cerist@db:5432/PFE'
+      DATABASE_URL: 'postgres://xxxx:xxxx@xxxx:5432/xxxx'
     depends_on:
       db:
         condition: service_healthy
@@ -23,13 +23,13 @@ services:
     volumes:
       - ./postgres:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: cerist
-      POSTGRES_PASSWORD: cerist
-      POSTGRES_DB: PFE
+      POSTGRES_USER: xxxx
+      POSTGRES_PASSWORD: xxxx
+      POSTGRES_DB: xxxx
     ports:
       - '5432:5432'
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U cerist -d PFE -h localhost -p 5432']
+      test: ['CMD-SHELL', 'pg_isready -U xxxx -d xxxx -h localhost -p 5432']
       interval: 10s
       timeout: 5s
       retries: 5
