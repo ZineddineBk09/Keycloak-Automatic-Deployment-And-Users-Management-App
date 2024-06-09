@@ -143,11 +143,14 @@ const FinalStep = () => {
     const ipAddr = addresses[0]?.addr;
     setKeycloakUrl(`http://${ipAddr}:${data?.keycloakPort}`);
     toast.success("Deployment Completed Successfully!");
+
+    // Clear the interval once the deployment is successful
+    clearInterval(interval);
   };
 
-  const loadAndServeKeycloakLink = () => {
-    let interval: any;
+  let interval: any;
 
+  const loadAndServeKeycloakLink = () => {
     interval = setInterval(() => {
       setProgress((prev) => {
         if (prev < 100) {
@@ -175,6 +178,7 @@ const FinalStep = () => {
         setLoading(true);
         if (res.status === 200) {
           toast.success("Deployment Started Successfully!");
+
           loadAndServeKeycloakLink();
           // resetSteps()
         } else {
