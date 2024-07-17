@@ -10,13 +10,7 @@ const cards = [
     link: '/users',
     cta: 'Manage Users',
   },
-  {
-    title: 'Automated Keycloak Deployment',
-    description:
-      'Automate your Keycloak deployment, deploy Keycloak with a single click.',
-    link: '/start-deploy',
-    cta: 'Deploy Keycloak',
-  },
+
 ]
 
 export default function MainPage() {
