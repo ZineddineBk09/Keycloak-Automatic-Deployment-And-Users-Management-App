@@ -4,7 +4,6 @@ import { cn } from '../lib/utils'
 import './globals.css'
 import { ThemeProvider } from '../components/theme-provider'
 import { Toaster } from 'sonner'
-import CheckAuthGuard from '../components/guards/auth-guard'
 import { MainNav } from '../components/ui/main-nav'
 
 export const metadata: Metadata = {
@@ -40,11 +39,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CheckAuthGuard>
             <MainNav />
             {children}
             <Toaster visibleToasts={10} richColors closeButton />
-          </CheckAuthGuard>
         </ThemeProvider>
       </body>
     </html>

@@ -1,50 +1,87 @@
-'use client'
-import { UsersContextProvider } from '../context/csv'
-import Image from 'next/image'
-import MainCard from '../components/shared/cards'
+"use client";
 
-const cards = [
-  {
-    title: 'Keycloak Users Management',
-    description: 'Manage users in Keycloak with ease.',
-    link: '/users',
-    cta: 'Manage Users',
-  },
-  {
-    title: 'Automated Keycloak Deployment',
-    description:
-      'Automate your Keycloak deployment, deploy Keycloak with a single click.',
-    link: '/start-deploy',
-    cta: 'Deploy Keycloak',
-  },
-]
+import MainCard from "../components/shared/cards";
+import { Button } from "../components/ui/button";
+import Link from "next/link";
 
 export default function MainPage() {
+  // create status enum
+  enum Status {
+    NOT_STARTED = "not-started",
+    COMPLETED = "completed",
+    PENDING = "pending",
+    FAILED = "failed",
+  }
+
+  const steps = [
+    {
+      title: "Openstack API Access & Keycloak Server",
+      description: "Set up Openstack API Access",
+      status: Status.NOT_STARTED,
+      subSteps: [
+        {
+          title: "Openstack API Access",
+          description:
+            "Set up Openstack API Access (Username, Password, Project, Domain)",
+          status: Status.NOT_STARTED,
+        },
+        {
+          title: "Keycloak Server",
+          description:
+            "Set up Keycloak Server Instance with Openstack Nova API (Flavor, Image, Network, Security Group, ...etc)",
+          status: Status.NOT_STARTED,
+        },
+      ],
+    },
+    {
+      title: "Keycloak Configuration",
+      description: "Set up Keycloak Configuration (Realm, Clients, ...etc)",
+      status: Status.NOT_STARTED,
+      subSteps: [
+        {
+          title: "Keycloak Realm Configuration",
+          description: "Set up Keycloak Realm Configuration (Name, ...etc)",
+          status: Status.NOT_STARTED,
+        },
+      ],
+      
+    },
+    {
+      title: "Keycloak Installation & Deployment",
+      description: "Install Keycloak",
+      status: Status.NOT_STARTED,
+      subSteps: [
+        {
+          title: "Keycloak Installation ",
+          description: "Install Keycloak with Docker and Docker Compose",
+          status: Status.NOT_STARTED,
+        },
+        {
+          title: "Keycloak Deployment",
+          description: "Deploy Keycloak Server with Openstack Nova API",
+          status: Status.NOT_STARTED,
+        },
+      ],
+    },
+  ];
+
   return (
-    <UsersContextProvider>
-      <div className='container mx-auto'>
-        <div className='flex items-center gap-x-2'>
-          <Image
-            src='/images/keycloak.png'
-            alt='Keycloak'
-            width={100}
-            height={40}
-          />
-          <h1 className='text-xl font-bold'>
-            Keycloak Users Management and Automated Deployment
-          </h1>
+    <div className="container mx-auto py-10 overflow-x-hidden">
+      <h1 className="text-2xl font-bold mb-10">
+        Welcome to Keycloak Openstack Automatic Deployment
+      </h1>
+
+      <div className="flex flex-col items-start">
+        <div className="w-full grid grid-cols-1 gap-y-3">
+          {steps.map((step, index) => (
+            <MainCard key={index} card={{ ...step, index: index + 1 }} />
+          ))}
         </div>
 
-        <div className='relative w-full items-center justify-center'>
-          <div className='w-full'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-              {cards.map((card, index) => (
-                <MainCard card={card} key={index} />
-              ))}
-            </div>
-          </div>
-        </div>
+        <Link href="/deploy" className="mt-10 mx-auto">
+          <Button>Start Deployment</Button>
+        </Link>
       </div>
-    </UsersContextProvider>
-  )
+    </div>
+  );
 }
