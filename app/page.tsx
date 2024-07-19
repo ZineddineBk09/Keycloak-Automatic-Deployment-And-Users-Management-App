@@ -1,44 +1,14 @@
 'use client'
-import { UsersContextProvider } from '../context/csv'
-import Image from 'next/image'
-import MainCard from '../components/shared/cards'
+import React from 'react'
+import { ClientLoginForm } from '../components/forms/login-form'
 
-const cards = [
-  {
-    title: 'Keycloak Users Management',
-    description: 'Manage users in Keycloak with ease.',
-    link: '/users',
-    cta: 'Manage Users',
-  },
-
-]
-
-export default function MainPage() {
+export default function LoginPage() {
   return (
-    <UsersContextProvider>
-      <div className='container mx-auto'>
-        <div className='flex items-center gap-x-2'>
-          <Image
-            src='/images/keycloak.png'
-            alt='Keycloak'
-            width={100}
-            height={40}
-          />
-          <h1 className='text-xl font-bold'>
-            Keycloak Users Management and Automated Deployment
-          </h1>
-        </div>
-
-        <div className='relative w-full items-center justify-center'>
-          <div className='w-full'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-              {cards.map((card, index) => (
-                <MainCard card={card} key={index} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </UsersContextProvider>
+    <div className='container mx-auto py-10'>
+      <h1 className='text-3xl font-bold mb-10'>
+        Login with your client credentials
+      </h1>
+      <ClientLoginForm />
+    </div>
   )
 }

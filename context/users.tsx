@@ -28,7 +28,7 @@ export const UsersContextProvider = ({
     try {
       if (!cookies?.kc_session) {
         throw new Error(
-          'You need to login to Keycloak to fetch users. Please login and try again.'
+          'You need to login first to fetch users. Please login and try again.'
         )
       }
 
@@ -44,7 +44,7 @@ export const UsersContextProvider = ({
     try {
       if (!cookies?.kc_session)
         throw new Error(
-          'You need to login to Keycloak to delete users. Please login and try again.'
+          'You need to login first to delete users. Please login and try again.'
         )
 
       await Promise.all(ids.map((id) => deleteRecord('users', id)))

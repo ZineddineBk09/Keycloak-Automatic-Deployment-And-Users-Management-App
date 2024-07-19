@@ -119,7 +119,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenu>
           <Button variant='outline' onClick={() => uploadToKeycloak()}>
             <UploadIcon className='h-5 w-5 mr-2' />
-            Upload to Keycloak
+            Upload
           </Button>
         </div>
       </div>

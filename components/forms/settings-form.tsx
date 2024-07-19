@@ -119,7 +119,7 @@ export function ClientSettingsForm() {
       name: 'Server URL',
       type: 'input',
       options: [],
-      placeholder: 'The Keycloak server URL.',
+      placeholder: 'The IA server URL.',
     },
   ]
 
@@ -144,7 +144,7 @@ export function ClientSettingsForm() {
     } else {
       const { data } = await response.json()
       const msg =
-        typeof data === 'string' ? data : data?.message || 'Unknown error'
+        typeof data === 'string' ? data : data?.message || 'Client update failed'
       toast.error('Failed to register: ' + msg)
     }
   }

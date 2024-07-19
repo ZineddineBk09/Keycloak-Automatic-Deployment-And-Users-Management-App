@@ -128,7 +128,7 @@ export function ClientRegisterForm() {
       name: "Server URL",
       type: "input",
       options: [],
-      placeholder: "The Keycloak server URL.",
+      placeholder: "The IA server URL.",
     },
   ];
 
@@ -160,7 +160,7 @@ export function ClientRegisterForm() {
         maxAge: data?.expires_in,
       });
 
-      toast.success("Successfully registered and logged");
+      toast.success("Successfully registered and logged in");
       router.push("/users");
     } else {
       const { data } = await response.json();

@@ -1,8 +1,3 @@
-export const publicRoutes = [
-  '/',
-  '/deploy',
-  '/deploy/openstack-config',
-  '/start-deploy',
-]
+export const publicRoutes = ["/", "/register"];
 
-export const hiddenRoutes=[]
+export const protectedRoutes = ["/upload", "/users", "/clients", "/settings"];

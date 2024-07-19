@@ -8,7 +8,7 @@ export default function ClientsPage() {
     <>
       <ClientsContextProvider>
         <div className='container mx-auto py-10'>
-          <h1 className='text-3xl font-bold mb-10'>Keycloak Clients</h1>
+          <h1 className='text-3xl font-bold mb-10'>Clients</h1>
           <DataTable columns={columns} />
         </div>
       </ClientsContextProvider>
