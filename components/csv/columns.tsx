@@ -98,15 +98,15 @@ export const columns: ColumnDef<User>[] = [
       return <div>{credentials[0].value}</div>
     },
   },
-  {
-    accessorKey: 'requiredActions',
-    header: 'Required Actions',
-    cell: ({ row }) => {
-      const requiredActions: any = row.getValue('requiredActions')
+  // {
+  //   accessorKey: 'requiredActions',
+  //   header: 'Required Actions',
+  //   cell: ({ row }) => {
+  //     const requiredActions: any = row.getValue('requiredActions')
 
-      return <div>{requiredActions.join(', ')}</div>
-    },
-  },
+  //     return <div>{requiredActions.join(', ')}</div>
+  //   },
+  // },
   {
     id: 'actions',
     cell: ({ row, table }) => {

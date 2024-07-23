@@ -88,7 +88,7 @@ const CsvReader = () => {
                     temporary: true,
                   },
                 ],
-                requiredActions: ["CONFIGURE_TOTP", "UPDATE_PASSWORD"],
+                // requiredActions: ["CONFIGURE_TOTP", "UPDATE_PASSWORD"],
               } as User;
             });
           setUsers(rows);
