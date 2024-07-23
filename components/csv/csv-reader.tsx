@@ -85,7 +85,7 @@ const CsvReader = () => {
                   {
                     type: "password",
                     value: user[7],
-                    temporary: true,
+                    temporary: false,
                   },
                 ],
                 // requiredActions: ["CONFIGURE_TOTP", "UPDATE_PASSWORD"],
