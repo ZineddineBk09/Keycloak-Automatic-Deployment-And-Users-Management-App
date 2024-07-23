@@ -27,6 +27,7 @@ export const getRecords = async (endpoint: string) => {
         Authorization: `Bearer ${kcSession}`,
       },
     });
+    console.log("response", response.data);
     const data = await response.data;
     return data;
   } catch (error) {
