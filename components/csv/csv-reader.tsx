@@ -33,6 +33,7 @@ const CsvReader = () => {
   const { CSVReader } = useCSVReader();
   const { setUsers, users } = useUsersContext();
 
+
   return (
     <div className="w-full">
       <CSVReader
@@ -46,20 +47,34 @@ const CsvReader = () => {
           // so now we need to convert this data into an array of objects
           // check if the first row is the header and is of the correct format and type User
           const firstRow = results.data[0];
+          // ex first row:  ['username', 'password', 'firstName', 'lastName', 'email']
+          // get indexes of deferent fields to assign the right values next
+          const indexes = {
+            username: firstRow.indexOf("username"),
+            firstName: firstRow.indexOf("firstName"),
+            lastName: firstRow.indexOf("lastName"),
+            email: firstRow.indexOf("email"),
+            password: firstRow.indexOf("password"),
+            emailVerified: firstRow.indexOf("emailVerified"),
+            enabled: firstRow.indexOf("enabled"),
+            groups: firstRow.indexOf("groups"),
+          }
+
           const requiredCols = [
             "username",
             "firstName",
             "lastName",
             "email",
-            "emailVerified",
-            "enabled",
-            "groups",
             "password",
+            //"emailVerified",
+            //"enabled",
+            //"groups",
           ];
+
           const missingCols = requiredCols.filter(
             (col) => !firstRow.includes(col)
           );
-          console.log("firstRow", firstRow);
+
           if (
             !firstRow ||
             firstRow.length !== requiredCols.length ||
@@ -69,22 +84,23 @@ const CsvReader = () => {
             console.error("Incorrect header row");
             return;
           }
+
           // convert the data into an array of User objects, skipping the first row (header) and the last row (empty)
           const rows: User[] = results.data
             .slice(1, results.data?.length - 1)
             .map((user: any) => {
               return {
-                username: user[0],
-                firstName: user[1],
-                lastName: user[2],
-                email: user[3],
-                emailVerified: user[4] === "true" ? true : false,
-                enabled: user[5] === "true" ? true : false,
-                groups: user[6].split(",").map((group: string) => group.trim()),
+                username: indexes.username === -1 ? "" : user[indexes.username],
+                firstName: indexes.firstName === -1 ? "" : user[indexes.firstName],
+                lastName: indexes.lastName === -1 ? "" : user[indexes.lastName],
+                email: indexes.email === -1 ? "" : user[indexes.email],
+                emailVerified: user[indexes.emailVerified] === "true" ? true : false,
+                enabled: user[indexes.enabled] === "true" ? true : false,
+                groups: user[indexes.groups] ? user[indexes.groups].split(",").map((group: string) => group.trim()) : [],
                 credentials: [
                   {
                     type: "password",
-                    value: user[7],
+                    value: user[indexes.password],
                     temporary: true,
                   },
                 ],
