@@ -3,11 +3,18 @@ import { User } from '../interfaces'
 import { useRouter } from 'next/navigation'
 import { createUser } from '../lib/api/keycloak'
 
+// create an interface that represents user creation, success or failure
+interface UserCreation {
+  user: User
+  success: boolean
+}
+
 export const UsersContext = createContext({})
 
 export const useUsersContext: {
   (): {
     users: User[]
+    progress: number
     setUsers: React.Dispatch<React.SetStateAction<User[]>>
     uploadToKeycloak: () => void
     deleteUser: (username: string) => void
@@ -20,15 +27,23 @@ export const UsersContextProvider = ({
   children: React.ReactNode
 }) => {
   const [users, setUsers] = useState<User[]>([] as User[])
+  const [progress, setProgress] = useState<number>(0)
   const router = useRouter()
 
   const uploadToKeycloak = async () => {
     try {
-      const createdUsers = await Promise.all(
+      await Promise.all(
         users.map(async (user) => {
-          return await createUser(user)
+          await createUser(user).then((data) => {
+            setProgress(progress + 1)
+          }
+          ).catch((error) => {
+            console.error('Error uploading user:', error)
+
+          })
         })
       )
+
       setUsers([])
       router.push('/users')
     } catch (error: any) {
@@ -44,6 +59,7 @@ export const UsersContextProvider = ({
     <UsersContext.Provider
       value={{
         users,
+        progress,
         setUsers,
         uploadToKeycloak,
         deleteUser,
