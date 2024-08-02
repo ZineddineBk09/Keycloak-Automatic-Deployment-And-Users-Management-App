@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { users, fetchUsers, deleteUsers } = useUsersContext()
+  const { users, page, totalPages, fetchUsers, deleteUsers, nextPage, previousPage } = useUsersContext()
   const [data, setData] = React.useState<TData[]>([] as TData[])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -87,7 +87,7 @@ export function DataTable<TData, TValue>({
       },
 
       updateRow: async (row: KeycloakUser) => {
-        await updateRecord('users',row, row.id)
+        await updateRecord('users', row, row.id)
           .then(() => {
             toast.success('User updated successfully')
             fetchUsers()
@@ -210,9 +210,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
