@@ -86,7 +86,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const groups: any = row.getValue('groups')
 
-      return <div>{groups.join(', ')}</div>
+      return <div>{groups.length > 0 ? groups.join(', ') : '[]'}</div>
     },
   },
   {
@@ -104,7 +104,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const requiredActions: any = row.getValue('requiredActions')
 
-      return <div>{requiredActions.join(', ')}</div>
+      return <div>{requiredActions.length > 0 ? requiredActions.join(', ') : '[]'}</div>
     },
   },
   {
