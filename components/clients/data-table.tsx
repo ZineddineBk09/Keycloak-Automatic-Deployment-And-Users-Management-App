@@ -182,7 +182,7 @@ export function DataTable<TData, TValue>({
             onClick={async () => {
               await fetchClients()
                 .then(() => {
-                  toast.success('Users fetched successfully')
+                  toast.success('Clients fetched successfully')
                   fetchClients()
                 })
                 .catch((error) => {

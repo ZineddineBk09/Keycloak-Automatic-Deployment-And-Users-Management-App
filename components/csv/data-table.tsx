@@ -36,6 +36,8 @@ import { UploadIcon } from '@radix-ui/react-icons'
 import { useUsersContext } from '../../context/csv'
 import { User } from '../../interfaces'
 import { DataTablePagination } from '../ui/pagination'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { AddColumnDialog } from '../shared/dialogs/columns'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -53,10 +55,11 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { uploadToKeycloak ,deleteUser} = useUsersContext()
+  const { progress, uploadToKeycloak, deleteUser } = useUsersContext()
+  const [cols, setCols] = React.useState<ColumnDef<TData, TValue>[]>(columns)
   const table = useReactTable({
     data,
-    columns,
+    columns: cols,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -136,9 +139,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -178,6 +181,28 @@ export function DataTable<TData, TValue>({
 
       {/* Pagination */}
       <DataTablePagination table={table} />
+
+      {/* Progress */}
+      {progress > 0 && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+          <UploadProgress />
+        </div>
+      )}
     </div>
   )
+}
+
+
+function UploadProgress() {
+  return (
+    <Card className="w-[550px]">
+      <CardHeader>
+        <CardTitle>Upload in progress ⏳⏳</CardTitle>
+        <CardDescription>
+          Uploading users to Keycloak. Please wait while we process the data.
+        </CardDescription>
+      </CardHeader>
+      <CardFooter className="flex justify-between" />
+    </Card>
+  );
 }

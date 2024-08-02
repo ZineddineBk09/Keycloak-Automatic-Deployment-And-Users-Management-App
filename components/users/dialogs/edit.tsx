@@ -20,7 +20,8 @@ import { toast } from 'sonner'
 import { useUsersContext } from '../../../context/users'
 
 function EditDialog({ user }: { user: KeycloakUser }) {
-  const { fetchUsers } = useUsersContext()
+  const { fetchUsers, page } = useUsersContext()
+
   const [fields, setFields] = useState({
     username: user.username,
     firstName: user.firstName,
@@ -32,7 +33,7 @@ function EditDialog({ user }: { user: KeycloakUser }) {
     await updateRecord('users', fields, user.id)
       .then(() => {
         toast.success('User updated successfully')
-        fetchUsers()
+        fetchUsers(page)
       })
       .catch((error) => {
         toast.error('Error updating user')
@@ -63,7 +64,7 @@ function EditDialog({ user }: { user: KeycloakUser }) {
             return (
               <div className='grid grid-cols-4 items-center gap-4' key={field}>
                 <Label htmlFor={field} className='text-right'>
-                  {field}
+                  {field.charAt(0).toUpperCase() + field.slice(1).split(/(?=[A-Z])/).join(' ')}
                 </Label>
                 <Input
                   id={field}
@@ -72,13 +73,13 @@ function EditDialog({ user }: { user: KeycloakUser }) {
                   onChange={
                     // disable onchange for username
                     field === 'username'
-                      ? () => {}
+                      ? () => { }
                       : (event) => {
-                          setFields((prev: any) => ({
-                            ...prev,
-                            [field]: event.target.value,
-                          }))
-                        }
+                        setFields((prev: any) => ({
+                          ...prev,
+                          [field]: event.target.value,
+                        }))
+                      }
                   }
                   disabled={field === 'username'}
                   className='col-span-3'

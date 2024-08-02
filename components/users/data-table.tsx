@@ -32,7 +32,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { DataTablePagination } from '../ui/pagination'
+import { DataTablePagination } from './pagination'
 import { useUsersContext } from '../../context/users'
 import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '../ui/skeleton'
@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { users, fetchUsers, deleteUsers } = useUsersContext()
+  const { users, page, pageSize, fetchUsers, deleteUsers } = useUsersContext()
   const [data, setData] = React.useState<TData[]>([] as TData[])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -73,13 +73,17 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination: {
+        pageSize,
+        pageIndex: page - 1, // Adjusting for zero-based index
+      }
     },
     meta: {
       deleteRow: async (row: KeycloakUser) => {
         await deleteRecord('users', row.id)
           .then(() => {
             toast.success('User deleted successfully')
-            fetchUsers()
+            fetchUsers(page)
           })
           .catch((error) => {
             toast.error('Error deleting user')
@@ -87,10 +91,10 @@ export function DataTable<TData, TValue>({
       },
 
       updateRow: async (row: KeycloakUser) => {
-        await updateRecord('users',row, row.id)
+        await updateRecord('users', row, row.id)
           .then(() => {
             toast.success('User updated successfully')
-            fetchUsers()
+            fetchUsers(page)
           })
           .catch((error) => {
             toast.error('Error updating user')
@@ -181,10 +185,9 @@ export function DataTable<TData, TValue>({
           <Button
             variant='outline'
             onClick={async () => {
-              await fetchUsers()
+              await fetchUsers(1)
                 .then(() => {
                   toast.success('Users fetched successfully')
-                  fetchUsers()
                 })
                 .catch((error) => {
                   toast.error('Error fetching users')
@@ -210,9 +213,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}

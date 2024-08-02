@@ -17,6 +17,7 @@ import { KeycloakUser } from '../../interfaces'
 import DeleteDialog from '../shared/dialogs/delete'
 import DetailsDialog from '../shared/dialogs/details'
 import EditDialog from './dialogs/edit'
+import ResetPasswordDialog from './dialogs/reset-password'
 
 export const columns: ColumnDef<KeycloakUser>[] = [
   {
@@ -142,6 +143,10 @@ export const columns: ColumnDef<KeycloakUser>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem asChild={true}>
               <EditDialog user={user} />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild={true}>
+              <ResetPasswordDialog userId={user?.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
