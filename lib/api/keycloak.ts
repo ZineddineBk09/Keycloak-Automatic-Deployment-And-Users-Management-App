@@ -15,12 +15,6 @@ export const getRecords = async (endpoint: string) => {
 
   // get users from keycloak server
   try {
-    console.log(
-      "fetching records",
-      `${domain}/${admin}/realms/${realm}/${endpoint}`,
-      kcSession
-    );
-
     const response = await axios.get(`/${admin}/realms/${realm}/${endpoint}`, {
       baseURL: domain,
       headers: {
@@ -55,7 +49,7 @@ export const createUser = async (user: User) => {
     const data = await response.data;
 
     // if (response.status === 201) {
-      // toast.success(`User ${user.username} created`);
+    // toast.success(`User ${user.username} created`);
     // }
     return data;
   } catch (error: any) {
