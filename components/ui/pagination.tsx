@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './select'
+import { useUsersContext } from '../../context/users'
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
