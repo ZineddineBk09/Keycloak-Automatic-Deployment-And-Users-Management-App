@@ -43,11 +43,15 @@ export const UsersContextProvider = ({
         throw new Error('You need to login first to fetch users. Please login and try again.');
       }
       const first = currentPage * pageSize - pageSize;
+      console.log(`users?first=${first}&max=${pageSize}`)
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
       setUsers((prevUsers) => {
         const newUsers = response.filter(
           (newUser: KeycloakUser) => !prevUsers.some((user) => user.id === newUser.id)
         );
+
+        if (newUsers.length === 0) return prevUsers;
+
         return [...prevUsers, ...newUsers];
       });
     } catch (error: any) {
@@ -102,25 +106,25 @@ export const UsersContextProvider = ({
 
   useEffect(() => {
     if (!cookies?.kc_session) return;
-    fetchUsers(1)
+    fetchUsers(page)
       .then(() => {
-        toast.success('Users fetched');
+        // toast.success('Users fetched');
       })
       .catch((error) => {
         toast.error(error.message);
       });
-  }, [cookies?.kc_session]);
+  }, [cookies?.kc_session, page, pageSize]);
 
   useEffect(() => {
     if (!cookies?.kc_session) return;
     fetchUsersCount()
       .then(() => {
-        toast.success('Total users count fetched');
+        // toast.success('Total users count fetched');
       })
       .catch((error) => {
         toast.error(error.message);
       });
-  }, [cookies?.kc_session]);
+  }, [cookies?.kc_session, users]);
 
   return (
     <UsersContext.Provider
