@@ -33,7 +33,7 @@ function EditDialog({ user }: { user: KeycloakUser }) {
     await updateRecord('users', fields, user.id)
       .then(() => {
         toast.success('User updated successfully')
-        fetchUsers(page)
+        fetchUsers(1)
       })
       .catch((error) => {
         toast.error('Error updating user')
