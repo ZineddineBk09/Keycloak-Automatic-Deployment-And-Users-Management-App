@@ -181,7 +181,7 @@ export const getUsersCount = async () => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 // Reset password a user password
 // first the admin needs to have role "admin" to be able to reset password
@@ -199,7 +199,7 @@ export const getUsersCount = async () => {
   },
   .....
  */
-// we need to check for "admin" role first (decoded the access token) before we can reset password 
+// we need to check for "admin" role first (decoded the access token) before we can reset password
 // if role present, we can reset password with a put request to the user endpoint
 // ex endpoint: http://10.0.0.95/admin/realms/master/users/7d8e81a7-551a-4085-b101-21ce4c8dbb9e/reset-password
 // ex body: { "type": "password", "temporary": false, "value": "password" }
@@ -217,26 +217,33 @@ export const resetUserPassword = async (userId: string, password: string) => {
   const decoded = jwtDecode(kcSession) as any;
   const roles = decoded.realm_access.roles;
   if (!roles.includes("admin")) {
-    console.log("You need to have the admin role to reset a user's password. Please contact your administrator.", roles)
+    console.log(
+      "You need to have the admin role to reset a user's password. Please contact your administrator.",
+      roles
+    );
     throw new Error(
       "You need to have the admin role to reset a user's password. Please contact your administrator."
     );
   }
 
   try {
-    const response = await axios.put(`/${admin}/realms/${realm}/users/${userId}/reset-password`, {
-      type: "password",
-      temporary: false,
-      value: password,
-    }, {
-      baseURL: domain,
-      headers: {
-        Authorization: `Bearer ${kcSession}`,
+    const response = await axios.put(
+      `/${admin}/realms/${realm}/users/${userId}/reset-password`,
+      {
+        type: "password",
+        temporary: false,
+        value: password,
       },
-    });
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
     const data = await response.data;
     return data;
   } catch (error) {
     throw error;
   }
-}
+};
