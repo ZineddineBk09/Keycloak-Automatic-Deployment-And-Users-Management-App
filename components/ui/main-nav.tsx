@@ -19,7 +19,6 @@ export function MainNav({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const path = usePathname();
-  console.log(path);
   const [cookies, setCookie, removeCookie] = useCookies(["kc_session"]);
   const links: NavLink[] = [
     {

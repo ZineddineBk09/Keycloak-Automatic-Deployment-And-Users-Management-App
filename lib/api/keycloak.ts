@@ -21,7 +21,6 @@ export const getRecords = async (endpoint: string) => {
         Authorization: `Bearer ${kcSession}`,
       },
     });
-    console.log("response", response.data);
     const data = await response.data;
     return data;
   } catch (error) {
@@ -29,7 +28,7 @@ export const getRecords = async (endpoint: string) => {
   }
 };
 
-export const createUser = async (user: User) => {
+export const createUser = async (user: User | any) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
 
