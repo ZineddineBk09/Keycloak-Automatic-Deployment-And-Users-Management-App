@@ -33,7 +33,6 @@ const CsvReader = () => {
   const { CSVReader } = useCSVReader();
   const { setUsers, users } = useUsersContext();
 
-
   return (
     <div className="w-full">
       <CSVReader
@@ -58,7 +57,8 @@ const CsvReader = () => {
             emailVerified: firstRow.indexOf("emailVerified"),
             enabled: firstRow.indexOf("enabled"),
             groups: firstRow.indexOf("groups"),
-          }
+            requiredActions: firstRow.indexOf("requiredActions"),
+          };
 
           const requiredCols = [
             "username",
@@ -75,11 +75,7 @@ const CsvReader = () => {
             (col) => !firstRow.includes(col)
           );
 
-          if (
-            !firstRow ||
-            firstRow.length !== requiredCols.length ||
-            missingCols.length > 0
-          ) {
+          if (!firstRow || missingCols.length > 0) {
             toast.error("Missing columns: " + missingCols.join(", ") + ".");
             console.error("Incorrect header row");
             return;
@@ -91,12 +87,18 @@ const CsvReader = () => {
             .map((user: any) => {
               return {
                 username: indexes.username === -1 ? "" : user[indexes.username],
-                firstName: indexes.firstName === -1 ? "" : user[indexes.firstName],
+                firstName:
+                  indexes.firstName === -1 ? "" : user[indexes.firstName],
                 lastName: indexes.lastName === -1 ? "" : user[indexes.lastName],
                 email: indexes.email === -1 ? "" : user[indexes.email],
-                emailVerified: user[indexes.emailVerified] === "true" ? true : false,
+                emailVerified:
+                  user[indexes.emailVerified] === "true" ? true : false,
                 enabled: user[indexes.enabled] === "true" ? true : false,
-                groups: user[indexes.groups] ? user[indexes.groups].split(",").map((group: string) => group.trim()) : [],
+                groups: user[indexes.groups]
+                  ? user[indexes.groups]
+                      .split(",")
+                      .map((group: string) => group.trim())
+                  : [],
                 credentials: [
                   {
                     type: "password",
@@ -104,7 +106,11 @@ const CsvReader = () => {
                     temporary: true,
                   },
                 ],
-                requiredActions: ["CONFIGURE_TOTP", "UPDATE_PASSWORD"],
+                requiredActions: user[indexes.requiredActions]
+                  ? user[indexes.requiredActions]
+                      .split(",")
+                      .map((action: string) => action.trim())
+                  : [],
               } as User;
             });
           setUsers(rows);
