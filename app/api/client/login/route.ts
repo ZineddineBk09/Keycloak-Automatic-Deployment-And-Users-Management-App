@@ -101,11 +101,12 @@ export async function POST(request: NextRequest) {
     }
   } else {
     // return an error
+    console.log("client secret is incorrect");
     return NextResponse.json(
       {
         status: 401,
         data: {
-          message: "client id or secret is incorrect",
+          message: "client secret is incorrect",
         },
       },
       { status: 401 }

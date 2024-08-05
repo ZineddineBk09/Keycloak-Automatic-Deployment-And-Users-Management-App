@@ -12,6 +12,8 @@ import {
   DialogClose,
 } from "../../ui/dialog";
 import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import { useState } from "react";
 import { createUser } from "../../../lib/api/keycloak";
 import { toast } from "sonner";
 import { useUsersContext } from "../../../context/users";
@@ -28,18 +30,15 @@ import {
   FormLabel,
   FormMessage,
 } from "../../ui/form";
+import { FieldType, User } from "../../../interfaces";
 import { Switch } from "../../ui/switch";
-import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
-import { Label } from "../../ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-
-const frameworksList = [
-  { value: "react", label: "React", icon: Turtle },
-  { value: "angular", label: "Angular", icon: Cat },
-  { value: "vue", label: "Vue", icon: Dog },
-  { value: "svelte", label: "Svelte", icon: Rabbit },
-  { value: "ember", label: "Ember", icon: Fish },
-];
+import {
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from "../../ui/multi-select";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -48,24 +47,13 @@ const formSchema = z.object({
   email: z.string().email(),
   emailVerified: z.boolean(),
   enabled: z.boolean(),
-  password: z.string().min(1),
+  credentials: z.array(z.object({})),
   groups: z.array(z.string()),
   requiredActions: z.array(z.string()),
 });
 
 function AddDialog() {
-  const requiredActions = [
-    "VERIFY_EMAIL",
-    "UPDATE_PROFILE",
-    "CONFIGURE_TOTP",
-    "CONFIGURE_RECOVERY_AUTHN_CODES",
-    "UPDATE_PASSWORD",
-    "TERMS_AND_CONDITIONS",
-    "VERIFY_PROFILE",
-    "UPDATE_EMAIL",
-  ];
-
-  const { groups, fetchUsers, fetchGroups, page } = useUsersContext();
+  const { fetchUsers, page } = useUsersContext();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -75,32 +63,20 @@ function AddDialog() {
       email: "",
       emailVerified: false,
       enabled: false,
-      password: "",
+      credentials: [],
       groups: [],
-      requiredActions: [],
     },
   });
+ 
 
   const onSubmit = async () => {
-    // get all fields except password
-    const { password, ...fields } = form.getValues();
-
-    await createUser({
-      ...fields,
-      credentials: [
-        {
-          type: "password",
-          value: password,
-          temporary: false,
-        },
-      ],
-    })
+    await createUser(form.getValues() as User)
       .then(() => {
-        toast.success("User created successfully");
+        toast.success("User updated successfully");
         fetchUsers(1);
       })
       .catch((error) => {
-        toast.error("Error creating user");
+        toast.error("Error updating user");
         console.error(error);
       })
       .finally(() => {
@@ -108,7 +84,6 @@ function AddDialog() {
         document.getElementById("close")?.click();
       });
   };
-
 
   return (
     <Dialog>
@@ -130,6 +105,46 @@ function AddDialog() {
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid grid-cols-2 gap-5"
           >
+            {/* {fields.map(({ id, name, options, type }: FieldType) => (
+              <FormField
+                key={id}
+                control={form.control}
+                // @ts-ignore
+                name={id}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{name}</FormLabel>
+                    <FormControl>
+                    {type === "switch" ? (
+                        <Switch {...field} />
+                      ) : type === "select" ? (
+                        <MultiSelector
+                          values={value}
+                          onValuesChange={setValue}
+                          loop={false}
+                        >
+                          <MultiSelectorTrigger>
+                            <MultiSelectorInput placeholder="Select your framework" />
+                          </MultiSelectorTrigger>
+                          <MultiSelectorContent>
+                            <MultiSelectorList>
+                              {options.map((option, i) => (
+                                <MultiSelectorItem key={i} value={option.value}>
+                                  {option.label}
+                                </MultiSelectorItem>
+                              ))}
+                            </MultiSelectorList>
+                          </MultiSelectorContent>
+                        </MultiSelector>
+                      ) : (
+                        <Input placeholder={name} {...field} />
+                      )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))} */}
             <FormField
               control={form.control}
               name="username"
@@ -190,7 +205,7 @@ function AddDialog() {
               control={form.control}
               name="emailVerified"
               render={({ field }) => (
-                <FormItem className="flex items-center gap-x-4">
+                <FormItem>
                   <FormLabel>Email Verified</FormLabel>
                   <FormControl>
                     <Switch
@@ -207,7 +222,7 @@ function AddDialog() {
               control={form.control}
               name="enabled"
               render={({ field }) => (
-                <FormItem className="flex items-center gap-x-4">
+                <FormItem>
                   <FormLabel>Enabled</FormLabel>
                   <FormControl>
                     <Switch
@@ -222,12 +237,12 @@ function AddDialog() {
 
             <FormField
               control={form.control}
-              name="password"
+              name="credentials"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>password</FormLabel>
+                  <FormLabel>Credentials</FormLabel>
                   <FormControl>
-                    <Input placeholder="password" {...field} />
+                    <Input placeholder="Credentials" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -240,51 +255,14 @@ function AddDialog() {
                 <FormItem>
                   <FormLabel>Groups</FormLabel>
                   <FormControl>
-                    <Popover modal>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full flex items-center justify-start"
-                        >
-                          Select Groups
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-96 max-h-96 overflow-y-auto">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Groups</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Groups to assign the user to.
-                            </p>
-                          </div>
-                          <div className="grid gap-2">
-                            {groups.map((group, i) => (
-                              <div className="w-full flex justify-between items-center gap-4">
-                                <Label htmlFor={group.name}>{group.name}</Label>
-                                <Switch
-                                  id={group.name}
-                                  checked={field.value.includes(group.name)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      field.onChange([
-                                        ...field.value,
-                                        group.name,
-                                      ]);
-                                    } else {
-                                      field.onChange(
-                                        field.value.filter(
-                                          (a) => a !== group.name
-                                        )
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <MultiSelectorInput
+                      placeholder="Select group"
+                      name={field.name}
+                      value={field.value}
+                      onSelect={(value) => {
+                        field.onChange([...field.value, value]);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -297,67 +275,31 @@ function AddDialog() {
                 <FormItem>
                   <FormLabel>Required Actions</FormLabel>
                   <FormControl>
-                    <Popover modal>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full flex items-center justify-start"
-                        >
-                          Select Required Actions
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-96">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">
-                              Actions
-                            </h4>
-                            <p className="text-sm text-muted-foreground">
-                              Actions for the user to perform on login.
-                            </p>
-                          </div>
-                          <div className="grid gap-2">
-                            {requiredActions.map((action, i) => (
-                              <div className="w-full flex justify-between items-center gap-4">
-                                <Label htmlFor={action}>{action}</Label>
-                                <Switch
-                                  id={action}
-                                  checked={field.value.includes(action)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      field.onChange([...field.value, action]);
-                                    } else {
-                                      field.onChange(
-                                        field.value.filter((a) => a !== action)
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <MultiSelectorInput
+                      placeholder="Select required actions"
+                      name={field.name}
+                      value={field.value}
+                      onSelect={(value) => {
+                        field.onChange([...field.value, value]);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="col-span-2" type="submit">
-              Submit
-            </Button>
+            <Button type="submit">Submit</Button>
           </form>
         </Form>
         <DialogFooter className="">
-          {/* <DialogClose>
+          <DialogClose>
             <Button variant="outline" id="close">
               Close
             </Button>
           </DialogClose>
           <Button type="submit" onClick={onSubmit}>
             Save changes
-          </Button> */}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

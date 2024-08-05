@@ -15,22 +15,11 @@ export interface Group {
 }
 
 export interface KeycloakGroup extends Group {
-  /** {
-    "id": "3ebd0887-464e-472a-ab34-76c49ef2c108",
-    "name": "Group",
-    "path": "/Group",
-    "subGroupCount": 0,
-    "subGroups": [],
-    "access": {
-      "view": true,
-      "viewMembers": true,
-      "manageMembers": true,
-      "manage": true,
-      "manageMembership": true
-    }
-  } */
   id: string
-  name: string
+  subGroups: KeycloakGroup[]
+  attributes: Record<string, string>
+  realmRoles: string[]
+  clientRoles: Record<string, string[]>
 }
 
 interface Role {
