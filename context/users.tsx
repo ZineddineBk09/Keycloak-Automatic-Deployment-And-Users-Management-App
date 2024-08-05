@@ -18,7 +18,7 @@ export const useUsersContext: {
     fetchUsers: (currentPage: number) => Promise<void>;
     deleteUsers: (ids: string[]) => Promise<void>;
     nextPage: () => Promise<void>;
-    prevPage: () => Promise<void>
+    prevPage: () => Promise<void>;
   };
 } = () => useContext(UsersContext as React.Context<any>);
 
@@ -36,18 +36,20 @@ export const UsersContextProvider = ({
   const [pageSize, setPageSize] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
 
-
   const fetchUsers = async (currentPage: number) => {
     try {
       if (!cookies?.kc_session) {
-        throw new Error('You need to login first to fetch users. Please login and try again.');
+        throw new Error(
+          "You need to login first to fetch users. Please login and try again."
+        );
       }
       const first = currentPage * pageSize - pageSize;
-      console.log(`users?first=${first}&max=${pageSize}`)
+      console.log(`users?first=${first}&max=${pageSize}`);
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
       setUsers((prevUsers) => {
         const newUsers = response.filter(
-          (newUser: KeycloakUser) => !prevUsers.some((user) => user.id === newUser.id)
+          (newUser: KeycloakUser) =>
+            !prevUsers.some((user) => user.id === newUser.id)
         );
 
         if (newUsers.length === 0) return prevUsers;
@@ -55,7 +57,7 @@ export const UsersContextProvider = ({
         return [...prevUsers, ...newUsers];
       });
     } catch (error: any) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
       throw error;
     }
   };
@@ -63,12 +65,14 @@ export const UsersContextProvider = ({
   const fetchUsersCount = async () => {
     try {
       if (!cookies?.kc_session) {
-        throw new Error('You need to login first to fetch users. Please login and try again.');
+        throw new Error(
+          "You need to login first to fetch users. Please login and try again."
+        );
       }
       const response = await getUsersCount();
       setTotalRecords(response);
     } catch (error: any) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
       throw error;
     }
   };
@@ -87,19 +91,20 @@ export const UsersContextProvider = ({
     }
   };
 
-
   const deleteUsers = async (ids: string[]) => {
     try {
       if (!cookies?.kc_session) {
-        throw new Error('You need to login first to delete users. Please login and try again.');
+        throw new Error(
+          "You need to login first to delete users. Please login and try again."
+        );
       }
 
-      await Promise.all(ids.map((id) => deleteRecord('users', id)));
+      await Promise.all(ids.map((id) => deleteRecord("users", id)));
       setPage(1); // Reset to first page
       setUsers([]); // Clear existing users
       await fetchUsers(1); // Fetch first page of users
     } catch (error: any) {
-      console.error('Error deleting users:', error);
+      console.error("Error deleting users:", error);
       throw error;
     }
   };
