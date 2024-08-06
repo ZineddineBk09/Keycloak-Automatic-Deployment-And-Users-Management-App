@@ -3,12 +3,14 @@ import { KeycloakUser } from "../interfaces";
 import { toast } from "sonner";
 import { getRecords, deleteRecord, getUsersCount } from "../lib/api/keycloak";
 import { useCookies } from "react-cookie";
+import { KeycloakGroup } from "../interfaces/keycloak";
 
 export const UsersContext = createContext({});
 
 export const useUsersContext: {
   (): {
     users: KeycloakUser[];
+    groups: KeycloakGroup[];
     page: number;
     pageSize: number;
     totalRecords: number;
@@ -16,6 +18,7 @@ export const useUsersContext: {
     setPage: React.Dispatch<React.SetStateAction<number>>;
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
     fetchUsers: (currentPage: number) => Promise<void>;
+    fetchGroups: () => Promise<void>;
     deleteUsers: (ids: string[]) => Promise<void>;
     nextPage: () => Promise<void>;
     prevPage: () => Promise<void>;
@@ -28,6 +31,7 @@ export const UsersContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[]);
+  const [groups, setGroups] = useState<KeycloakGroup[]>([] as KeycloakGroup[]);
   const [cookies] = useCookies(["kc_session"]);
   // implement pagination for users, since keycloak can have 100000 users or more
   // here's an example of a URL with params to control number of records returned + where to start from
@@ -44,7 +48,7 @@ export const UsersContextProvider = ({
         );
       }
       const first = currentPage * pageSize - pageSize;
-      console.log(`users?first=${first}&max=${pageSize}`);
+
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
       setUsers((prevUsers) => {
         const newUsers = response.filter(
@@ -73,6 +77,30 @@ export const UsersContextProvider = ({
       setTotalRecords(response);
     } catch (error: any) {
       console.error("Error fetching users:", error);
+      throw error;
+    }
+  };
+
+  const fetchGroups = async () => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error(
+          "You need to login first to fetch groups. Please login and try again."
+        );
+      }
+      const response = await getRecords("groups");
+      setGroups((prevGroups) => {
+        const newGroups = response.filter(
+          (newUser: KeycloakGroup) =>
+            !prevGroups.some((group) => group.id === newUser.id)
+        );
+
+        if (newGroups.length === 0) return prevGroups;
+
+        return [...prevGroups, ...newGroups];
+      });
+    } catch (error: any) {
+      console.error("Error fetching groups:", error);
       throw error;
     }
   };
@@ -122,9 +150,19 @@ export const UsersContextProvider = ({
 
   useEffect(() => {
     if (!cookies?.kc_session) return;
+    // fetch users
     fetchUsersCount()
       .then(() => {
         // toast.success('Total users count fetched');
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+
+    // fetch groups
+    fetchGroups()
+      .then(() => {
+        // toast.success('Groups fetched');
       })
       .catch((error) => {
         toast.error(error.message);
@@ -135,6 +173,7 @@ export const UsersContextProvider = ({
     <UsersContext.Provider
       value={{
         users,
+        groups,
         page,
         pageSize,
         totalRecords,
@@ -142,6 +181,7 @@ export const UsersContextProvider = ({
         setPage,
         setPageSize,
         fetchUsers,
+        fetchGroups,
         deleteUsers,
         nextPage,
         prevPage,

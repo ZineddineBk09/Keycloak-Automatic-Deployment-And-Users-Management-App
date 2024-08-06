@@ -140,9 +140,6 @@ export const columns: ColumnDef<KeycloakClient>[] = [
                 }}
               />
             </DropdownMenuItem>
-            {/* <DropdownMenuItem asChild={true}>
-              <EditDialog client={client} />
-            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       )
