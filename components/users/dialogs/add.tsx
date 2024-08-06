@@ -33,14 +33,6 @@ import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
 import { Label } from "../../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 
-const frameworksList = [
-  { value: "react", label: "React", icon: Turtle },
-  { value: "angular", label: "Angular", icon: Cat },
-  { value: "vue", label: "Vue", icon: Dog },
-  { value: "svelte", label: "Svelte", icon: Rabbit },
-  { value: "ember", label: "Ember", icon: Fish },
-];
-
 const formSchema = z.object({
   username: z.string().min(1),
   firstName: z.string().min(1),
@@ -108,7 +100,6 @@ function AddDialog() {
         document.getElementById("close")?.click();
       });
   };
-
 
   return (
     <Dialog>
