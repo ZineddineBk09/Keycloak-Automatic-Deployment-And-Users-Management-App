@@ -115,6 +115,7 @@ export function DataTable<TData, TValue>({
     const usersIds: string[] = rowsIndices.map(
       (idx: string) => (data[Number(idx)] as any).id as string
     );
+    
     deleteUsers(usersIds)
       .then(() => {
         const msg: string = usersIds.length > 1 ? "Users" : "User";
