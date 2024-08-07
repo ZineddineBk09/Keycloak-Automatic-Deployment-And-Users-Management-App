@@ -29,7 +29,6 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Switch } from "../../ui/switch";
-import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
 import { Label } from "../../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 
@@ -45,18 +44,18 @@ const formSchema = z.object({
   requiredActions: z.array(z.string()),
 });
 
-function AddDialog() {
-  const requiredActions = [
-    "VERIFY_EMAIL",
-    "UPDATE_PROFILE",
-    "CONFIGURE_TOTP",
-    "CONFIGURE_RECOVERY_AUTHN_CODES",
-    "UPDATE_PASSWORD",
-    "TERMS_AND_CONDITIONS",
-    "VERIFY_PROFILE",
-    "UPDATE_EMAIL",
-  ];
+const requiredActions = [
+  "VERIFY_EMAIL",
+  "UPDATE_PROFILE",
+  "CONFIGURE_TOTP",
+  "CONFIGURE_RECOVERY_AUTHN_CODES",
+  "UPDATE_PASSWORD",
+  "TERMS_AND_CONDITIONS",
+  "VERIFY_PROFILE",
+  "UPDATE_EMAIL",
+];
 
+function AddDialog() {
   const { groups, fetchUsers, fetchGroups, page } = useUsersContext();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -250,7 +249,10 @@ function AddDialog() {
                           </div>
                           <div className="grid gap-2">
                             {groups.map((group, i) => (
-                              <div className="w-full flex justify-between items-center gap-4">
+                              <div
+                                className="w-full flex justify-between items-center gap-4"
+                                key={group.id}
+                              >
                                 <Label htmlFor={group.name}>{group.name}</Label>
                                 <Switch
                                   id={group.name}
@@ -309,7 +311,10 @@ function AddDialog() {
                           </div>
                           <div className="grid gap-2">
                             {requiredActions.map((action, i) => (
-                              <div className="w-full flex justify-between items-center gap-4">
+                              <div
+                                className="w-full flex justify-between items-center gap-4"
+                                key={action}
+                              >
                                 <Label htmlFor={action}>{action}</Label>
                                 <Switch
                                   id={action}
@@ -341,14 +346,11 @@ function AddDialog() {
           </form>
         </Form>
         <DialogFooter className="">
-          {/* <DialogClose>
+          <DialogClose className="hidden">
             <Button variant="outline" id="close">
               Close
             </Button>
           </DialogClose>
-          <Button type="submit" onClick={onSubmit}>
-            Save changes
-          </Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>
