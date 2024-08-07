@@ -46,7 +46,7 @@ function EditDialog({ client }: { client: KeycloakClient }) {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[550px]'>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Edit Client</DialogTitle>
           <DialogDescription>
             Make changes to client here. Click save when you&apos;re done.
           </DialogDescription>

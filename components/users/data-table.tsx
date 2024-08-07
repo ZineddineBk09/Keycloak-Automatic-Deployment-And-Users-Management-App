@@ -65,8 +65,8 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState({});
   const [isDeleteDisabled, setIsDeleteDisabled] = React.useState<boolean>(true);
   const table = useReactTable({
-    data,
-    columns,
+    data:React.useMemo(() => data, [data]),
+    columns: React.useMemo(() => columns, [columns]),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

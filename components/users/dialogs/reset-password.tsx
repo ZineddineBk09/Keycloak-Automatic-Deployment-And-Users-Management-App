@@ -70,8 +70,7 @@ function ResetPasswordDialog({ userId }: { userId: string }) {
               type="password"
               value={password}
               onChange={(e) => {
-                console.log(e.target.value);
-                setPassword(e.target.value)
+                setPassword(e.target.value);
               }}
               className="col-span-3"
             />
@@ -79,9 +78,9 @@ function ResetPasswordDialog({ userId }: { userId: string }) {
         </div>
         <DialogFooter>
           <DialogClose>
-            {/* <Button variant="outline" id="close"> */}
+            <Button variant="outline" id="close">
               Close
-            {/* </Button> */}
+            </Button>
           </DialogClose>
           <Button
             type="submit"

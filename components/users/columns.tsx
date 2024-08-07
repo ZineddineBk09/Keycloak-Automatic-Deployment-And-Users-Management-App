@@ -111,7 +111,7 @@ export const columns: ColumnDef<KeycloakUser>[] = [
     id: 'actions',
     cell: ({ row, table }) => {
       const user = row.original
-      const { deleteRow, updateRow } = table.options.meta as any
+      const { deleteRow } = table.options.meta as any
 
       return (
         <DropdownMenu>
@@ -121,7 +121,7 @@ export const columns: ColumnDef<KeycloakUser>[] = [
               <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
+          <DropdownMenuContent align='end' className='z-0'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(user.id)}
