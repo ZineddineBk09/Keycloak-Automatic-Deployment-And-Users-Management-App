@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "../../ui/button";
-import { KeycloakUser } from "../../../interfaces";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +20,7 @@ import { useUsersContext } from "../../../context/users";
 
 function ResetPasswordDialog({ userId }: { userId: string }) {
   const { fetchUsers, page } = useUsersContext();
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("password");
 
   const handleResetPassword = async () => {
     await resetUserPassword(userId, password)
@@ -70,16 +69,19 @@ function ResetPasswordDialog({ userId }: { userId: string }) {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                console.log(e.target.value);
+                setPassword(e.target.value)
+              }}
               className="col-span-3"
             />
           </div>
         </div>
-        <DialogFooter className="">
+        <DialogFooter>
           <DialogClose>
-            <Button variant="outline" id="close">
+            {/* <Button variant="outline" id="close"> */}
               Close
-            </Button>
+            {/* </Button> */}
           </DialogClose>
           <Button
             type="submit"
