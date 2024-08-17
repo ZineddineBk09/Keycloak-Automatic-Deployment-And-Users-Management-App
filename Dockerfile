@@ -35,14 +35,15 @@ RUN npm install --only=production
 COPY --from=build /app/.next ./.next
 
 # Copy the public and static folders from the build stage
-COPY --from=build /app/public ./public
+# COPY --from=build /app/public ./public
 COPY --from=build /app/.next/static ./.next/static
 
 # Prisma
 COPY --from=build /app/prisma ./prisma
 
 # Move the copied public, and static folders to the .next/standalone folder
-RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
+# RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
+RUN mv .next/static .next/standalone/.next/
 
 ENV DATABASE_URL='postgres://cerist:cerist@postgres-db:5432/PFE'
 
