@@ -14,9 +14,9 @@ const CheckAuthGuard = ({ children }: { children: React.ReactNode }): any => {
     if (protectedRoutes.includes(path) && !cookies?.kc_session) {
       router.push('/')
     }
-    if (!protectedRoutes.includes(path) && cookies?.kc_session) {
-      router.push('/users')
-    }
+    // if (!protectedRoutes.includes(path) && cookies?.kc_session) {
+    //   router.push('/users')
+    // }
   }, [path, cookies?.kc_session])
 
   return children
