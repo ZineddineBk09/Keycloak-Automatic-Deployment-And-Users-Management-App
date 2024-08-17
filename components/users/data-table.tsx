@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({
         await deleteRecord("users", row.id)
           .then(() => {
             toast.success("User deleted successfully");
-            fetchUsers(page);
+            fetchUsers(1);
           })
           .catch((error) => {
             toast.error("Error deleting user");

@@ -1,7 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { KeycloakUser } from "../interfaces";
 import { toast } from "sonner";
-import { getRecords, deleteRecord, getUsersCount } from "../lib/api/keycloak";
+import {
+  getRecords,
+  getRecord,
+  deleteRecord,
+  getUsersCount,
+} from "../lib/api/keycloak";
 import { useCookies } from "react-cookie";
 import { KeycloakGroup } from "../interfaces/keycloak";
 
@@ -18,6 +23,7 @@ export const useUsersContext: {
     setPage: React.Dispatch<React.SetStateAction<number>>;
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
     fetchUsers: (currentPage: number) => Promise<void>;
+    fetchUser: (id: string) => Promise<KeycloakUser>;
     fetchGroups: () => Promise<void>;
     deleteUsers: (ids: string[]) => Promise<void>;
     nextPage: () => Promise<void>;
@@ -50,18 +56,40 @@ export const UsersContextProvider = ({
       const first = currentPage * pageSize - pageSize;
 
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
-      setUsers((prevUsers) => {
-        const newUsers = response.filter(
-          (newUser: KeycloakUser) =>
-            !prevUsers.some((user) => user.id === newUser.id)
-        );
+      console.log(response);
+      if (currentPage === 1) {
+        setUsers(response);
+        return;
+      } else {
+        setUsers((prevUsers) => {
+          const newUsers = response.filter(
+            (newUser: KeycloakUser) =>
+              !prevUsers.some((user) => user.id === newUser.id)
+          );
 
-        if (newUsers.length === 0) return prevUsers;
+          if (newUsers.length === 0) return prevUsers;
 
-        return [...prevUsers, ...newUsers];
-      });
+          return [...prevUsers, ...newUsers];
+        });
+      }
     } catch (error: any) {
       console.error("Error fetching users:", error);
+      throw error;
+    }
+  };
+
+  const fetchUser = async (id: string) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error(
+          "You need to login first to fetch users. Please login and try again."
+        );
+      }
+      console.log("fetching user with id:", id);
+      const response = await getRecord("users", id);
+      return response;
+    } catch (error: any) {
+      console.error("Error fetching user:", error);
       throw error;
     }
   };
@@ -181,6 +209,7 @@ export const UsersContextProvider = ({
         setPage,
         setPageSize,
         fetchUsers,
+        fetchUser,
         fetchGroups,
         deleteUsers,
         nextPage,

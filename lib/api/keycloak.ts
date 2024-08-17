@@ -28,6 +28,33 @@ export const getRecords = async (endpoint: string) => {
   }
 };
 
+export const getRecord = async (endpoint: string, id: string) => {
+  const kcSession = getKcSession();
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !realm || !admin) {
+    throw new Error(
+      "Error fetching record. Please check if the server is running. and try again."
+    );
+  }
+
+  try {
+    const response = await axios.get(
+      `/${admin}/realms/${realm}/${endpoint}/${id}`,
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
+    const data = await response.data;
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const createUser = async (user: User | any) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();

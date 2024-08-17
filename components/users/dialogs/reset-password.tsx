@@ -20,7 +20,7 @@ import { useUsersContext } from "../../../context/users";
 
 function ResetPasswordDialog({ userId }: { userId: string }) {
   const { fetchUsers, page } = useUsersContext();
-  const [password, setPassword] = useState("password");
+  const [password, setPassword] = useState("");
 
   const handleResetPassword = async () => {
     await resetUserPassword(userId, password)
