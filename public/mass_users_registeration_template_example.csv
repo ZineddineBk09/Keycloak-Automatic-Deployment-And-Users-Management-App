@@ -1,0 +1,11 @@
+username,firstName,lastName,emailVerified,email,enabled,groups,password,requiredActions
+ahmed.elgamal,Ahmed,Elgamal,true,ahmed.elgamal@domain.com,true,"Admin, User",S9m8kL2pX7qT,"VERIFY_EMAIL, UPDATE_PROFILE"
+fatima.khan,Fatima,Khan,false,fatima.khan@domain.com,true,"User, Moderator",R4d6uH3zN1wJ,"UPDATE_PROFILE, VERIFY_PROFILE"
+omar.ali,Omar,Ali,true,omar.ali@domain.com,true,"User, Admin",V5x9B7rP2qF8,"CONFIGURE_TOTP, UPDATE_PASSWORD"
+layla.ahmed,Layla,Ahmed,true,layla.ahmed@domain.com,false,Manager,K0a4L3mC7tZ9,"UPDATE_PASSWORD, TERMS_AND_CONDITIONS"
+mohammed.alsayed,Mohammed,Alsayed,true,mohammed.alsayed@domain.com,true,"Admin, Support",W8r2V5jN6kH3,"TERMS_AND_CONDITIONS, VERIFY_PROFILE"
+noura.fadel,Noura,Fadel,false,noura.fadel@domain.com,true,User,X7u1M8vL4zQ2,"VERIFY_PROFILE, UPDATE_EMAIL"
+youssef.elhaj,Youssef,Elhaj,true,youssef.elhaj@domain.com,true,"Editor, Contributor",T6p9R3wK7yL1,"UPDATE_EMAIL, CONFIGURE_RECOVERY_AUTHN_CODES"
+salma.nasser,Salma,Nasser,true,salma.nasser@domain.com,false,"Admin, Editor",H5z8N2xV4mQ7,"UPDATE_PROFILE, VERIFY_EMAIL"
+ibrahim.abdul,Ibrahim,Abdul,true,ibrahim.abdul@domain.com,true,"Support, User",J1r3L6pT9kX0,"CONFIGURE_RECOVERY_AUTHN_CODES, UPDATE_PASSWORD"
+amira.hassan,Amira,Hassan,false,amira.hassan@domain.com,true,"Manager, Editor",Y4m7V5xN2bQ8,"VERIFY_EMAIL, UPDATE_PROFILE"
