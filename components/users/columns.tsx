@@ -115,6 +115,7 @@ export const columns: ColumnDef<KeycloakUser>[] = [
 
       return (
         <div className="flex items-center gap-x-5">
+          <ResetPasswordDialog userId={user?.id} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -153,7 +154,6 @@ export const columns: ColumnDef<KeycloakUser>[] = [
             </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
-          <ResetPasswordDialog userId={user?.id} />
         </div>
       );
     },
