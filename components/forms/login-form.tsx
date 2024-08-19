@@ -74,7 +74,7 @@ export function ClientLoginForm() {
       });
 
       toast.success("Successfully logged in");
-      //router.push('/users')
+      router.push('/users')
     } else {
       const { data } = await response.json();
       const msg =
