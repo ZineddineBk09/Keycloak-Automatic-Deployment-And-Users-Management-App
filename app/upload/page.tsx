@@ -6,10 +6,9 @@ import { UsersContextProvider } from "../../context/csv";
 
 export default function UploadPage() {
   const downloadTemplate = () => {
-    // download csv file in /public/mass_users_registeration_template_example.csv
     window.open("/mass_users_registeration_template_example.csv");
   };
-  
+
   return (
     <UsersContextProvider>
       <div className="container mx-auto py-10">
