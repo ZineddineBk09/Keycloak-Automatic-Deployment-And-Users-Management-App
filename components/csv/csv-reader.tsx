@@ -5,7 +5,7 @@ import { useCSVReader } from "react-papaparse";
 import { User } from "../../interfaces";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { TrashIcon, TableIcon } from "@radix-ui/react-icons";
+import { TrashIcon, TableIcon, FilePlusIcon, FileIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 
@@ -125,15 +125,23 @@ const CsvReader = () => {
           <>
             <div className="w-full flex items-center gap-x-6 m-auto">
               <Button variant="outline" type="button" {...getRootProps()}>
-                Upload CSV
-                <TableIcon
-                  className="h-5 w-5 text-gray-500 ml-2"
+                <FilePlusIcon
+                  className="h-5 w-5 text-gray-500 mr-2"
                   aria-hidden="true"
                 />
+                Upload CSV
               </Button>
 
-              <div className="flex-1">
-                File: {acceptedFile && acceptedFile.name}
+              <div className="flex-1 flex items-center">
+              <FileIcon
+                  className="h-6 w-6 text-gray-500 mr-2"
+                  aria-hidden="true"
+                /> File:{" "}
+                {acceptedFile && (
+                  <span className="ml-2 rounded py-1 px-2 bg-gray-100">
+                    {acceptedFile.name}
+                  </span>
+                )}
               </div>
 
               <Button
@@ -141,14 +149,19 @@ const CsvReader = () => {
                 {...getRemoveFileProps()}
                 onClick={() => setUsers([])}
               >
-                Clear
                 <TrashIcon
-                  className="h-6 w-6 text-red-500 ml-2"
+                  className="h-6 w-6 text-red-500 mr-2"
                   aria-hidden="true"
                 />
+                Clear
               </Button>
             </div>
-            <ProgressBar style={styles.progressBarBackgroundColor} />
+            <ProgressBar
+              style={{
+                ...styles.progressBarBackgroundColor,
+                marginTop: "20px",
+              }}
+            />
           </>
         )}
       </CSVReader>
