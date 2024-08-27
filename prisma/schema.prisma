@@ -21,43 +21,26 @@ model Client {
   updatedAt    DateTime @updatedAt
 }
 
-model OpenstackKeycloak {
-  id            String   @id @default(cuid())
-  username      String
-  userId        String   @unique
-  tenantId      String //! tenant name same as Project ID 
-  project       String
-  domain        String   @default("Default") //! domain name, NOT domain id
-  baseUrl       String
-  flavor        String   @default("m1.small")
-  keypair       String   @default("keycloak")
-  network       String   @default("private")
-  keycloakPort  String   @default("8080")
-  securityGroup String   @default("default")
-  realmName     String   @default("master")
-  adminUsername String   @default("admin")
-  adminPassword String   @default("admin")
-  stackId       String   @default("keycloak")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+// create a history model, that will save the history of upload users page so that the admin can have a global view on what users been uploaded successfuly and what users failed + axios error response to help in debugging
+model User {
+  id        String    @id @default(cuid())
+  username  String
+  historyId String?
+  History   History[] @relation("HistoryUser")
 }
 
-model Deployment {
-  id            String   @id @default(cuid())
-  deploymentId  String   @unique //! stack id 
-  username      String
-  userId        String   @unique
-  tenantId      String   @unique
-  project       String
-  domain        String   @default("Default") //! domain name, NOT domain id
-  baseUrl       String
-  flavor        String   @default("m1.small")
-  keypair       String   @default("keycloak")
-  network       String   @default("private")
-  keycloakPort  String   @default("8080")
-  securityGroup String   @default("default")
-  realmName     String   @default("master")
-  adminUsername String   @default("admin")
-  adminPassword String   @default("admin")
-  createdAt     DateTime @default(now())
+model History {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation("HistoryUser", fields: [userId], references: [id])
+  error   Json?
+  batchId String
+  batch   Batch  @relation(fields: [batchId], references: [id])
+}
+
+model Batch {
+  id        String    @id @default(cuid())
+  batchName String
+  histories History[]
+  timestamp DateTime  @default(now()) // When the batch was created
 }
