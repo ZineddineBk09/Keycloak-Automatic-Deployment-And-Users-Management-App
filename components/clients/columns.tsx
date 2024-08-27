@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { KeycloakClient } from '../../interfaces'
-import DeleteDialog from '../shared/dialogs/delete'
-import DetailsDialog from '../shared/dialogs/details'
+import DeleteDialog from '../../app/shared/dialogs/delete'
+import DetailsDialog from '../../app/shared/dialogs/details'
 
 export const columns: ColumnDef<KeycloakClient>[] = [
   {

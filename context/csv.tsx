@@ -1,7 +1,10 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../interfaces";
 import { useRouter } from "next/navigation";
 import { createUser } from "../lib/api/keycloak";
+import { History } from "../interfaces/history";
+import axios from "axios";
+import { toast } from "sonner";
 
 // create an interface that represents user creation, success or failure
 interface UserCreation {
@@ -15,7 +18,9 @@ export const useUsersContext: {
   (): {
     users: User[];
     progress: number;
+    fileName: string;
     setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+    setFileName: React.Dispatch<React.SetStateAction<string>>;
     uploadToKeycloak: () => void;
     deleteUser: (username: string) => void;
   };
@@ -27,10 +32,14 @@ export const UsersContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [users, setUsers] = useState<User[]>([] as User[]);
+  const [fileName, setFileName] = useState<string>("");
   const [progress, setProgress] = useState<number>(0);
   const router = useRouter();
+  const [errors, setErrors] = useState([]);
 
   const uploadToKeycloak = async () => {
+    const localErrors: any[] = [];
+
     try {
       await Promise.all(
         users.map(async (user) => {
@@ -40,15 +49,34 @@ export const UsersContextProvider = ({
             })
             .catch((error) => {
               console.error("Error uploading user:", error);
+
+              localErrors.push({
+                username: user.username,
+                status: "failure",
+                error: {
+                  message: error?.response?.data.errorMessage || "",
+                  code: error?.code || "",
+                },
+              });
             });
         })
       );
+
+      const batch = {
+        batchName: fileName,
+        histories: localErrors,
+      };
+
+      const response = await axios.post("/api/history", batch).then((res) => {
+        console.log("Batch created successfully:", res.data);
+        toast.info("Error batch created successfully, check history");
+      });
 
       // timeout of 2 seconds to allow the progress bar to reach 100%
       setTimeout(() => {
         setUsers([]);
         router.push("/users");
-      }, 2000);
+      }, 5000);
     } catch (error: any) {
       console.error("Error uploading users:", error);
     }
@@ -58,12 +86,17 @@ export const UsersContextProvider = ({
     setUsers(users.filter((user) => user.username !== username));
   };
 
+  useEffect(() => {
+    console.log("Errors:", errors);
+  }, [errors]);
+
   return (
     <UsersContext.Provider
       value={{
         users,
         progress,
         setUsers,
+        setFileName,
         uploadToKeycloak,
         deleteUser,
       }}

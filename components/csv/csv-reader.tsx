@@ -5,7 +5,12 @@ import { useCSVReader } from "react-papaparse";
 import { User } from "../../interfaces";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { TrashIcon, TableIcon, FilePlusIcon, FileIcon } from "@radix-ui/react-icons";
+import {
+  TrashIcon,
+  TableIcon,
+  FilePlusIcon,
+  FileIcon,
+} from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 
@@ -31,7 +36,7 @@ const styles = {
 
 const CsvReader = () => {
   const { CSVReader } = useCSVReader();
-  const { setUsers, users } = useUsersContext();
+  const { setUsers, setFileName, users } = useUsersContext();
 
   return (
     <div className="w-full">
@@ -121,49 +126,54 @@ const CsvReader = () => {
           acceptedFile,
           ProgressBar,
           getRemoveFileProps,
-        }: any) => (
-          <>
-            <div className="w-full flex items-center gap-x-6 m-auto">
-              <Button variant="outline" type="button" {...getRootProps()}>
-                <FilePlusIcon
-                  className="h-5 w-5 text-gray-500 mr-2"
-                  aria-hidden="true"
-                />
-                Upload CSV
-              </Button>
+        }: any) => {
+          setFileName(acceptedFile?.name || "No file chosen");
 
-              <div className="flex-1 flex items-center">
-              <FileIcon
-                  className="h-6 w-6 text-gray-500 mr-2"
-                  aria-hidden="true"
-                /> File:{" "}
-                {acceptedFile && (
-                  <span className="ml-2 rounded py-1 px-2 bg-gray-100">
-                    {acceptedFile.name}
-                  </span>
-                )}
+          return (
+            <>
+              <div className="w-full flex items-center gap-x-6 m-auto">
+                <Button variant="outline" type="button" {...getRootProps()}>
+                  <FilePlusIcon
+                    className="h-5 w-5 text-gray-500 mr-2"
+                    aria-hidden="true"
+                  />
+                  Upload CSV
+                </Button>
+
+                <div className="flex-1 flex items-center">
+                  <FileIcon
+                    className="h-6 w-6 text-gray-500 mr-2"
+                    aria-hidden="true"
+                  />{" "}
+                  File:{" "}
+                  {acceptedFile && (
+                    <span className="ml-2 rounded py-1 px-2 bg-gray-100">
+                      {acceptedFile.name}
+                    </span>
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  {...getRemoveFileProps()}
+                  onClick={() => setUsers([])}
+                >
+                  <TrashIcon
+                    className="h-6 w-6 text-red-500 mr-2"
+                    aria-hidden="true"
+                  />
+                  Clear
+                </Button>
               </div>
-
-              <Button
-                variant="outline"
-                {...getRemoveFileProps()}
-                onClick={() => setUsers([])}
-              >
-                <TrashIcon
-                  className="h-6 w-6 text-red-500 mr-2"
-                  aria-hidden="true"
-                />
-                Clear
-              </Button>
-            </div>
-            <ProgressBar
-              style={{
-                ...styles.progressBarBackgroundColor,
-                marginTop: "20px",
-              }}
-            />
-          </>
-        )}
+              <ProgressBar
+                style={{
+                  ...styles.progressBarBackgroundColor,
+                  marginTop: "20px",
+                }}
+              />
+            </>
+          );
+        }}
       </CSVReader>
       {users.length > 0 && <DataTable columns={columns} data={users} />}
     </div>
