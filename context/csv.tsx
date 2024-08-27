@@ -35,7 +35,6 @@ export const UsersContextProvider = ({
   const [fileName, setFileName] = useState<string>("");
   const [progress, setProgress] = useState<number>(0);
   const router = useRouter();
-  const [errors, setErrors] = useState([]);
 
   const uploadToKeycloak = async () => {
     const localErrors: any[] = [];
@@ -68,8 +67,7 @@ export const UsersContextProvider = ({
       };
 
       const response = await axios.post("/api/history", batch).then((res) => {
-        console.log("Batch created successfully:", res.data);
-        toast.info("Error batch created successfully, check history");
+        toast.info("Errors has been saved to the database, check history");
       });
 
       // timeout of 2 seconds to allow the progress bar to reach 100%
@@ -85,10 +83,6 @@ export const UsersContextProvider = ({
   const deleteUser = async (username: string) => {
     setUsers(users.filter((user) => user.username !== username));
   };
-
-  useEffect(() => {
-    console.log("Errors:", errors);
-  }, [errors]);
 
   return (
     <UsersContext.Provider
