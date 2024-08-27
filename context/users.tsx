@@ -56,7 +56,6 @@ export const UsersContextProvider = ({
       const first = currentPage * pageSize - pageSize;
 
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
-      console.log(response);
       if (currentPage === 1) {
         setUsers(response);
         return;
@@ -85,7 +84,6 @@ export const UsersContextProvider = ({
           "You need to login first to fetch users. Please login and try again."
         );
       }
-      console.log("fetching user with id:", id);
       const response = await getRecord("users", id);
       return response;
     } catch (error: any) {
