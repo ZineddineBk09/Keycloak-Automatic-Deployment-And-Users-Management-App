@@ -52,11 +52,12 @@ export function MainNav({
       label: "Settings",
       condition: cookies?.kc_session,
     },
+    {
+      href: "/history",
+      label: "History",
+      condition: cookies?.kc_session,
+    },
   ];
-
-  // const displayNav = () => publicRoutes.includes(path);
-
-  // if (!displayNav()) return null;
 
   return (
     <div className="flex h-16 items-center px-4 border-b relative lg:px-16">
