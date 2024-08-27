@@ -207,7 +207,6 @@ function UploadProgress() {
   );
 
   React.useEffect(() => {
-    console.log(progress, users.length);
     if (progress === users.length) {
       setTitle("Upload complete 🎉🎉");
       setDescription("Users have been successfully uploaded to Keycloak.");
