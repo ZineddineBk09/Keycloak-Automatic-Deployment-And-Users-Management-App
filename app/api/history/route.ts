@@ -94,11 +94,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("====================================");
-    console.log("Histories:", histories);
-    console.log("Batch Name:", batchName);
-    console.log("====================================");
-
     const batch = await prisma.batch.create({
       data: {
         batchName,
