@@ -115,6 +115,7 @@ export const columns: ColumnDef<KeycloakUser>[] = [
 
       return (
         <div className="flex items-center gap-x-5">
+          <EditDialog user={user} />
           <ResetPasswordDialog userId={user?.id} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -145,10 +146,10 @@ export const columns: ColumnDef<KeycloakUser>[] = [
                   }}
                 />
               </DropdownMenuItem>
-              <DropdownMenuItem asChild={true}>
+              {/* <DropdownMenuItem asChild={true}>
                 <EditDialog user={user} />
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              </DropdownMenuItem> */}
+              {/* <DropdownMenuSeparator /> */}
               {/* <DropdownMenuItem asChild={true}>
               <ResetPasswordDialog userId={user?.id} />
             </DropdownMenuItem> */}
