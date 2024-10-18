@@ -105,7 +105,7 @@ sudo docker build -t "keycloak-users-management-and-auto-deploy-app" .
 sudo docker run -p 3000:3000 -d keycloak-users-management-and-auto-deploy-app
 ```
 
-5. ###  Open your browser and navigate to `http://localhost:3000` to access the app.
+5. ###  Open your browser and navigate to `http://127.0.0.1:3000` to access the app.
 
    <img src="./public/screenshots/landing-page.png" alt="Keycloak Management App" width="750">
 
