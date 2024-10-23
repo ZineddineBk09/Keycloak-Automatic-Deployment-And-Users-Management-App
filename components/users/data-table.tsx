@@ -65,7 +65,7 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState({});
   const [isDeleteDisabled, setIsDeleteDisabled] = React.useState<boolean>(true);
   const table = useReactTable({
-    data:React.useMemo(() => data, [data]),
+    data: React.useMemo(() => data, [data]),
     columns: React.useMemo(() => columns, [columns]),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
       updateRow: async (row: KeycloakUser) => {
         await updateRecord("users", row, row.id)
           .then(() => {
-            toast.success("User updated successfully!!!!!!");
+            toast.success("User updated successfully!");
             fetchUsers(1);
           })
           .catch((error) => {
@@ -115,7 +115,7 @@ export function DataTable<TData, TValue>({
     const usersIds: string[] = rowsIndices.map(
       (idx: string) => (data[Number(idx)] as any).id as string
     );
-    
+
     deleteUsers(usersIds)
       .then(() => {
         const msg: string = usersIds.length > 1 ? "Users" : "User";
@@ -132,7 +132,6 @@ export function DataTable<TData, TValue>({
   }, [users]);
 
   // check if there is any rows selected to enable the delete button
-
   React.useEffect(() => {
     if (Object.keys(rowSelection).length) {
       setIsDeleteDisabled(false);
@@ -212,6 +211,7 @@ export function DataTable<TData, TValue>({
                     toast.success("Users fetched successfully");
                   })
                   .catch((error) => {
+                    console.log(error)
                     toast.error("Error fetching users");
                   });
               }}

@@ -49,6 +49,7 @@ export const UsersContextProvider = ({
   const fetchUsers = async (currentPage: number) => {
     try {
       if (!cookies?.kc_session) {
+        console.log('No token available')
         throw new Error(
           "You need to login first to fetch users. Please login and try again."
         );
@@ -56,6 +57,7 @@ export const UsersContextProvider = ({
       const first = currentPage * pageSize - pageSize;
 
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
+      console.log("Users ctxt:", response);
       if (currentPage === 1) {
         setUsers(response);
         return;
@@ -100,6 +102,7 @@ export const UsersContextProvider = ({
         );
       }
       const response = await getUsersCount();
+      console.log(response)
       setTotalRecords(response);
     } catch (error: any) {
       console.error("Error fetching users:", error);

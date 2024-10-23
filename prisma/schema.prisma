@@ -1,7 +1,7 @@
 datasource db {
   provider = "postgresql"
-  url      = "postgres://cerist:cerist@127.0.0.1:5432/PFE"
-  // env("DATABASE_URL")
+  url      = "postgres://cts-user:cts_2024@127.0.0.1:5432/CTS_DB" // url format: postgresql://[user]:[password]@[host]:[port]/[database]
+  // postgres://<username>:<password>@<host>:<port>/<database>
 }
 
 generator client {

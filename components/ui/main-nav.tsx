@@ -6,7 +6,7 @@ import { ThemeSwitch } from "../theme-switch";
 import { useCookies } from "react-cookie";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { publicRoutes } from "../../routes";
+import Logo from "./logo";
 
 interface NavLink {
   href: string;
@@ -61,7 +61,7 @@ export function MainNav({
 
   return (
     <div className="flex h-16 items-center px-4 border-b relative lg:px-16">
-      <ThemeSwitch />
+      <Logo />
 
       <nav
         className={cn("flex items-center space-x-4 lg:space-x-6", className)}
@@ -89,6 +89,8 @@ export function MainNav({
       <div className="absolute right-4">
         {cookies?.kc_session ? <SignOut /> : null}
       </div>
+      
+      <ThemeSwitch />
     </div>
   );
 }
