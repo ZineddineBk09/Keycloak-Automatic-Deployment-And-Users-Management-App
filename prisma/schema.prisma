@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = "postgres://cts-user:cts_2024@127.0.0.1:5432/CTS_DB" // url format: postgresql://[user]:[password]@[host]:[port]/[database]
+  url      = env("DATABASE_URL")  // url format: postgresql://[user]:[password]@[host]:[port]/[database]
   // postgres://<username>:<password>@<host>:<port>/<database>
 }
 
