@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { User } from "../../interfaces";
 import axios from "../axios/keycloak";
 import { jwtDecode } from "jwt-decode";
+import { Group } from "../../interfaces/keycloak";
 
 export const getRecords = async (endpoint: string) => {
   const kcSession = getKcSession();
@@ -61,7 +62,7 @@ export const createUser = async (user: User | any) => {
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error creating user. Please check if the Keycloak server is running. and try again."
+      "Error creating user. Please check if the IAM server is running. and try again."
     );
   }
 
@@ -84,13 +85,46 @@ export const createUser = async (user: User | any) => {
   }
 };
 
+export const createGroup = async (group: Group | any) => {
+  const kcSession = getKcSession();
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !realm || !admin) {
+    throw new Error(
+      "Error creating group. Please check if the IAM server is running. and try again."
+    );
+  }
+
+  try {
+    const response = await axios.post(
+      `/${admin}/realms/${realm}/groups`,
+      group,
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
+    const data = await response.data;
+
+    // if (response.status === 201) {
+    // toast.success(`User ${user.username} created`);
+    // }
+    return data;
+  } catch (error: any) {
+    toast.error(`Failed to create group ${group.name}`);
+    throw error;
+  }
+};
+
 export const deleteRecord = async (endpoint: string, id: string) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error deleting record. Please check if the Keycloak server is running. and try again."
+      "Error deleting record. Please check if the IAM server is running. and try again."
     );
   }
 
@@ -121,7 +155,7 @@ export const updateRecord = async (
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error updating record. Please check if the Keycloak server is running. and try again."
+      "Error updating record. Please check if the IAM server is running. and try again."
     );
   }
 
@@ -185,7 +219,7 @@ const getKcSession = () => {
 
 // return users count : http://127.0.0.1:8080/admin/realms/master/users/count
 // response will be a number: 100
-export const getUsersCount = async () => {
+export const getCount = async (endpoint: string) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
 
@@ -196,12 +230,15 @@ export const getUsersCount = async () => {
   }
 
   try {
-    const response = await axios.get(`/${admin}/realms/${realm}/users/count`, {
-      baseURL: domain,
-      headers: {
-        Authorization: `Bearer ${kcSession}`,
-      },
-    });
+    const response = await axios.get(
+      `/${admin}/realms/${realm}/${endpoint}/count`,
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
     const data = await response.data;
     return data;
   } catch (error) {

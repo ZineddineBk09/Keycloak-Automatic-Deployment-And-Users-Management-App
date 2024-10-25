@@ -1,35 +1,69 @@
-version: '3.8'
-services:
-  web:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    volumes:
-      - ./package-lock.json:/app/package-lock.json:ro
-      - .:/app
-    command: npm run start
-    ports:
-      - '3000:3000'
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: 'postgres://xxxx:xxxx@xxxx:5432/xxxx'
-    depends_on:
-      db:
-        condition: service_healthy
+version: "3.8"
 
-  db:
-    image: postgres:13
-    restart: always
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
+services:
+  # App service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
-      POSTGRES_USER: xxxx
-      POSTGRES_PASSWORD: xxxx
-      POSTGRES_DB: xxxx
+      DATABASE_URL: postgres://cts-user:cts_2024@postgres-db:5432/CTS_DB
+    expose:
+      - "3000" # Expose internal port 3000 for Nginx reverse proxy
+    volumes:
+      # Mount CSV file into the app's public folder and make it available for download
+      - ./public/mass_users_registeration_template_example.csv:/app/public/mass_users_registeration_template_example.csv
+    depends_on:
+      - postgres-db # Ensure Postgres is ready before the app starts
+    networks:
+      - app-network
+
+  # PostgreSQL service
+  postgres-db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=cts-user
+      - POSTGRES_PASSWORD=cts_2024
+      - POSTGRES_DB=CTS_DB
     ports:
-      - '5432:5432'
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U xxxx -d xxxx -h 127.0.0.1 -p 5432']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "5432:5432" # Expose Postgres on port 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Nginx reverse proxy for SSL termination
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80" # HTTP port
+      - "443:443" # HTTPS port
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      # Mount Let's Encrypt certificates to Nginx
+      - ../certbot/iam.ahscen.cloud.cerist.dz/cert.pem:/etc/ssl/certs/fullchain.pem:ro
+      - ../certbot/iam.ahscen.cloud.cerist.dz/key.pem:/etc/ssl/private/privkey.pem:ro
+    depends_on:
+      - app # Nginx will only start after the app service is ready
+      - certbot
+    networks:
+      - app-network
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - ./certbot/iam.ahscen.cloud.cerist.dz:/var/www/certbot 
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot -d iam.ahscen.cloud.cerist.dz --quiet; sleep 12h & wait $${!}; done;"
+    networks:
+      - app-network
+
+# Define a custom network for services to communicate
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes for persistent storage
+volumes:
+  postgres-data:

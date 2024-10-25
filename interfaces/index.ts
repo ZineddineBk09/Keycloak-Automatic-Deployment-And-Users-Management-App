@@ -92,6 +92,13 @@ export interface Client {
   updatedAt: string;
 }
 
+export interface KeycloakGroup {
+  id: string;
+  name: string;
+  path: string;
+  subGroupCount: number;
+}
+
 export interface DecodedJWT {
   exp: number;
   iat: number;

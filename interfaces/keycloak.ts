@@ -11,7 +11,6 @@ export interface User {
 
 export interface Group {
   name: string
-  path: string
 }
 
 export interface KeycloakGroup extends Group {
