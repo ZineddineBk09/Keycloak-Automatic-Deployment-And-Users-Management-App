@@ -5,7 +5,7 @@ import {
   getRecords,
   getRecord,
   deleteRecord,
-  getUsersCount,
+  getCount,
 } from "../lib/api/keycloak";
 import { useCookies } from "react-cookie";
 import { KeycloakGroup } from "../interfaces/keycloak";
@@ -49,7 +49,7 @@ export const UsersContextProvider = ({
   const fetchUsers = async (currentPage: number) => {
     try {
       if (!cookies?.kc_session) {
-        console.log('No token available')
+        console.log("No token available");
         throw new Error(
           "You need to login first to fetch users. Please login and try again."
         );
@@ -90,22 +90,6 @@ export const UsersContextProvider = ({
       return response;
     } catch (error: any) {
       console.error("Error fetching user:", error);
-      throw error;
-    }
-  };
-
-  const fetchUsersCount = async () => {
-    try {
-      if (!cookies?.kc_session) {
-        throw new Error(
-          "You need to login first to fetch users. Please login and try again."
-        );
-      }
-      const response = await getUsersCount();
-      console.log(response)
-      setTotalRecords(response);
-    } catch (error: any) {
-      console.error("Error fetching users:", error);
       throw error;
     }
   };
@@ -179,14 +163,6 @@ export const UsersContextProvider = ({
 
   useEffect(() => {
     if (!cookies?.kc_session) return;
-    // fetch users
-    fetchUsersCount()
-      .then(() => {
-        // toast.success('Total users count fetched');
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
 
     // fetch groups
     fetchGroups()

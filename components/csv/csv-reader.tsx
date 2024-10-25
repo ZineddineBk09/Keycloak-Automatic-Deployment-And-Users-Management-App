@@ -147,7 +147,7 @@ const CsvReader = () => {
                   />{" "}
                   File:{" "}
                   {acceptedFile && (
-                    <span className="ml-2 rounded py-1 px-2 bg-gray-100">
+                    <span className="ml-2 rounded py-1 px-2 bg-gray-100 dark:bg-gray-800">
                       {acceptedFile.name}
                     </span>
                   )}

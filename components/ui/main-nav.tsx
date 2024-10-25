@@ -33,6 +33,11 @@ export function MainNav({
       condition: cookies?.kc_session,
     },
     {
+      href: "/groups",
+      label: "Groups",
+      condition: cookies?.kc_session,
+    },
+    {
       href: "/upload",
       label: "Upload",
       condition: cookies?.kc_session,

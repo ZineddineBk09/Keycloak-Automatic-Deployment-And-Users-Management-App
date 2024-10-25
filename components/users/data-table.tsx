@@ -39,7 +39,7 @@ import { Skeleton } from "../ui/skeleton";
 import { KeycloakUser } from "../../interfaces";
 import {
   deleteRecord,
-  getUsersCount,
+  getCount,
   updateRecord,
 } from "../../lib/api/keycloak";
 import { toast } from "sonner";
@@ -141,7 +141,7 @@ export function DataTable<TData, TValue>({
   }, [rowSelection]);
 
   React.useEffect(() => {
-    getUsersCount().then((data) => {
+    getCount('users').then((data) => {
       setCount(data);
     });
   }, [users]);
