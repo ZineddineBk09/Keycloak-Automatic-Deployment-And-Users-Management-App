@@ -42,8 +42,6 @@ COPY --from=build /app/prisma ./prisma
 RUN mv .next/static .next/standalone/.next/
 RUN mv public .next/standalone/public
 
-ENV DATABASE_URL='postgres://cerist:cerist@postgres-db:5432/PFE'
-
 # Expose the port 3000 for the app
 EXPOSE 3000
 
