@@ -19,6 +19,7 @@ export const useUsersContext: {
     page: number;
     pageSize: number;
     totalRecords: number;
+    loading: boolean;
     setUsers: React.Dispatch<React.SetStateAction<KeycloakUser[]>>;
     setPage: React.Dispatch<React.SetStateAction<number>>;
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
@@ -45,9 +46,11 @@ export const UsersContextProvider = ({
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchUsers = async (currentPage: number) => {
     try {
+      setLoading(true);
       if (!cookies?.kc_session) {
         console.log("No token available");
         throw new Error(
@@ -76,6 +79,8 @@ export const UsersContextProvider = ({
     } catch (error: any) {
       console.error("Error fetching users:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -182,6 +187,7 @@ export const UsersContextProvider = ({
         page,
         pageSize,
         totalRecords,
+        loading,
         setUsers,
         setPage,
         setPageSize,

@@ -37,11 +37,7 @@ import { useUsersContext } from "../../context/users";
 import { ReloadIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Skeleton } from "../ui/skeleton";
 import { KeycloakUser } from "../../interfaces";
-import {
-  deleteRecord,
-  getCount,
-  updateRecord,
-} from "../../lib/api/keycloak";
+import { deleteRecord, getCount, updateRecord } from "../../lib/api/keycloak";
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 import AddDialog from "./dialogs/add";
@@ -53,7 +49,8 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { users, page, pageSize, fetchUsers, deleteUsers } = useUsersContext();
+  const { users, page, pageSize, loading, fetchUsers, deleteUsers } =
+    useUsersContext();
   const [data, setData] = React.useState<TData[]>([] as TData[]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -141,7 +138,7 @@ export function DataTable<TData, TValue>({
   }, [rowSelection]);
 
   React.useEffect(() => {
-    getCount('users').then((data) => {
+    getCount("users").then((data) => {
       setCount(data);
     });
   }, [users]);
@@ -211,7 +208,7 @@ export function DataTable<TData, TValue>({
                     toast.success("Users fetched successfully");
                   })
                   .catch((error) => {
-                    console.log(error)
+                    console.log(error);
                     toast.error("Error fetching users");
                   });
               }}
@@ -245,7 +242,7 @@ export function DataTable<TData, TValue>({
               ))}
             </TableHeader>
             <TableBody>
-              {table?.getRowModel().rows?.length ? (
+              {table?.getRowModel().rows?.length || !loading ? (
                 table?.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}

@@ -23,10 +23,12 @@ export const HistoryContextProvider = ({
 }) => {
   const [batches, setBatches] = useState<Batch[]>([] as Batch[]);
   const [cookies, setCookie, removeCookie] = useCookies(["kc_session"]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchBatches = async () => {
     // call the create user API
     try {
+      setLoading(true);
       if (!cookies?.kc_session) {
         throw new Error(
           "You need to login first to fetch batches. Please login and try again."
@@ -41,6 +43,8 @@ export const HistoryContextProvider = ({
     } catch (error: any) {
       console.error("Error fetching batches:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,6 +78,7 @@ export const HistoryContextProvider = ({
     <HistoryContext.Provider
       value={{
         batches,
+        loading,
         setBatches,
         fetchBatches,
         deleteBatches,

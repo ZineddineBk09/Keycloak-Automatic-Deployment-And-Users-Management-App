@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { clients, fetchClients, deleteClients } = useClientsContext();
+  const { clients,loading, fetchClients, deleteClients } = useClientsContext();
   const [data, setData] = React.useState<TData[]>([] as TData[]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -229,7 +229,7 @@ export function DataTable<TData, TValue>({
               ))}
             </TableHeader>
             <TableBody>
-              {table?.getRowModel().rows?.length ? (
+              {table?.getRowModel().rows?.length || !loading  ? (
                 table?.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}

@@ -49,7 +49,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
-  const { groups, fetchGroups, deleteGroups } = useGroupsContext();
+  const { groups, loading, fetchGroups, deleteGroups } = useGroupsContext();
   const [data, setData] = React.useState<TData[]>([] as TData[]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -160,7 +160,7 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
           />
           <div className="flex items-center gap-x-4 ml-auto">
-          <AddDialog />
+            <AddDialog />
             {!isDeleteDisabled && (
               <Button variant="outline" onClick={handleDeleteUsers}>
                 Delete ({Object.keys(rowSelection).length})
@@ -238,7 +238,7 @@ export function DataTable<TData, TValue>({
               ))}
             </TableHeader>
             <TableBody>
-              {table?.getRowModel().rows?.length ? (
+              {table?.getRowModel().rows?.length || !loading ? (
                 table?.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
