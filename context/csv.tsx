@@ -2,15 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../interfaces";
 import { useRouter } from "next/navigation";
 import { createUser } from "../lib/api/keycloak";
-import { History } from "../interfaces/history";
 import axios from "axios";
 import { toast } from "sonner";
-
-// create an interface that represents user creation, success or failure
-interface UserCreation {
-  user: User;
-  success: boolean;
-}
 
 export const UsersContext = createContext({});
 
