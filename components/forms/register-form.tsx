@@ -79,7 +79,7 @@ export function ClientRegisterForm() {
       realmId: "master",
       authProtocol: "openid-connect",
       adminUser: "admin",
-      serverUrl: "https://keycloak.example.com:8080",
+      serverUrl: "https://auth.ahscen.cloud.cerist.dz",
     },
   });
 
