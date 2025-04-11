@@ -21,26 +21,34 @@ model Client {
   updatedAt    DateTime @updatedAt
 }
 
-// create a history model, that will save the history of upload users page so that the admin can have a global view on what users been uploaded successfuly and what users failed + axios error response to help in debugging
-model User {
-  id        String    @id @default(cuid())
-  username  String
-  historyId String?
-  History   History[] @relation("HistoryUser")
-}
-
 model History {
-  id      String @id @default(cuid())
-  userId  String
-  user    User   @relation("HistoryUser", fields: [userId], references: [id])
-  error   Json?
-  batchId String
-  batch   Batch  @relation(fields: [batchId], references: [id])
+  id        String   @id @default(uuid())
+  batchId   String
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  username  String
+  status    String
+  operation String
+  timestamp DateTime
+  error     Json?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([batchId])
+  @@index([status])
+  @@index([operation])
 }
 
 model Batch {
-  id        String    @id @default(cuid())
-  batchName String
-  histories History[]
-  timestamp DateTime  @default(now()) // When the batch was created
+  id           String     @id @default(uuid())
+  batchName    String
+  timestamp    DateTime
+  successCount Int       @default(0)
+  failureCount Int       @default(0)
+  metadata     Json?
+  histories    History[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([timestamp])
 }

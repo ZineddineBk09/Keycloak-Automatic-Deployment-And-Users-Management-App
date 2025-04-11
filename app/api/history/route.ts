@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "../../../db";
+import { Batch, HistoryEntry } from "../../../interfaces/history";
 
 // GET: Retrieve all batches or a specific batch with histories
 export async function GET(request: NextRequest) {
@@ -10,11 +11,7 @@ export async function GET(request: NextRequest) {
     const batch = await prisma.batch.findUnique({
       where: { id: batchId },
       include: {
-        histories: {
-          include: {
-            user: true,
-          },
-        },
+        histories: true,
       },
     });
 
@@ -25,48 +22,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Exclude batchId, userId from histories and historyId from user
-    const sanitizedBatch = {
-      ...batch,
-      histories: batch.histories.map(({ batchId, userId, user, ...rest }) => ({
-        ...rest,
-        user: {
-          ...user,
-          historyId: undefined, // Remove historyId
-        },
-      })),
-    };
-
-    return NextResponse.json(
-      { status: 200, data: { batch: sanitizedBatch } },
-      { status: 200 }
-    );
+    return NextResponse.json({ status: 200, data: { batch } }, { status: 200 });
   } else {
     // Get all batches with associated histories
     const batches = await prisma.batch.findMany({
       include: {
-        histories: {
-          include: {
-            user: true,
-          },
-        },
+        histories: true,
+      },
+      orderBy: {
+        timestamp: "desc",
       },
     });
 
-    // Exclude batchId and userId from histories
-    const sanitizedBatches = batches.map((batch) => ({
-      ...batch,
-      histories: batch.histories.map(({ batchId, userId, user, ...rest }) => ({
-        ...rest,
-        user: {
-          ...user,
-          historyId: undefined, // Remove historyId
-        },
-      })),
-    }));
-
     return NextResponse.json(
-      { status: 200, data: { batches: sanitizedBatches } },
+      { status: 200, data: { batches } },
       { status: 200 }
     );
   }
@@ -85,52 +54,43 @@ interface BatchInput {
 
 export async function POST(request: NextRequest) {
   try {
-    const { histories, batchName }: BatchInput = await request.json();
-
-    if (!batchName || !histories || !Array.isArray(histories)) {
-      return NextResponse.json(
-        { status: 400, error: "Invalid input data" },
-        { status: 400 }
-      );
-    }
+    const body = await request.json();
+    const { batchName, histories, timestamp, metadata } = body as Batch;
 
     const batch = await prisma.batch.create({
       data: {
         batchName,
+        timestamp: new Date(timestamp),
+        successCount: body.successCount || 0,
+        failureCount: body.failureCount || 0,
+        metadata,
         histories: {
-          create: histories.map((history) => ({
-            user: {
-              create: {
-                username: history.username,
-              },
-            },
-            error: history.error,
-          })),
+          create: histories.map((history: HistoryEntry) => ({
+            username: history.username,
+            status: history.status,
+            operation: history.operation,
+            timestamp: new Date(history.timestamp),
+            error: history.error || null,
+            metadata: history.metadata || null,
+          })) as any,
         },
       },
       include: {
-        histories: {
-          include: {
-            user: true,
-          },
-        },
+        histories: true,
       },
     });
 
     return NextResponse.json(
       {
         status: 201,
-        data: {
-          message: "Batch created successfully with histories",
-          batch,
-        },
+        data: { message: "Batch created successfully", batch },
       },
       { status: 201 }
     );
   } catch (error) {
     console.error("Error creating batch:", error);
     return NextResponse.json(
-      { status: 500, error: "Internal server error" },
+      { status: 500, error: "Internal server error", details: error },
       { status: 500 }
     );
   }

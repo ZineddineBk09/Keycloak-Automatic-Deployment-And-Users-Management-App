@@ -4,7 +4,7 @@ import { HistoryContextProvider } from "../../context/history";
 
 export default function HistoryPage() {
   return (
-    <div className="container mx-auto py-10">
+    <div className="max-w-[90vw] container mx-auto py-10">
       <div className="w-full flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold mb-2">History</h1>
