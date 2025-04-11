@@ -2,17 +2,25 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { KeyIcon } from "lucide-react";
 
 import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import {
   Select,
   SelectContent,
@@ -171,49 +179,74 @@ export function ClientRegisterForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        {fields.map(({ id, name, placeholder, type, options }: FieldType) => (
-          <FormField
-            key={id}
-            control={form.control}
-            // @ts-ignore
-            name={id}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{name}</FormLabel>
-                {type === "input" ? (
-                  <FormControl>
-                    <Input placeholder={name} {...field} />
-                  </FormControl>
-                ) : (
-                  <Select>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {options.map(({ value, label, ...option }) => (
-                        <SelectItem
-                          key={value}
-                          value={value}
-                          disabled={option.disabled || false}
-                        >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-                <FormDescription>{placeholder}</FormDescription>
-                <FormMessage />
-              </FormItem>
+    <Card className="w-full max-w-md shadow-lg">
+      <CardHeader className="space-y-4 flex flex-col items-center">
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+          <KeyIcon className="h-8 w-8 text-primary" />
+        </div>
+        <CardTitle className="text-2xl font-semibold text-center">
+          Register New Client
+        </CardTitle>
+        <CardDescription className="text-center">
+          Create a new client with the required credentials
+        </CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-4">
+            {fields.map(
+              ({ id, name, placeholder, type, options }: FieldType) => (
+                <FormField
+                  key={id}
+                  control={form.control}
+                  //@ts-ignore
+                  name={id}
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>{name}</FormLabel>
+                      <FormControl>
+                        {type === "input" ? (
+                          <Input
+                            placeholder={placeholder}
+                            type={id === "clientSecret" ? "password" : "text"}
+                            {...field}
+                          />
+                        ) : (
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select an option" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {options.map(({ value, label, disabled }) => (
+                                <SelectItem
+                                  key={value}
+                                  value={value}
+                                  disabled={disabled}
+                                >
+                                  {label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )
             )}
-          />
-        ))}
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full">
+              Register Client
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
   );
 }
