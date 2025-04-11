@@ -87,7 +87,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="container !max-w-[90vw] mx-auto py-10">
       {/* Filters */}
       <div className="flex items-center py-4">
         <Input
@@ -217,9 +217,7 @@ function UploadProgress() {
     <Card className="w-[550px]">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>
-          {description}
-        </CardDescription>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardFooter className="flex justify-between" />
     </Card>

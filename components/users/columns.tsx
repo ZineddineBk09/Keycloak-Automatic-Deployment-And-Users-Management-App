@@ -42,6 +42,15 @@ export const columns: ColumnDef<KeycloakUser>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  // index
+  {
+    accessorKey: "index",
+    header: "#",
+    cell: ({ row }) => {
+      const index = row.index + 1;
+      return <span>{index}</span>;
+    },
+  },
   {
     accessorKey: "createdTimestamp",
     header: "Created",

@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
             fetchGroups();
           })
           .catch((error) => {
-            toast.error("Error deleting client");
+            toast.error("Error deleting group");
           });
       },
 
@@ -139,7 +139,7 @@ export function DataTable<TData, TValue>({
   }, [groups]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="max-w-[90vw] container mx-auto py-10">
       <h1 className="flex items-center gap-x-3 text-3xl font-bold mb-10">
         Groups
         <Badge className="font-normal px-3" color="amber">

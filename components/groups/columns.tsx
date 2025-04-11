@@ -41,6 +41,14 @@ export const columns: ColumnDef<KeycloakClient>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "index",
+    header: "#",
+    cell: ({ row }) => {
+      const index = row.index + 1;
+      return <span>{index}</span>;
+    },
+  },
+  {
     accessorKey: "id",
     header: "Group ID",
   },

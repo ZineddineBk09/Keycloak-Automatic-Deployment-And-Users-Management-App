@@ -68,7 +68,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="max-w-[90vw] container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-10">Edit User</h1>
       <div className="grid gap-4 py-4">
         {["username", "firstName", "lastName", "email"].map((field) => {

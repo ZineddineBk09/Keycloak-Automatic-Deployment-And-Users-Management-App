@@ -39,6 +39,14 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "index",
+    header: "#",
+    cell: ({ row }) => {
+      const index = row.index + 1;
+      return <span>{index}</span>;
+    },
+  },
+  {
     accessorKey: 'username',
     header: 'Username',
   },

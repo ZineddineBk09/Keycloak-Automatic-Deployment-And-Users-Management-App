@@ -34,13 +34,14 @@ import {
 } from "../ui/dropdown-menu";
 import { DataTablePagination } from "./pagination";
 import { useUsersContext } from "../../context/users";
-import { ReloadIcon, TrashIcon } from "@radix-ui/react-icons";
+import { ReloadIcon, TrashIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { Skeleton } from "../ui/skeleton";
 import { KeycloakUser } from "../../interfaces";
 import { deleteRecord, getCount, updateRecord } from "../../lib/api/keycloak";
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 import AddDialog from "./dialogs/add";
+import { downloadCSV } from "../../lib/utils/export";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -124,6 +125,23 @@ export function DataTable<TData, TValue>({
       });
   };
 
+  const handleExport = () => {
+    const exportData = users.map((user) => {
+      const { id, attributes, groups, ...rest } = user as any;
+      return {
+        ...rest,
+        groups: groups?.map((g: any) => g.name).join(";") || "",
+        created: new Date(user.createdTimestamp).toLocaleString(),
+      };
+    });
+
+    downloadCSV(
+      exportData,
+      `keycloak-users-${new Date().toISOString().split("T")[0]}`
+    );
+    toast.success("Users exported successfully");
+  };
+
   React.useEffect(() => {
     setData(users as TData[]);
   }, [users]);
@@ -144,7 +162,7 @@ export function DataTable<TData, TValue>({
   }, [users]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container !max-w-[90vw] mx-auto py-10">
       <h1 className="flex items-center gap-x-3 text-3xl font-bold mb-10">
         Users
         <Badge className="font-normal px-3" color="amber">
@@ -165,6 +183,15 @@ export function DataTable<TData, TValue>({
           />
           <div className="flex items-center gap-x-4 ml-auto">
             <AddDialog />
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              // disabled if users.length===0
+              disabled={users.length === 0}
+            >
+              Export
+              <DownloadIcon className="h-4 w-4 ml-2" />
+            </Button>
             {!isDeleteDisabled && (
               <Button variant="outline" onClick={handleDeleteUsers}>
                 Delete ({Object.keys(rowSelection).length})
