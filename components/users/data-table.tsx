@@ -235,7 +235,6 @@ export function DataTable<TData, TValue>({
                     toast.success("Users fetched successfully");
                   })
                   .catch((error) => {
-                    console.log(error);
                     toast.error("Error fetching users");
                   });
               }}

@@ -38,7 +38,7 @@ export const HistoryContextProvider = ({
       const response = await axios.get<{ data: { batches: Batch[] } }>(
         "/api/history"
       );
-      console.log(response.data.data);
+
       setBatches(response.data.data.batches);
     } catch (error: any) {
       console.error("Error fetching batches:", error);

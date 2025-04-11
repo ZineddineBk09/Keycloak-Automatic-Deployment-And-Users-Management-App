@@ -60,7 +60,7 @@ export const UsersContextProvider = ({
       const first = currentPage * pageSize - pageSize;
 
       const response = await getRecords(`users?first=${first}&max=${pageSize}`);
-      console.log("Users ctxt:", response);
+
       if (currentPage === 1) {
         setUsers(response);
         return;

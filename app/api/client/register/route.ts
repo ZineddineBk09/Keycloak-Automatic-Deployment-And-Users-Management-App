@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (err) {
-    console.log("error creating client", err);
+    console.log("error creating client");
 
     return NextResponse.json(
       {
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
         }
       );
     } catch (err) {
-      console.log("error registering client", err);
+      console.log("error registering client");
 
       // delete the client from the database
       await deleteClient(clientId);

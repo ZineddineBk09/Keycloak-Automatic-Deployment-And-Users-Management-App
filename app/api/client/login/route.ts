@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
         }
       );
     } catch (err) {
-      console.log("error loging client", err);
+      console.log("error loging client");
       return NextResponse.json(
         {
           status: 500,
