@@ -141,15 +141,17 @@ const CsvReader = () => {
                 </Button>
 
                 <div className="flex-1 flex items-center">
-                  <FileIcon
-                    className="h-6 w-6 text-gray-500 mr-2"
-                    aria-hidden="true"
-                  />{" "}
-                  File:{" "}
                   {acceptedFile && (
-                    <span className="ml-2 rounded py-1 px-2 bg-gray-100 dark:bg-gray-800">
-                      {acceptedFile.name}
-                    </span>
+                    <>
+                      <FileIcon
+                        className="h-6 w-6 text-gray-500 mr-2"
+                        aria-hidden="true"
+                      />{" "}
+                      File:{" "}
+                      <span className="ml-2 rounded py-1 px-2 bg-gray-100 dark:bg-gray-800">
+                        {acceptedFile.name}
+                      </span>
+                    </>
                   )}
                 </div>
 
