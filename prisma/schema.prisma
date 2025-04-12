@@ -1,7 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")  // url format: postgresql://[user]:[password]@[host]:[port]/[database]
-  // postgres://<username>:<password>@<host>:<port>/<database>
+  url      = env("DATABASE_URL") // url format: postgresql://[user]:[password]@[host]:[port]/[database]
 }
 
 generator client {
@@ -40,7 +39,7 @@ model History {
 }
 
 model Batch {
-  id           String     @id @default(uuid())
+  id           String    @id @default(uuid())
   batchName    String
   timestamp    DateTime
   successCount Int       @default(0)
