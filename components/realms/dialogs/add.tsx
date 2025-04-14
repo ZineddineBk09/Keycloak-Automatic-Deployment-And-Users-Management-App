@@ -140,11 +140,12 @@ export function AddRealmDialog() {
                             <span className="text-muted-foreground">?</span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            Is HTTPS required? 'None' means HTTPS is not
-                            required for any client IP address. 'External
-                            requests' means localhost and private IP addresses
-                            can access without HTTPS. 'All requests' means HTTPS
-                            is required for all IP addresses.
+                            Is HTTPS required? &apos;None&apos; means HTTPS is
+                            not required for any client IP address.
+                            &apos;External requests&apos; means localhost and
+                            private IP addresses can access without HTTPS.
+                            &apos;All requests&apos; means HTTPS is required for
+                            all IP addresses.
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
