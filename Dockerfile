@@ -16,11 +16,12 @@ RUN npm install
 # Copy the source code
 COPY . .
 
-# Erase old Prisma data
-RUN npx prisma db push --force-reset
 
 # Generate the Prisma client
 RUN npx prisma generate
+
+# Erase old Prisma data
+RUN npx prisma db push --force-reset
 
 # Build the application
 RUN npm run build
