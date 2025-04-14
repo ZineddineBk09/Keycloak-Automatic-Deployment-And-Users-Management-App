@@ -1,6 +1,9 @@
 # Use a lightweight image for Node.js applications
 FROM node:18-alpine AS build
 
+# Install OpenSSL and libssl3
+RUN apk add --no-cache openssl libssl3
+
 # Set the working directory
 WORKDIR /app
 
@@ -13,6 +16,9 @@ RUN npm install
 # Copy the source code
 COPY . .
 
+# Erase old Prisma data
+RUN npx prisma db push --force-reset
+
 # Generate the Prisma client
 RUN npx prisma generate
 
@@ -21,6 +27,9 @@ RUN npm run build
 
 # Use a lightweight image for the production environment
 FROM node:18-alpine AS production
+
+# Install OpenSSL and libssl3
+RUN apk add --no-cache openssl libssl3
 
 # Set the working directory
 WORKDIR /app
@@ -33,16 +42,21 @@ RUN npm install --only=production
 
 # Copy the build files from the previous stage
 COPY --from=build /app/.next ./.next
+
+# Copy the public and static folders from the build stage
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/static ./.next/static
 
 # Prisma
 COPY --from=build /app/prisma ./prisma
 
-RUN mv .next/static .next/standalone/.next/
-RUN mv public .next/standalone/public
+# Move the copied public, and static folders to the .next/standalone folder
+RUN mv public .next/standalone/public && mv .next/static .next/standalone/.next/
 
-# Expose the port 3000 for the app
+# Set the database URL environment variable
+ENV DATABASE_URL='postgres://cerist:cerist@postgres-db:5432/PFE'
+
+# Expose the port
 EXPOSE 3000
 
 # Start the application
