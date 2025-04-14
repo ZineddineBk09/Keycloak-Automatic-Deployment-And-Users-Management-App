@@ -310,3 +310,87 @@ export const resetUserPassword = async (userId: string, password: string) => {
     throw error;
   }
 };
+
+export const getRealms = async () => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error("Error fetching realms. Please check if the server is running.");
+  }
+
+  try {
+    const response = await axios.get(`/${admin}/realms`, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createRealm = async (realm: any) => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error("Error creating realm. Please check if the server is running.");
+  }
+
+  try {
+    const response = await axios.post(`/${admin}/realms`, realm, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateRealm = async (realmName: string, realm: any) => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error("Error updating realm. Please check if the server is running.");
+  }
+
+  try {
+    const response = await axios.put(`/${admin}/realms/${realmName}`, realm, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteRealm = async (realmName: string) => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error("Error deleting realm. Please check if the server is running.");
+  }
+
+  try {
+    const response = await axios.delete(`/${admin}/realms/${realmName}`, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

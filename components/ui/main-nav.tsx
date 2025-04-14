@@ -62,6 +62,11 @@ export function MainNav({
       label: "History",
       condition: cookies?.kc_session,
     },
+    {
+      href: "/realms",
+      label: "Realms",
+      condition: cookies?.kc_session,
+    },
   ];
 
   return (

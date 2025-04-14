@@ -128,3 +128,72 @@ export interface FieldType {
   required?: boolean;
   options?: string[];
 }
+
+export interface Realm {
+  id: string;
+  realm: string;
+  enabled: boolean;
+  displayName?: string;
+  accessTokenLifespan: number;
+  sslRequired: "all" | "none" | "external";
+  notBefore: number;
+  defaultSignatureAlgorithm: string;
+  revokeRefreshToken: boolean;
+  refreshTokenMaxReuse: number;
+  ssoSessionIdleTimeout: number;
+  ssoSessionMaxLifespan: number;
+  offlineSessionIdleTimeout: number;
+  offlineSessionMaxLifespanEnabled: boolean;
+  offlineSessionMaxLifespan: number;
+  accessCodeLifespan: number;
+  accessCodeLifespanUserAction: number;
+  accessCodeLifespanLogin: number;
+  actionTokenGeneratedByAdminLifespan: number;
+  actionTokenGeneratedByUserLifespan: number;
+  oauth2DeviceCodeLifespan: number;
+  oauth2DevicePollingInterval: number;
+  registrationAllowed: boolean;
+  loginWithEmailAllowed: boolean;
+  duplicateEmailsAllowed: boolean;
+  resetPasswordAllowed: boolean;
+  editUsernameAllowed: boolean;
+  bruteForceProtected: boolean;
+  permanentLockout: boolean;
+  maxFailureWaitSeconds: number;
+  minimumQuickLoginWaitSeconds: number;
+  waitIncrementSeconds: number;
+  failureFactor: number;
+  defaultRole: {
+    id: string;
+    name: string;
+    description: string;
+    composite: boolean;
+    clientRole: boolean;
+    containerId: string;
+  };
+  requiredCredentials: string[];
+  otpPolicyType: string;
+  otpPolicyAlgorithm: string;
+  otpPolicyDigits: number;
+  otpPolicyPeriod: number;
+  webAuthnPolicyRpEntityName: string;
+  webAuthnPolicySignatureAlgorithms: string[];
+  browserSecurityHeaders: {
+    contentSecurityPolicy: string;
+    xContentTypeOptions: string;
+    referrerPolicy: string;
+    xRobotsTag: string;
+    xFrameOptions: string;
+    xXSSProtection: string;
+    strictTransportSecurity: string;
+  };
+  smtpServer: Record<string, any>;
+  eventsEnabled: boolean;
+  eventsListeners: string[];
+  adminEventsEnabled: boolean;
+  adminEventsDetailsEnabled: boolean;
+  internationalizationEnabled: boolean;
+  supportedLocales: string[];
+  attributes: Record<string, string>;
+  userManagedAccessAllowed: boolean;
+}

@@ -8,4 +8,5 @@ export const protectedRoutes = [
   "/settings",
   "users/[id]",
   "/history",
+  "/realms",
 ];
