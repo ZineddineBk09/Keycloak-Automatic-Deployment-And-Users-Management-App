@@ -39,8 +39,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       # Mount Let's Encrypt certificates to Nginx
-      - ../certbot/iam.ahscen.cloud.cerist.dz/cert.pem:/etc/ssl/certs/fullchain.pem:ro
-      - ../certbot/iam.ahscen.cloud.cerist.dz/key.pem:/etc/ssl/private/privkey.pem:ro
+      - ../certbot/idpmgr.cloud.cerist.dz/cert.pem:/etc/ssl/certs/fullchain.pem:ro
+      - ../certbot/idpmgr.cloud.cerist.dz/key.pem:/etc/ssl/private/privkey.pem:ro
     depends_on:
       - app # Nginx will only start after the app service is ready
       - certbot
@@ -52,8 +52,8 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/lib/letsencrypt:/var/lib/letsencrypt
-      - ./certbot/iam.ahscen.cloud.cerist.dz:/var/www/certbot 
-    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot -d iam.ahscen.cloud.cerist.dz --quiet; sleep 12h & wait $${!}; done;"
+      - ./certbot/idpmgr.cloud.cerist.dz:/var/www/certbot 
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot -d idpmgr.cloud.cerist.dz --quiet; sleep 12h & wait $${!}; done;"
     networks:
       - app-network
 
