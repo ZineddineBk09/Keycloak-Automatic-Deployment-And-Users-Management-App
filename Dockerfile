@@ -21,7 +21,7 @@ COPY . .
 RUN npx prisma generate
 
 # Erase old Prisma data
-RUN npx prisma db push --force-reset
+# RUN npx prisma db push --force-reset
 
 # Build the application
 RUN npm run build
