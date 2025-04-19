@@ -71,7 +71,6 @@ export function DataTable<TData, TValue>({
     },
     meta: {
       deleteRow: (row: any) => {
-        console.log('Delete: ', row)
       },
     },
   })

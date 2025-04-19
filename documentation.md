@@ -71,7 +71,7 @@ npm install
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:3000` to access the app.
+4. Open your browser and navigate to `http://127.0.0.1:3000` to access the app.
 
     <img src="./public/screenshots/landing-page.png" alt="Keycloak Management App" width="900">
 

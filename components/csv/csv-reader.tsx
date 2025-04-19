@@ -5,7 +5,12 @@ import { useCSVReader } from "react-papaparse";
 import { User } from "../../interfaces";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { TrashIcon, TableIcon } from "@radix-ui/react-icons";
+import {
+  TrashIcon,
+  TableIcon,
+  FilePlusIcon,
+  FileIcon,
+} from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 
@@ -31,7 +36,7 @@ const styles = {
 
 const CsvReader = () => {
   const { CSVReader } = useCSVReader();
-  const { setUsers, users } = useUsersContext();
+  const { setUsers, setFileName, users } = useUsersContext();
 
   return (
     <div className="w-full">
@@ -46,49 +51,71 @@ const CsvReader = () => {
           // so now we need to convert this data into an array of objects
           // check if the first row is the header and is of the correct format and type User
           const firstRow = results.data[0];
+          // ex first row:  ['username', 'password', 'firstName', 'lastName', 'email']
+          // get indexes of deferent fields to assign the right values next
+          const indexes = {
+            username: firstRow.indexOf("username"),
+            firstName: firstRow.indexOf("firstName"),
+            lastName: firstRow.indexOf("lastName"),
+            email: firstRow.indexOf("email"),
+            password: firstRow.indexOf("password"),
+            emailVerified: firstRow.indexOf("emailVerified"),
+            enabled: firstRow.indexOf("enabled"),
+            groups: firstRow.indexOf("groups"),
+            requiredActions: firstRow.indexOf("requiredActions"),
+          };
+
           const requiredCols = [
             "username",
             "firstName",
             "lastName",
             "email",
-            "emailVerified",
-            "enabled",
-            "groups",
             "password",
+            //"emailVerified",
+            //"enabled",
+            //"groups",
           ];
+
           const missingCols = requiredCols.filter(
             (col) => !firstRow.includes(col)
           );
-          console.log("firstRow", firstRow);
-          if (
-            !firstRow ||
-            firstRow.length !== requiredCols.length ||
-            missingCols.length > 0
-          ) {
+
+          if (!firstRow || missingCols.length > 0) {
             toast.error("Missing columns: " + missingCols.join(", ") + ".");
             console.error("Incorrect header row");
             return;
           }
+
           // convert the data into an array of User objects, skipping the first row (header) and the last row (empty)
           const rows: User[] = results.data
             .slice(1, results.data?.length - 1)
             .map((user: any) => {
               return {
-                username: user[0],
-                firstName: user[1],
-                lastName: user[2],
-                email: user[3],
-                emailVerified: user[4] === "true" ? true : false,
-                enabled: user[5] === "true" ? true : false,
-                groups: user[6].split(",").map((group: string) => group.trim()),
+                username: indexes.username === -1 ? "" : user[indexes.username],
+                firstName:
+                  indexes.firstName === -1 ? "" : user[indexes.firstName],
+                lastName: indexes.lastName === -1 ? "" : user[indexes.lastName],
+                email: indexes.email === -1 ? "" : user[indexes.email],
+                emailVerified:
+                  user[indexes.emailVerified] === "true" ? true : false,
+                enabled: user[indexes.enabled] === "true" ? true : false,
+                groups: user[indexes.groups]
+                  ? user[indexes.groups]
+                      .split(",")
+                      .map((group: string) => group.trim())
+                  : [],
                 credentials: [
                   {
                     type: "password",
-                    value: user[7],
-                    temporary: false,
+                    value: user[indexes.password],
+                    temporary: true,
                   },
                 ],
-                // requiredActions: ["CONFIGURE_TOTP", "UPDATE_PASSWORD"],
+                requiredActions: user[indexes.requiredActions]
+                  ? user[indexes.requiredActions]
+                      .split(",")
+                      .map((action: string) => action.trim())
+                  : [],
               } as User;
             });
           setUsers(rows);
@@ -99,36 +126,56 @@ const CsvReader = () => {
           acceptedFile,
           ProgressBar,
           getRemoveFileProps,
-        }: any) => (
-          <>
-            <div className="w-full flex items-center gap-x-6 m-auto">
-              <Button variant="outline" type="button" {...getRootProps()}>
-                Upload CSV
-                <TableIcon
-                  className="h-5 w-5 text-gray-500 ml-2"
-                  aria-hidden="true"
-                />
-              </Button>
+        }: any) => {
+          setFileName(acceptedFile?.name || "No file chosen");
 
-              <div className="flex-1">
-                File: {acceptedFile && acceptedFile.name}
+          return (
+            <>
+              <div className="w-full flex items-center gap-x-6 m-auto">
+                <Button variant="outline" type="button" {...getRootProps()}>
+                  <FilePlusIcon
+                    className="h-5 w-5 text-gray-500 mr-2"
+                    aria-hidden="true"
+                  />
+                  Upload CSV
+                </Button>
+
+                <div className="flex-1 flex items-center">
+                  {acceptedFile && (
+                    <>
+                      <FileIcon
+                        className="h-6 w-6 text-gray-500 mr-2"
+                        aria-hidden="true"
+                      />{" "}
+                      File:{" "}
+                      <span className="ml-2 rounded py-1 px-2 bg-gray-100 dark:bg-gray-800">
+                        {acceptedFile.name}
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  {...getRemoveFileProps()}
+                  onClick={() => setUsers([])}
+                >
+                  <TrashIcon
+                    className="h-6 w-6 text-red-500 mr-2"
+                    aria-hidden="true"
+                  />
+                  Clear
+                </Button>
               </div>
-
-              <Button
-                variant="outline"
-                {...getRemoveFileProps()}
-                onClick={() => setUsers([])}
-              >
-                Clear
-                <TrashIcon
-                  className="h-6 w-6 text-red-500 ml-2"
-                  aria-hidden="true"
-                />
-              </Button>
-            </div>
-            <ProgressBar style={styles.progressBarBackgroundColor} />
-          </>
-        )}
+              <ProgressBar
+                style={{
+                  ...styles.progressBarBackgroundColor,
+                  marginTop: "20px",
+                }}
+              />
+            </>
+          );
+        }}
       </CSVReader>
       {users.length > 0 && <DataTable columns={columns} data={users} />}
     </div>

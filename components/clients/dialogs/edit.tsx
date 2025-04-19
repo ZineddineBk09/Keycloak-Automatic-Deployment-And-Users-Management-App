@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 import { useUsersContext } from '../../../context/users'
 
 function EditDialog({ client }: { client: KeycloakClient }) {
-  const { fetchUsers } = useUsersContext()
+  const { fetchUsers, page } = useUsersContext()
   const [fields, setFields] = useState({
     name: client.name,
   })
@@ -29,7 +29,7 @@ function EditDialog({ client }: { client: KeycloakClient }) {
     await updateRecord('clients', fields, client.id)
       .then(() => {
         toast.success('User updated successfully')
-        fetchUsers()
+        fetchUsers(page)
       })
       .catch((error) => {
         toast.error('Error updating client')
@@ -46,7 +46,7 @@ function EditDialog({ client }: { client: KeycloakClient }) {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[550px]'>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Edit Client</DialogTitle>
           <DialogDescription>
             Make changes to client here. Click save when you&apos;re done.
           </DialogDescription>
@@ -65,13 +65,13 @@ function EditDialog({ client }: { client: KeycloakClient }) {
                   onChange={
                     // disable onchange for username
                     field === 'username'
-                      ? () => {}
+                      ? () => { }
                       : (event) => {
-                          setFields((prev: any) => ({
-                            ...prev,
-                            [field]: event.target.value,
-                          }))
-                        }
+                        setFields((prev: any) => ({
+                          ...prev,
+                          [field]: event.target.value,
+                        }))
+                      }
                   }
                   disabled={field === 'username'}
                   className='col-span-3'

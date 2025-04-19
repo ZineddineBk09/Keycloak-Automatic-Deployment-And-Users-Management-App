@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") // url format: postgresql://[user]:[password]@[host]:[port]/[database]
 }
 
 generator client {
-  provider      = "prisma-client-js"
+  provider = "prisma-client-js"
   // binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -18,48 +15,39 @@ model Client {
   realmId      String   @default("master")
   authProtocol String   @default("openid-connect")
   adminUser    String   @default("admin")
-  serverUrl    String   @default("https://keycloak.example.com:8080")
+  serverUrl    String   @default("https://auth.ahscen.cloud.cerist.dz")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
-model OpenstackKeycloak {
-  id            String   @id @default(cuid())
-  username      String
-  userId        String   @unique
-  tenantId      String //! tenant name same as Project ID 
-  project       String
-  domain        String   @default("Default") //! domain name, NOT domain id
-  baseUrl       String
-  flavor        String   @default("m1.small")
-  keypair       String   @default("keycloak")
-  network       String   @default("private")
-  keycloakPort  String   @default("8080")
-  securityGroup String   @default("default")
-  realmName     String   @default("master")
-  adminUsername String   @default("admin")
-  adminPassword String   @default("admin")
-  stackId       String   @default("keycloak")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model History {
+  id        String   @id @default(uuid())
+  batchId   String
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  username  String
+  status    String
+  operation String
+  timestamp DateTime
+  error     Json?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([batchId])
+  @@index([status])
+  @@index([operation])
 }
 
-model Deployment {
-  id            String   @id @default(cuid())
-  deploymentId  String   @unique //! stack id 
-  username      String
-  userId        String   @unique
-  tenantId      String   @unique
-  project       String
-  domain        String   @default("Default") //! domain name, NOT domain id
-  baseUrl       String
-  flavor        String   @default("m1.small")
-  keypair       String   @default("keycloak")
-  network       String   @default("private")
-  keycloakPort  String   @default("8080")
-  securityGroup String   @default("default")
-  realmName     String   @default("master")
-  adminUsername String   @default("admin")
-  adminPassword String   @default("admin")
-  createdAt     DateTime @default(now())
+model Batch {
+  id           String    @id @default(uuid())
+  batchName    String
+  timestamp    DateTime
+  successCount Int       @default(0)
+  failureCount Int       @default(0)
+  metadata     Json?
+  histories    History[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([timestamp])
 }

@@ -8,8 +8,8 @@ import CheckAuthGuard from '../components/guards/auth-guard'
 import { MainNav } from '../components/ui/main-nav'
 
 export const metadata: Metadata = {
-  title: 'Keycloak User Management',
-  description: 'Keycloak User Management App',
+  title: 'Users Management',
+  description: 'Users Management Application',
 }
 
 const fontSans = FontSans({
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning>
       <body
         className={cn(
           'text-gray-900',

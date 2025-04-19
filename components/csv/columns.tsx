@@ -39,6 +39,14 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "index",
+    header: "#",
+    cell: ({ row }) => {
+      const index = row.index + 1;
+      return <span>{index}</span>;
+    },
+  },
+  {
     accessorKey: 'username',
     header: 'Username',
   },
@@ -86,7 +94,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const groups: any = row.getValue('groups')
 
-      return <div>{groups.join(', ')}</div>
+      return <div>{groups.length > 0 ? groups.join(', ') : '[]'}</div>
     },
   },
   {
@@ -98,15 +106,15 @@ export const columns: ColumnDef<User>[] = [
       return <div>{credentials[0].value}</div>
     },
   },
-  // {
-  //   accessorKey: 'requiredActions',
-  //   header: 'Required Actions',
-  //   cell: ({ row }) => {
-  //     const requiredActions: any = row.getValue('requiredActions')
+  {
+    accessorKey: 'requiredActions',
+    header: 'Required Actions',
+    cell: ({ row }) => {
+      const requiredActions: any = row.getValue('requiredActions')
 
-  //     return <div>{requiredActions.join(', ')}</div>
-  //   },
-  // },
+      return <div>{requiredActions.length > 0 ? requiredActions.join(', ') : '[]'}</div>
+    },
+  },
   {
     id: 'actions',
     cell: ({ row, table }) => {

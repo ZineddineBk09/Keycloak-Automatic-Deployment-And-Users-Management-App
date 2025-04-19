@@ -2,12 +2,9 @@ import { toast } from "sonner";
 import { User } from "../../interfaces";
 import axios from "../axios/keycloak";
 import { jwtDecode } from "jwt-decode";
+import { Group } from "../../interfaces/keycloak";
 
-export const getRecords = async (
-  endpoint: string,
-  first: number = 0,
-  max: number = 100
-) => {
+export const getRecords = async (endpoint: string) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
 
@@ -25,7 +22,6 @@ export const getRecords = async (
         Authorization: `Bearer ${kcSession}`,
       },
     });
-    console.log("response", response.data);
     const data = await response.data;
     return data;
   } catch (error) {
@@ -33,13 +29,40 @@ export const getRecords = async (
   }
 };
 
-export const createUser = async (user: User) => {
+export const getRecord = async (endpoint: string, id: string) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error creating user. Please check if the Keycloak server is running. and try again."
+      "Error fetching record. Please check if the server is running. and try again."
+    );
+  }
+
+  try {
+    const response = await axios.get(
+      `/${admin}/realms/${realm}/${endpoint}/${id}`,
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
+    const data = await response.data;
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createUser = async (user: User | any) => {
+  const kcSession = getKcSession();
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !realm || !admin) {
+    throw new Error(
+      "Error creating user. Please check if the IAM server is running. and try again."
     );
   }
 
@@ -52,12 +75,45 @@ export const createUser = async (user: User) => {
     });
     const data = await response.data;
 
-    if (response.status === 201) {
-      toast.success(`User ${user.username} created`);
-    }
+    // if (response.status === 201) {
+    // toast.success(`User ${user.username} created`);
+    // }
     return data;
   } catch (error: any) {
     toast.error(`Failed to create user ${user.username}`);
+    throw error;
+  }
+};
+
+export const createGroup = async (group: Group | any) => {
+  const kcSession = getKcSession();
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !realm || !admin) {
+    throw new Error(
+      "Error creating group. Please check if the IAM server is running. and try again."
+    );
+  }
+
+  try {
+    const response = await axios.post(
+      `/${admin}/realms/${realm}/groups`,
+      group,
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
+    const data = await response.data;
+
+    // if (response.status === 201) {
+    // toast.success(`User ${user.username} created`);
+    // }
+    return data;
+  } catch (error: any) {
+    toast.error(`Failed to create group ${group.name}`);
     throw error;
   }
 };
@@ -68,7 +124,7 @@ export const deleteRecord = async (endpoint: string, id: string) => {
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error deleting record. Please check if the Keycloak server is running. and try again."
+      "Error deleting record. Please check if the IAM server is running. and try again."
     );
   }
 
@@ -99,7 +155,7 @@ export const updateRecord = async (
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error updating record. Please check if the Keycloak server is running. and try again."
+      "Error updating record. Please check if the IAM server is running. and try again."
     );
   }
 
@@ -161,30 +217,215 @@ const getKcSession = () => {
     ?.split("=")[1] as string;
 };
 
-// http://10.0.0.95/admin/realms/master/users/count
-// returns 20006
-export const getUsersCount = async () => {
+// return users count : http://127.0.0.1:8080/admin/realms/master/users/count
+// response will be a number: 100
+export const getCount = async (endpoint: string) => {
   const kcSession = getKcSession();
   const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !realm || !admin) {
     throw new Error(
-      "Error fetching records. Please check if the server is running. and try again."
+      "Error fetching users count. Please check if the server is running. and try again."
     );
   }
 
-  // get users from keycloak server
   try {
-    const response = await axios.get(`/${admin}/realms/${realm}/users/count`, {
-      baseURL: domain,
-      headers: {
-        Authorization: `Bearer ${kcSession}`,
-      },
-    });
-    console.log("response", response.data);
+    const response = await axios.get(
+      `/${admin}/realms/${realm}/${endpoint}/count`,
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
     const data = await response.data;
     return data;
   } catch (error) {
     throw error;
   }
-}
+};
+
+// Reset password a user password
+// first the admin needs to have role "admin" to be able to reset password
+// ex: decoded token
+/**
+ * .....
+ * "realm_access": {
+    "roles": [
+      "create-realm",
+      "default-roles-master",
+      "offline_access",
+      "admin", // this is the role we need to check for
+      "uma_authorization"
+    ]
+  },
+  .....
+ */
+// we need to check for "admin" role first (decoded the access token) before we can reset password
+// if role present, we can reset password with a put request to the user endpoint
+// ex endpoint: http://10.0.0.95/admin/realms/master/users/7d8e81a7-551a-4085-b101-21ce4c8dbb9e/reset-password
+// ex body: { "type": "password", "temporary": false, "value": "password" }
+export const resetUserPassword = async (userId: string, password: string) => {
+  const kcSession = getKcSession();
+  const { domain, realm, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !realm || !admin) {
+    throw new Error(
+      "Error resetting password. Please check if the server is running. and try again."
+    );
+  }
+
+  // check if the user has the "admin" role
+  const decoded = jwtDecode(kcSession) as any;
+  const roles = decoded.realm_access.roles;
+  if (!roles.includes("admin")) {
+    console.log(
+      "You need to have the admin role to reset a user's password. Please contact your administrator.",
+      roles
+    );
+    throw new Error(
+      "You need to have the admin role to reset a user's password. Please contact your administrator."
+    );
+  }
+
+  try {
+    const response = await axios.put(
+      `/${admin}/realms/${realm}/users/${userId}/reset-password`,
+      {
+        type: "password",
+        temporary: false,
+        value: password,
+      },
+      {
+        baseURL: domain,
+        headers: {
+          Authorization: `Bearer ${kcSession}`,
+        },
+      }
+    );
+    const data = await response.data;
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getRealms = async () => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error(
+      "Error fetching realms. Please check if the server is running."
+    );
+  }
+
+  try {
+    const response = await axios.get(`/${admin}/realms`, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createRealm = async (realm: any) => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error(
+      "Error creating realm. Please check if the server is running."
+    );
+  }
+
+  try {
+    const response = await axios.post(`/${admin}/realms`, realm, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateRealm = async (realmName: string, realm: any) => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error(
+      "Error updating realm. Please check if the server is running."
+    );
+  }
+
+  try {
+    const response = await axios.put(`/${admin}/realms/${realmName}`, realm, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteRealm = async (realmName: string) => {
+  const kcSession = getKcSession();
+  const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
+
+  if (!kcSession || !admin) {
+    throw new Error(
+      "Error deleting realm. Please check if the server is running."
+    );
+  }
+
+  try {
+    const response = await axios.delete(`/${admin}/realms/${realmName}`, {
+      baseURL: domain,
+      headers: {
+        Authorization: `Bearer ${kcSession}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const uploadCSV = async (
+  file: File,
+  endpoint: string
+): Promise<void> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true, // Include cookies for authentication
+      }
+    );
+    if (response.status !== 200) {
+      throw new Error("Failed to upload CSV file");
+    }
+  } catch (error) {
+    console.error("Error uploading CSV:", error);
+    throw error;
+  }
+};

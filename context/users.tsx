@@ -1,107 +1,260 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { KeycloakUser } from '../interfaces'
-import { toast } from 'sonner'
-import { getRecords, deleteRecord, getUsersCount } from '../lib/api/keycloak'
-import { useCookies } from 'react-cookie'
+import { createContext, useContext, useEffect, useState } from "react";
+import { KeycloakUser } from "../interfaces";
+import { toast } from "sonner";
+import {
+  getRecords,
+  getRecord,
+  deleteRecord,
+  getCount,
+  uploadCSV,
+} from "../lib/api/keycloak";
+import { useCookies } from "react-cookie";
+import { KeycloakGroup } from "../interfaces/keycloak";
 
-export const UsersContext = createContext({})
+interface UsersContextType {
+  users: KeycloakUser[];
+  groups: KeycloakGroup[];
+  page: number;
+  pageSize: number;
+  totalRecords: number;
+  loading: boolean;
+  setUsers: React.Dispatch<React.SetStateAction<KeycloakUser[]>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  fetchUsers: (currentPage: number) => Promise<void>;
+  fetchUser: (id: string) => Promise<KeycloakUser>;
+  fetchGroups: () => Promise<void>;
+  deleteUsers: (ids: string[]) => Promise<void>;
+  nextPage: () => Promise<void>;
+  prevPage: () => Promise<void>;
+  bulkUpdateUsers: (file: File) => Promise<void>;
+  fetchActivityLogs: (userId: string) => Promise<any>;
+  advancedSearch: (query: string) => Promise<void>;
+}
 
-export const useUsersContext: {
-  (): {
-    users: KeycloakUser[]
-    setUsers: React.Dispatch<React.SetStateAction<KeycloakUser[]>>
-    fetchUsers: () => Promise<void>
-    deleteUsers: (ids: string[]) => Promise<void>
-    page: number, totalPages: number,
-    nextPage: () => Promise<void>
-    previousPage: () => Promise<void>
+export const UsersContext = createContext<UsersContextType | undefined>(
+  undefined
+);
+
+export const useUsersContext = (): UsersContextType => {
+  const context = useContext(UsersContext);
+  if (!context) {
+    throw new Error("useUsersContext must be used within a UsersContextProvider");
   }
-} = () => useContext(UsersContext as React.Context<any>)
+  return context;
+};
 
 export const UsersContextProvider = ({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) => {
-  const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[])
-  const [cookies] = useCookies(['kc_session'])
+  const [users, setUsers] = useState<KeycloakUser[]>([] as KeycloakUser[]);
+  const [groups, setGroups] = useState<KeycloakGroup[]>([] as KeycloakGroup[]);
+  const [cookies] = useCookies(["kc_session"]);
+  // implement pagination for users, since keycloak can have 100000 users or more
+  // here's an example of a URL with params to control number of records returned + where to start from
+  // http://127.0.0.1:8080/admin/realms/master/users?first=99&max=200
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const pageSize = 100;
+  const [pageSize, setPageSize] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchUsers = async () => {
-    // call the create user API
+  const fetchUsers = async (currentPage: number) => {
+    try {
+      setLoading(true);
+      if (!cookies?.kc_session) {
+        console.log("No token available");
+        throw new Error(
+          "You need to login first to fetch users. Please login and try again."
+        );
+      }
+      const first = currentPage * pageSize - pageSize;
+
+      const response = await getRecords(`users?first=${first}&max=${pageSize}`);
+
+      if (currentPage === 1) {
+        setUsers(response);
+        return;
+      } else {
+        setUsers((prevUsers) => {
+          const newUsers = response.filter(
+            (newUser: KeycloakUser) =>
+              !prevUsers.some((user) => user.id === newUser.id)
+          );
+
+          if (newUsers.length === 0) return prevUsers;
+
+          return [...prevUsers, ...newUsers];
+        });
+      }
+    } catch (error: any) {
+      console.error("Error fetching users:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUser = async (id: string) => {
     try {
       if (!cookies?.kc_session) {
         throw new Error(
-          'You need to login first to fetch users. Please login and try again.'
-        )
+          "You need to login first to fetch users. Please login and try again."
+        );
       }
-
-      const response = await getRecords('users', (page - 1) * pageSize, pageSize);
-      setUsers(
-        [
-          ...response
-        ]
-      )
-      setTotalPages(Math.ceil(response.total / pageSize)); // Assuming `response.total` gives the total count of users
+      const response = await getRecord("users", id);
+      return response;
     } catch (error: any) {
-      console.error('Error fetching users:', error)
-      throw error
+      console.error("Error fetching user:", error);
+      throw error;
     }
-  }
+  };
+
+  const fetchGroups = async () => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error(
+          "You need to login first to fetch groups. Please login and try again."
+        );
+      }
+      const response = await getRecords("groups");
+      setGroups((prevGroups) => {
+        const newGroups = response.filter(
+          (newUser: KeycloakGroup) =>
+            !prevGroups.some((group) => group.id === newUser.id)
+        );
+
+        if (newGroups.length === 0) return prevGroups;
+
+        return [...prevGroups, ...newGroups];
+      });
+    } catch (error: any) {
+      console.error("Error fetching groups:", error);
+      throw error;
+    }
+  };
 
   const nextPage = async () => {
-    setPage(Math.min(page + 1, totalPages));
-    await fetchUsers();
-  }
+    const nextPage = page + 1;
+    setPage(nextPage);
+    await fetchUsers(nextPage);
+  };
 
-  const previousPage = async () => {
-    setPage(Math.max(page - 1, 1));
-    await fetchUsers();
-  }
+  const prevPage = async () => {
+    if (page > 1) {
+      const prevPage = page - 1;
+      setPage(prevPage);
+      await fetchUsers(prevPage);
+    }
+  };
 
   const deleteUsers = async (ids: string[]) => {
     try {
-      if (!cookies?.kc_session)
+      if (!cookies?.kc_session) {
         throw new Error(
-          'You need to login first to delete users. Please login and try again.'
-        )
+          "You need to login first to delete users. Please login and try again."
+        );
+      }
 
-      await Promise.all(ids.map((id) => deleteRecord('users', id)))
-      await fetchUsers()
+      await Promise.all(ids.map((id) => deleteRecord("users", id)));
+      setPage(1); // Reset to first page
+      setUsers([]); // Clear existing users
+      await fetchUsers(1); // Fetch first page of users
     } catch (error: any) {
-      console.error('Error deleting users:', error)
-      throw error
+      console.error("Error deleting users:", error);
+      throw error;
     }
-  }
+  };
+
+  const bulkUpdateUsers = async (file: File) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error("You need to login first to perform bulk updates.");
+      }
+      await uploadCSV(file, "users/bulk-update");
+      toast.success("Users updated successfully.");
+      await fetchUsers(1); // Refresh users
+    } catch (error: any) {
+      console.error("Error updating users:", error);
+      toast.error("Error updating users.");
+    }
+  };
+
+  const fetchActivityLogs = async (userId: string) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error("You need to login first to fetch activity logs.");
+      }
+      const logs = await getRecords(`users/${userId}/activity-logs`);
+      return logs;
+    } catch (error: any) {
+      console.error("Error fetching activity logs:", error);
+      throw error;
+    }
+  };
+
+  const advancedSearch = async (query: string) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error("You need to login first to perform advanced search.");
+      }
+      const results = await getRecords(`users/search?query=${query}`);
+      setUsers(results);
+    } catch (error: any) {
+      console.error("Error performing advanced search:", error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    if (!cookies?.kc_session) return
-    fetchUsers()
+    if (!cookies?.kc_session) return;
+    fetchUsers(page)
       .then(() => {
-        toast.success('Users fetched')
+        // toast.success('Users fetched');
       })
       .catch((error) => {
-        toast.error(error.message)
+        toast.error(error.message);
+      });
+  }, [cookies?.kc_session, page, pageSize]);
+
+  useEffect(() => {
+    if (!cookies?.kc_session) return;
+
+    // fetch groups
+    fetchGroups()
+      .then(() => {
+        // toast.success('Groups fetched');
       })
-    getUsersCount().then(data => console.log('COUNT: ', data))
-  }, [cookies?.kc_session])
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  }, [cookies?.kc_session, users]);
 
   return (
     <UsersContext.Provider
       value={{
         users,
-        setUsers,
-        fetchUsers,
-        deleteUsers,
+        groups,
         page,
-        totalPages,
+        pageSize,
+        totalRecords,
+        loading,
+        setUsers,
+        setPage,
+        setPageSize,
+        fetchUsers,
+        fetchUser,
+        fetchGroups,
+        deleteUsers,
         nextPage,
-        previousPage
+        prevPage,
+        bulkUpdateUsers,
+        fetchActivityLogs,
+        advancedSearch,
       }}
     >
       {children}
     </UsersContext.Provider>
-  )
-}
+  );
+};

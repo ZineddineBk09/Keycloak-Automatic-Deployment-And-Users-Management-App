@@ -9,7 +9,7 @@ export default function SettingsPage() {
         <div>
           <h1 className='text-3xl font-bold mb-2'>Settings</h1>
           <p className='text-sm text-slate-500 dark:text-slate-400 mb-10'>
-            Changing these settings will not reflect the Keycloak server.
+            Changing these settings will not reflect the server.
           </p>
         </div>
       </div>

@@ -1,12 +1,12 @@
-'use client'
-import React from 'react'
-import { ClientRegisterForm } from '../../components/forms/register-form'
+"use client";
+import React from "react";
+import { ClientRegisterForm } from "../../components/forms/register-form";
+import { ThemeToggle } from "../../components/theme-toggle";
 
 export default function RegisterPage() {
   return (
-    <div className='container mx-auto py-10'>
-      <h1 className='text-3xl font-bold mb-10'>Register your client</h1>
+    <main className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 flex flex-col items-center justify-center p-4">
       <ClientRegisterForm />
-    </div>
-  )
+    </main>
+  );
 }
