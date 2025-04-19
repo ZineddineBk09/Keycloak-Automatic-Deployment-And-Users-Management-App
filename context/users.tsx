@@ -6,31 +6,43 @@ import {
   getRecord,
   deleteRecord,
   getCount,
+  uploadCSV,
 } from "../lib/api/keycloak";
 import { useCookies } from "react-cookie";
 import { KeycloakGroup } from "../interfaces/keycloak";
 
-export const UsersContext = createContext({});
+interface UsersContextType {
+  users: KeycloakUser[];
+  groups: KeycloakGroup[];
+  page: number;
+  pageSize: number;
+  totalRecords: number;
+  loading: boolean;
+  setUsers: React.Dispatch<React.SetStateAction<KeycloakUser[]>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  fetchUsers: (currentPage: number) => Promise<void>;
+  fetchUser: (id: string) => Promise<KeycloakUser>;
+  fetchGroups: () => Promise<void>;
+  deleteUsers: (ids: string[]) => Promise<void>;
+  nextPage: () => Promise<void>;
+  prevPage: () => Promise<void>;
+  bulkUpdateUsers: (file: File) => Promise<void>;
+  fetchActivityLogs: (userId: string) => Promise<any>;
+  advancedSearch: (query: string) => Promise<void>;
+}
 
-export const useUsersContext: {
-  (): {
-    users: KeycloakUser[];
-    groups: KeycloakGroup[];
-    page: number;
-    pageSize: number;
-    totalRecords: number;
-    loading: boolean;
-    setUsers: React.Dispatch<React.SetStateAction<KeycloakUser[]>>;
-    setPage: React.Dispatch<React.SetStateAction<number>>;
-    setPageSize: React.Dispatch<React.SetStateAction<number>>;
-    fetchUsers: (currentPage: number) => Promise<void>;
-    fetchUser: (id: string) => Promise<KeycloakUser>;
-    fetchGroups: () => Promise<void>;
-    deleteUsers: (ids: string[]) => Promise<void>;
-    nextPage: () => Promise<void>;
-    prevPage: () => Promise<void>;
-  };
-} = () => useContext(UsersContext as React.Context<any>);
+export const UsersContext = createContext<UsersContextType | undefined>(
+  undefined
+);
+
+export const useUsersContext = (): UsersContextType => {
+  const context = useContext(UsersContext);
+  if (!context) {
+    throw new Error("useUsersContext must be used within a UsersContextProvider");
+  }
+  return context;
+};
 
 export const UsersContextProvider = ({
   children,
@@ -155,6 +167,46 @@ export const UsersContextProvider = ({
     }
   };
 
+  const bulkUpdateUsers = async (file: File) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error("You need to login first to perform bulk updates.");
+      }
+      await uploadCSV(file, "users/bulk-update");
+      toast.success("Users updated successfully.");
+      await fetchUsers(1); // Refresh users
+    } catch (error: any) {
+      console.error("Error updating users:", error);
+      toast.error("Error updating users.");
+    }
+  };
+
+  const fetchActivityLogs = async (userId: string) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error("You need to login first to fetch activity logs.");
+      }
+      const logs = await getRecords(`users/${userId}/activity-logs`);
+      return logs;
+    } catch (error: any) {
+      console.error("Error fetching activity logs:", error);
+      throw error;
+    }
+  };
+
+  const advancedSearch = async (query: string) => {
+    try {
+      if (!cookies?.kc_session) {
+        throw new Error("You need to login first to perform advanced search.");
+      }
+      const results = await getRecords(`users/search?query=${query}`);
+      setUsers(results);
+    } catch (error: any) {
+      console.error("Error performing advanced search:", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     if (!cookies?.kc_session) return;
     fetchUsers(page)
@@ -197,6 +249,9 @@ export const UsersContextProvider = ({
         deleteUsers,
         nextPage,
         prevPage,
+        bulkUpdateUsers,
+        fetchActivityLogs,
+        advancedSearch,
       }}
     >
       {children}

@@ -1,0 +1,5 @@
+
+username,roles,attributes
+ahmed.elgamal,"Admin,User","key1:value1,key2:value2"
+fatima.khan,"User,Moderator","key3:value3,key4:value4"
+omar.ali,"User,Admin","key5:value5,key6:value6"

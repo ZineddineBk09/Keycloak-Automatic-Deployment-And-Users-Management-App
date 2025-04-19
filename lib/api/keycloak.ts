@@ -316,7 +316,9 @@ export const getRealms = async () => {
   const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !admin) {
-    throw new Error("Error fetching realms. Please check if the server is running.");
+    throw new Error(
+      "Error fetching realms. Please check if the server is running."
+    );
   }
 
   try {
@@ -337,7 +339,9 @@ export const createRealm = async (realm: any) => {
   const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !admin) {
-    throw new Error("Error creating realm. Please check if the server is running.");
+    throw new Error(
+      "Error creating realm. Please check if the server is running."
+    );
   }
 
   try {
@@ -358,7 +362,9 @@ export const updateRealm = async (realmName: string, realm: any) => {
   const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !admin) {
-    throw new Error("Error updating realm. Please check if the server is running.");
+    throw new Error(
+      "Error updating realm. Please check if the server is running."
+    );
   }
 
   try {
@@ -379,7 +385,9 @@ export const deleteRealm = async (realmName: string) => {
   const { domain, admin } = await getClientDomainRealmAdminAndProtocol();
 
   if (!kcSession || !admin) {
-    throw new Error("Error deleting realm. Please check if the server is running.");
+    throw new Error(
+      "Error deleting realm. Please check if the server is running."
+    );
   }
 
   try {
@@ -391,6 +399,33 @@ export const deleteRealm = async (realmName: string) => {
     });
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const uploadCSV = async (
+  file: File,
+  endpoint: string
+): Promise<void> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true, // Include cookies for authentication
+      }
+    );
+    if (response.status !== 200) {
+      throw new Error("Failed to upload CSV file");
+    }
+  } catch (error) {
+    console.error("Error uploading CSV:", error);
     throw error;
   }
 };

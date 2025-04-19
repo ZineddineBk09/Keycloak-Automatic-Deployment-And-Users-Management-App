@@ -15,23 +15,21 @@ import {
 function DeleteDialog({
   data,
   deleteRow,
+  children,
 }: {
   data: any
   deleteRow: (data: any) => void
+  children: React.ReactNode
 }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <span className='relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-slate-100 hover:bg-slate-100 focus:text-slate-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-slate-800 dark:focus:text-slate-50 dark:hover:bg-gray-800'>
-          Delete
-        </span>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            record.
+            This action cannot be undone. This will permanently delete{' '}
+            {data ? 'the selected record' : 'all non-admin users'}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

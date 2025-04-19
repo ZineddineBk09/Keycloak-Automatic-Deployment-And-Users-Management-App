@@ -135,7 +135,7 @@ export interface Realm {
   enabled: boolean;
   displayName?: string;
   accessTokenLifespan: number;
-  sslRequired: "all" | "none" | "external";
+  sslRequired: string;
   notBefore: number;
   defaultSignatureAlgorithm: string;
   revokeRefreshToken: boolean;
@@ -196,4 +196,76 @@ export interface Realm {
   supportedLocales: string[];
   attributes: Record<string, string>;
   userManagedAccessAllowed: boolean;
+}
+
+export interface IUserToken {
+  exp: number;
+  iat: number;
+  jti: string;
+  iss: string;
+  aud: string[];
+  sub: string;
+  typ: string;
+  azp: string;
+  acr: string;
+  "allowed-origins": string[];
+  realm_access: {
+    roles: string[];
+  };
+  resource_access: {
+    "univ_constantine_1-realm": {
+      roles: string[];
+    };
+    idpmgr: {
+      roles: string[];
+    };
+    "univ_bechar-realm": {
+      roles: string[];
+    };
+    "univ_batna_1-realm": {
+      roles: string[];
+    };
+    "pharmacy_faculty-realm": {
+      roles: string[];
+    };
+    "inpfp-realm": {
+      roles: string[];
+    };
+    "medical_faculty-realm": {
+      roles: string[];
+    };
+    "master-realm": {
+      roles: string[];
+    };
+    broker: {
+      roles: string[];
+    };
+    "univ_adrar-realm": {
+      roles: string[];
+    };
+    "demo realm-realm": {
+      roles: string[];
+    };
+    "ahscen-realm": {
+      roles: string[];
+    };
+    "mesrs-realm": {
+      roles: string[];
+    };
+    "realm-realm": {
+      roles: string[];
+    };
+    "realm 02-realm": {
+      roles: string[];
+    };
+    account: {
+      roles: string[];
+    };
+  };
+  scope: string;
+  clientHost: string;
+  email_verified: boolean;
+  preferred_username: string;
+  clientAddress: string;
+  client_id: string;
 }

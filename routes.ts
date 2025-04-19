@@ -9,4 +9,5 @@ export const protectedRoutes = [
   "users/[id]",
   "/history",
   "/realms",
+  '/dashboard'
 ];

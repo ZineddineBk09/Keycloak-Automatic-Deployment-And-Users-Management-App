@@ -42,6 +42,7 @@ import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 import AddDialog from "./dialogs/add";
 import { downloadCSV } from "../../lib/utils/export";
+import DeleteDialog from "../../app/shared/dialogs/delete";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -141,6 +142,23 @@ export function DataTable<TData, TValue>({
     );
     toast.success("Users exported successfully");
   };
+  console.log(users);
+  const handleBulkDelete = async () => {
+    const nonAdminUsers = users.filter(
+      (user: any) => user.username !== "admin"
+    );
+    console.log("nonAdminUsers", nonAdminUsers);
+    const userIds = nonAdminUsers.map((user: any) => user.id);
+
+    deleteUsers(userIds)
+      .then(() => {
+        toast.success("All non-admin users deleted successfully");
+        setRowSelection({});
+      })
+      .catch((error) => {
+        toast.error("Error deleting users");
+      });
+  };
 
   React.useEffect(() => {
     setData(users as TData[]);
@@ -201,6 +219,11 @@ export function DataTable<TData, TValue>({
                 />
               </Button>
             )}
+            <DeleteDialog data={null} deleteRow={handleBulkDelete}>
+              <Button variant="outline" className="text-red-500">
+                Delete All
+              </Button>
+            </DeleteDialog>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
